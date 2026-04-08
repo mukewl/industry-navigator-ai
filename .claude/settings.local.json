@@ -4,7 +4,8 @@
       "Bash(gh auth:*)",
       "Bash(npx skills:*)",
       "Bash(node -e ':*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)"
     ]
   }
 }
