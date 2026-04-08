@@ -66,19 +66,22 @@ const Index = () => {
     }
 
     // Direct links to Briefs
-    if (activeTab === "renault-brief") {
+    const briefTabMap: Record<string, string> = {
+      "renault-brief": "Renault",
+      "carrefour-brief": "Carrefour",
+      "stellantis-brief": "Stellantis",
+      "totalenergies-brief": "TotalEnergies",
+      "saintgobain-brief": "Saint-Gobain",
+      "schneiderelectric-brief": "Schneider Electric",
+      "veolia-brief": "Veolia",
+      "airfranceklm-brief": "Air France-KLM",
+      "danone-brief": "Danone",
+      "loreal-brief": "L'Oréal",
+    };
+    if (activeTab in briefTabMap) {
       return (
         <SustainabilityBrief
-          companyName="Renault"
-          onBack={() => setActiveTab("dashboard")}
-        />
-      );
-    }
-    
-    if (activeTab === "carrefour-brief") {
-      return (
-        <SustainabilityBrief
-          companyName="Carrefour"
+          companyName={briefTabMap[activeTab]}
           onBack={() => setActiveTab("dashboard")}
         />
       );

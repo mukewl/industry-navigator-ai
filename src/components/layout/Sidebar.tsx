@@ -16,6 +16,14 @@ const navPrimary = [
 const navSecondary = [
   { id: "renault-brief", label: "Renault Brief", icon: FileText },
   { id: "carrefour-brief", label: "Carrefour Brief", icon: FileText },
+  { id: "stellantis-brief", label: "Stellantis Brief", icon: FileText },
+  { id: "totalenergies-brief", label: "TotalEnergies Brief", icon: FileText },
+  { id: "saintgobain-brief", label: "Saint-Gobain Brief", icon: FileText },
+  { id: "schneiderelectric-brief", label: "Schneider Electric Brief", icon: FileText },
+  { id: "veolia-brief", label: "Veolia Brief", icon: FileText },
+  { id: "airfranceklm-brief", label: "Air France-KLM Brief", icon: FileText },
+  { id: "danone-brief", label: "Danone Brief", icon: FileText },
+  { id: "loreal-brief", label: "L'Oréal Brief", icon: FileText },
   { id: "roadmap", label: "Roadmap", icon: Map },
 ];
 
