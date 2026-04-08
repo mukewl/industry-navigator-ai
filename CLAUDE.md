@@ -4,7 +4,7 @@ This document is for AI assistants and developers working in this repo. It summa
 
 ## Product intent
 
-**Orange Business–branded internal demo** for a “Gen AI sustainability profiling” workflow: account managers pick a company, watch a simulated multi-agent pipeline, then read a structured **sustainability brief** (challenges, mapped Orange solutions, export hooks). The experience is aimed at **enterprise sales reps** (dense UI, minimal marketing chrome).
+**Orange Business–branded internal demo** for a "Gen AI sustainability profiling" workflow: account managers pick a company, watch a simulated multi-agent pipeline, then read a structured **sustainability brief** (challenges, mapped Orange solutions, export hooks). The experience is aimed at **enterprise sales reps** (dense UI, minimal marketing chrome).
 
 ---
 
@@ -19,10 +19,11 @@ This document is for AI assistants and developers working in this repo. It summa
 | Icons | **lucide-react** |
 | Routing | **react-router-dom** v6 — only `/` and `*` are used in practice |
 | Server state | **TanStack Query** — `QueryClientProvider` in `App.tsx`; main screens do not depend on it yet |
-| Charts | **Recharts** — dashboard challenge breakdown (donut) |
+| Charts | **Recharts** — used in `AccountDashboard` (bar chart) and `SustainabilityBrief` Overview tab (impact score bar chart) |
 | Backend (scaffold) | **Supabase** — `@supabase/supabase-js`, client in `src/integrations/supabase/client.ts`, generated `types.ts` |
 | Forms / validation | **react-hook-form**, **zod**, **@hookform/resolvers** (available; not central to current flows) |
 | Toasts | **shadcn Toaster** + **Sonner** (both mounted in `App.tsx`) |
+| Animation | **CSS keyframes only** — framer-motion is NOT installed; do not add it |
 
 **Path alias:** `@/` → `src/` (see `vite.config.ts`, `tsconfig`).
 
@@ -36,18 +37,19 @@ This document is for AI assistants and developers working in this repo. It summa
 src/
   App.tsx                 # Router shell, providers, toasters
   main.tsx
+  index.css               # Tailwind base + HSL tokens + glass utility classes + custom keyframes
   pages/
     Index.tsx             # Main app: tab state + view switching (heart of navigation)
     NotFound.tsx
   components/
     layout/               # Sidebar, Header
     dashboard/            # AccountDashboard, RoadmapView, SystemArchitecture (+ unused legacy widgets)
-    search/               # SearchPanel (new profile entry)
+    search/               # SearchPanel (new profile entry / hero page)
     pipeline/             # PipelineView (simulated steps)
     brief/                # SustainabilityBrief, SolutionDetail
     ui/                   # shadcn primitives
   data/
-    briefData.ts          # Static brief dataset (Renault + Carrefour)
+    briefData.ts          # Static brief dataset — all 10 companies (see below)
   lib/
     briefMetrics.ts       # Derived stats for dashboard (contract sum, CO₂ label, chart rows)
     utils.ts              # cn() etc.
@@ -60,7 +62,7 @@ src/
 
 ## Navigation and state model
 
-**Important:** Most “screens” are **not separate routes**. `Index.tsx` keeps `activeTab` as a string and renders one of several views. Sidebar / mobile header call `onTabChange`.
+**Important:** Most "screens" are **not separate routes**. `Index.tsx` keeps `activeTab` as a string and renders one of several views. Sidebar / mobile header call `onTabChange`.
 
 **Known `activeTab` values** (from `Index.tsx` + `Sidebar.tsx`):
 
@@ -77,15 +79,44 @@ src/
 
 **Other state in `Index`:** `searchQuery`, `isLoading`, `hasSearched` — only parts of this are fully wired (e.g. loading flag for search is not driven to true today).
 
-**Brief routing quirk:** `SustainabilityBrief` resolves data with  
-`companyName.toLowerCase().includes("carrefour") ? "carrefour" : "renault"` — any other name falls back to **Renault** data.
+**Brief routing — UPDATED:** `SustainabilityBrief` now resolves company data via a `nameMap` object with explicit keys for all 10 companies. If the company name doesn't match any key, `data` is `null` and a proper empty state is shown — **no silent Renault fallback anymore**.
 
 ---
 
-## Data and “business logic”
+## Data and "business logic"
 
 - **Source of truth for copy/structure:** `src/data/briefData.ts` — challenges, solutions, benchmarks, contacts, financial blocks, etc.
-- **Dashboard aggregates:** `src/lib/briefMetrics.ts` — e.g. summed contract labels, CO₂ string, `BRIEF_COMPANY_KEYS` (`renault`, `carrefour`).
+- **Companies in briefData:** `renault`, `carrefour`, `stellantis`, `totalenergies`, `saintgobain`, `schneiderelectric`, `veolia`, `airfranceklm`, `danone`, `loreal` — **all 10 are fully populated**.
+- **Solution data shape** (important for Overview additions and SolutionDetail):
+  ```ts
+  {
+    challengeId: number,
+    challengeLabel: string,
+    product: string,
+    detail: string,
+    icon: LucideIcon,
+    impactScore: number,           // 0–100, used in Overview bar chart + Top Play card
+    metrics: {
+      profitability: string,       // e.g. "€2.4M estimated contract value | High margin service"
+      clientBenefit: string,
+      co2Impact: string,           // e.g. "-12,400 tCO2e/year estimated"
+    },
+    details: {
+      overview: string[],
+      financialCase: {
+        contractValue: string,     // e.g. "€2.4M" — used in Top Play card
+        revenueType: string,
+        upsellPotential: string,
+        years: { year: string, revenue: string }[],
+      },
+      esgCase: string[],
+      keySellingPoints: string[],
+      nextSteps: string[],
+    }
+  }
+  ```
+- **Contact data shape:** `{ role: string, icon: LucideIcon }` — roles are displayed in Overview "Key contacts" and Export "Targets" sections.
+- **Dashboard aggregates:** `src/lib/briefMetrics.ts` — e.g. summed contract labels, CO₂ string, `BRIEF_COMPANY_KEYS`. **This file still only references `renault` and `carrefour`** — it has not been updated to include all 10 companies. This is intentional (dashboard is a two-client view); update carefully if expanding the dashboard client list.
 - **No live API** in the main user path: pipeline durations are **fixed timeouts** in `PipelineView`; export and CRM actions show **toasts only**.
 
 **Supabase:** Client is ready (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`). **No feature code in the current UI imports or queries it** — wiring persistence, auth, or real profiles is future work.
@@ -94,27 +125,110 @@ src/
 
 ## Design system (current)
 
-- **Theme:** `index.html` sets `<html class="dark">`. Tokens live in `src/index.css` (HSL CSS variables).
-- **Palette:** **Zinc / slate neutrals** + **single accent** — Orange **primary** (`hsl` orange ~ `#FF6900`).
-- **Typography:** **IBM Plex Sans** (UI), **JetBrains Mono** (code). Utility classes in `index.css` `@layer components`:
-  - `type-eyebrow` — small uppercase metadata
-  - `type-section-label` — section headers
+- **Theme:** `index.html` sets `<html class="dark">`. Tokens live in `src/index.css` (HSL CSS variables). The app is **always dark mode** — there is no light/dark toggle.
+- **Background:** Pure black (`hsl(0 0% 0%)`). Glass panels are `rgba(255,255,255,0.78–0.88)` which appear as frosted light cards against the dark background.
+- **Palette:** Zinc / slate neutrals + **single chromatic accent — Orange `#FF6900`** (`--primary: 24 100% 50%`). No other chromatic colours in the UI chrome.
+- **Typography:** SF Pro via system stack (`-apple-system, BlinkMacSystemFont`). JetBrains Mono for code only. Custom utility classes in `index.css` `@layer components`:
+  - `type-eyebrow` — 12px uppercase metadata (column headers, dt labels)
+  - `type-section-label` — 12px uppercase section headers (slightly looser tracking than eyebrow)
   - `type-prose` / `type-prose-md` / `type-ui` — readable body density
-- **Body:** `text-base`, slightly looser line-height in `.dark` for readability.
-- **Explicit non-goals (recent UX direction):** no hero marketing layout, no glassmorphism as primary chrome; tool-like, Linear/Notion-adjacent density.
+- **Glass utility classes** (defined in `index.css`, use these — don't invent new ones):
+  - `glass-nav` — dark glass for sidebar rail
+  - `glass-panel` — light frosted content surface (78% white)
+  - `glass-panel-strong` — heavier frosted surface (88% white), used for primary cards
+  - `glass-inset` — recessed frosted inset (55% white)
+  - `glass-tab-shell` — tab bar container
+  - `glass-stat` — stat pill
+- **Shadows:** `shadow-apple` (3px 5px 30px / 0.22) and `shadow-apple-soft` (3px 5px 24px / 0.08) — use sparingly via utility classes, not inline styles.
+- **Animation classes** in `index.css` `@layer utilities`:
+  - `animate-fade-in` — 0.45s fade, used on page/view entry
+  - `animate-slide-up` — 0.45s slide up + fade
+  - `animate-tab-from-right` — 0.2s slide from +20px, used for forward tab transitions
+  - `animate-tab-from-left` — 0.2s slide from −20px, used for backward tab transitions
+- **Explicit non-goals:** no hero marketing layout, no glassmorphism as primary chrome, no gradient text on headings, no glassmorphism used decoratively — tool-like, Linear/Notion-adjacent density.
 
 ---
 
 ## What is built (feature checklist)
 
-- [x] **Dashboard** — Two-panel layout: scrollable client list (Renault / Carrefour), selection, summary stats, Recharts donut + legend, **Open full brief** CTA.
-- [x] **New profile** — Search by company name; example chips; transitions to pipeline.
-- [x] **Pipeline** — Five named steps with progress animation and sidebar “parallel agents” / live stats (illustrative).
-- [x] **Brief** — Tabbed: Overview (table), Challenges (collapsible detail), Solutions (cards → **SolutionDetail** playbook), Export (checkboxes, PowerPoint/Canva toasts, Save to CRM toast, confidence, benchmarks, targets).
-- [x] **Roadmap** — Static Phase 2 feature list (moved off dashboard).
+- [x] **Dashboard** — Two-panel layout: scrollable client list (Renault / Carrefour), selection, summary stats, Recharts bar chart, **Open full brief** CTA.
+- [x] **New profile / hero page** — Redesigned: full-bleed background with radial orange glow + dot grid, large headline "Generate a sustainability brief.", stat row, search card, all 10 company chips. Two-tier container width (44rem outer for chips, 32rem inner for card).
+- [x] **Pipeline** — Five named steps with progress animation and sidebar "parallel agents" / live stats (illustrative).
+- [x] **Brief — tab animation** — Tab switching uses directional CSS slide animation (right for forward, left for backward). Tabs component is controlled; content re-mounts on switch via `key`.
+- [x] **Brief — Overview tab** — Meta row + pressure/play table + **impact score bar chart** (Recharts) + **key contacts pills** + **Top Recommended Play card** (highest impactScore, contract value, CO₂ impact, link to playbook).
+- [x] **Brief — Challenges tab** — Collapsible cards with urgency badges.
+- [x] **Brief — Solutions tab** — Cards → SolutionDetail playbook view.
+- [x] **Brief — Export tab** — Checkboxes, PowerPoint/Canva toasts, Save to CRM toast, confidence bar, benchmarks, targets.
+- [x] **Brief — empty state** — Proper "no brief available" screen for unrecognised companies; lists all 10 supported names.
+- [x] **Roadmap** — Static Phase 2 feature list.
 - [x] **System architecture** — Separate informational view.
 - [x] **Responsive shell** — Sidebar (lg+), sheet + header on small screens.
 - [x] **404** — `NotFound` route for unknown paths.
+
+---
+
+## Recently changed files (last session)
+
+| File | What changed |
+|------|-------------|
+| `src/components/search/SearchPanel.tsx` | Full redesign: background decoration layers (radial glow + dot grid + vignette), enlarged headline, stat row, eyebrow badge pill, two-tier container (44rem / 32rem), all 10 chips, centered alignment, non-uniform spacing rhythm |
+| `src/components/brief/SustainabilityBrief.tsx` | Controlled tabs with directional slide animation; Overview tab additions (bar chart, contacts, Top Play card); silent Renault fallback replaced with proper null/empty state |
+| `src/index.css` | Added `animate-tab-from-right`, `animate-tab-from-left`, `@keyframes tabSlideFromRight`, `@keyframes tabSlideFromLeft` |
+
+---
+
+## Patterns and decisions established this session
+
+### Tab animation pattern
+`SustainabilityBrief` uses **controlled Radix `Tabs`** (`value` + `onValueChange`) but does **not** use `TabsContent` — content is rendered manually in a single `div` with `key={slideKey}`. Incrementing `slideKey` forces a React re-mount, which retriggers the CSS animation. Direction is computed by comparing the incoming tab's index in `TAB_ORDER` against the current tab's index.
+
+```ts
+const TAB_ORDER = ["overview", "challenges", "solutions", "export"] as const;
+
+const handleTabChange = (tab: string) => {
+  const fromIdx = TAB_ORDER.indexOf(tab as TabId);   // destination
+  const toIdx   = TAB_ORDER.indexOf(activeTab);       // current
+  setSlideDir(fromIdx > toIdx ? "right" : "left");
+  setActiveTab(tab as TabId);
+  setSlideKey((k) => k + 1);
+};
+```
+
+Apply this same pattern if other multi-tab views need directional animation in future.
+
+### SearchPanel two-tier width
+The hero page uses a **nested container strategy** to let chips span a wider column than the card:
+- Outer: `max-w-[44rem]` — chip section uses this full width
+- Inner: `max-w-[32rem]` — heading and search card are narrower for readability
+
+### Bar chart data pattern (Overview)
+Chart data is derived inline from `data.solutions` before the return:
+```ts
+const chartData = data.solutions.map((s) => ({
+  label: `#${s.challengeId}`,   // short X-axis label
+  fullName: s.product,           // shown in tooltip
+  score: s.impactScore,
+}));
+```
+Tooltip uses `payload[0].payload` cast to `(typeof chartData)[number]` to show `fullName`.
+
+### Top Recommended Play
+`topPlay` is derived by sorting solutions descending on `impactScore`:
+```ts
+const topPlay = [...data.solutions].sort((a, b) => b.impactScore - a.impactScore)[0];
+```
+Contract value is accessed via `(topPlay as any).details?.financialCase?.contractValue` with `?? "—"` fallback because TypeScript's inference through the union of all `briefData` values is not always reliable for deeply nested properties.
+
+### No framer-motion
+Framer Motion is **not installed** and should **not be added**. All animation uses CSS keyframes defined in `src/index.css`. New animations go in the `@layer utilities` block alongside existing ones.
+
+### Recharts styling conventions
+Match the existing `AccountDashboard` chart style:
+- `CartesianGrid vertical={false}` with `stroke="rgba(0,0,0,0.06)"`
+- `axisLine={false}`, `tickLine={false}` on both axes
+- Tick fill: `hsl(240 3.8% 46.1%)` (matches `--muted-foreground`)
+- Bar fill: `hsl(24 100% 50%)` (matches `--primary`) with `radius={[4, 4, 0, 0]}`
+- Custom tooltip: `rounded-lg border border-black/[0.06] bg-white/95 px-3 py-2 text-[0.8125rem] shadow-apple-sm backdrop-blur-xl`
 
 ---
 
@@ -131,30 +245,34 @@ They may be leftovers from an earlier layout or Lovable scaffold. Safe to remove
 
 ## Known gaps and suggested next work
 
+### Highest priority (product completeness)
+
+1. **Sidebar company list** — Only Renault and Carrefour appear in the sidebar Library and as direct brief links. The other 8 companies are accessible via search but not via the sidebar. Either expand the sidebar list to all 10 or add a "Browse all" entry point.
+2. **`briefMetrics.ts` covers only 2 companies** — Dashboard stats (contract sum, CO₂ label) only aggregate Renault + Carrefour. If the dashboard expands to show all clients, this file needs updating.
+3. **Search `isLoading`** — `Index.tsx` never sets `isLoading` to true; the "Running" button state in `SearchPanel` is dead. Wire the loading state through the pipeline transition.
+4. **Export** — Implement real PowerPoint / Canva generation; wire checkboxes to actual selection state (currently `defaultChecked` only).
+
 ### Product / backend
 
-1. **Real pipeline** — Replace timers with API jobs; surface errors, cancel/retry, map job output to brief sections.
-2. **Dynamic companies** — Avoid silent Renault fallback; empty state or API-driven brief when unknown.
-3. **Supabase** — Persist profiles, users, brief versions; RLS; optional real “Save to CRM” integration.
-4. **Export** — Implement PowerPoint / Canva (or other) generation; wire checkboxes to real selection state.
-5. **Search `isLoading`** — Parent never sets loading true; button “Running” state is effectively unused.
+5. **Real pipeline** — Replace fixed timeouts in `PipelineView` with API jobs; surface errors, cancel/retry, map job output to brief sections.
+6. **Supabase** — Persist profiles, users, brief versions; RLS; optional real "Save to CRM" integration.
 
 ### UX / IA
 
-6. **URL sync** — Deep-link tabs or briefs (`/brief/renault`) for share/bookmark (optional).
-7. **Nav duplication** — Sidebar has both Dashboard paths and direct “Renault Brief” / “Carrefour Brief”; confirm IA with stakeholders.
+7. **URL sync** — Deep-link tabs or briefs (`/brief/renault`) for share/bookmark. Currently all navigation is in-memory state only.
+8. **Nav duplication** — Sidebar has both Dashboard entry and direct "Renault Brief" / "Carrefour Brief" links — confirm IA with stakeholders before expanding to all 10.
 
 ### Engineering
 
-8. **Bundle size** — Recharts inflates main chunk; consider `React.lazy` for dashboard chart.
-9. **Tests** — No test suite described in repo; add e2e or critical unit tests if product hardens.
-10. **ESLint** — `npm run lint` exists; keep CI-aligned if added.
+9. **Bundle size** — Recharts inflates main chunk (~887KB gzipped ~259KB). Consider `React.lazy` for dashboard and brief charts.
+10. **Tests** — No test suite; add e2e or critical unit tests if product hardens.
+11. **ESLint** — `npm run lint` exists; keep CI-aligned if added.
 
 ### Housekeeping
 
-11. **`package.json` name** — Still `vite_react_shadcn_ts`; rename if publishing.
-12. **`scripts/extract-brief-data.mjs`** — Utility used to extract `briefData.ts`; optional to delete or document.
-13. **`.bak` files** — Remove `src/data/briefData.ts.bak` if present (accidental backup).
+12. **`package.json` name** — Still `vite_react_shadcn_ts`; rename if publishing.
+13. **`scripts/extract-brief-data.mjs`** — Utility used to extract `briefData.ts`; optional to delete or document.
+14. **`.bak` files** — Remove `src/data/briefData.ts.bak` if present.
 
 ---
 
@@ -162,9 +280,11 @@ They may be leftovers from an earlier layout or Lovable scaffold. Safe to remove
 
 - Prefer **`@/` imports** for `src`.
 - **Do not break** `Index` tab contract without updating `Sidebar` / `Header` / any `setActiveTab` callers.
-- **Brief content** edits: start from `src/data/briefData.ts` (or the consuming components) — keep `SolutionData` / structure compatible with `SolutionDetail`.
-- **Design changes:** respect existing tokens (`bg-background`, `text-muted-foreground`, `border-border`, `primary`); avoid hard-coded hex except where charts require explicit fills.
-- **Skills:** The repo includes optional Claude skills under `.claude/skills/` (audit, typeset, redesign, etc.) — use when the user invokes them.
+- **Brief content** edits: start from `src/data/briefData.ts` — keep `SolutionData` / structure compatible with `SolutionDetail`. Do not add fields to some companies without adding them to all 10.
+- **Design changes:** use existing glass utility classes (`glass-panel`, `glass-panel-strong`, etc.) and token variables (`bg-background`, `text-muted-foreground`, `border-border`, `primary`). Avoid hard-coded hex **except** where Recharts requires explicit colour strings (use `hsl(24 100% 50%)` for primary, `hsl(240 3.8% 46.1%)` for muted).
+- **Animation:** add new keyframes to `src/index.css` `@layer utilities` block; name classes `animate-*`.
+- **No framer-motion.** Do not install it.
+- **Skills:** The repo includes optional Claude skills under `.claude/skills/` (audit, typeset, redesign, arrange, etc.) — use when the user invokes them via `/skill-name`.
 
 ---
 
@@ -182,4 +302,4 @@ npm run lint
 
 ---
 
-*Last aligned with the codebase layout and main flows in this workspace. Update this file when routing, data sources, or major UI sections change.*
+*Last updated: 2026-04-08. Reflects all work through the SearchPanel redesign, /arrange layout pass, and SustainabilityBrief tab animation + Overview additions session.*
