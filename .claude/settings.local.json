@@ -3,7 +3,8 @@
     "allow": [
       "Bash(gh auth:*)",
       "Bash(npx skills:*)",
-      "Bash(npm run:*)"
+      "Bash(node -e ':*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
