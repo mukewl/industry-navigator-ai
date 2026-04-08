@@ -40,72 +40,45 @@ export const SolutionDetail = ({ companyName, solution, onBack }: SolutionDetail
   if (!solution.details) return null;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 animate-fade-in pb-10">
-      {/* Header */}
+    <div className="max-w-5xl mx-auto space-y-6 animate-fade-in pb-10 text-base">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <solution.icon className="h-6 w-6 text-primary" />
+        <div className="min-w-0">
+          <div className="flex items-start gap-3 mb-2">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted border border-border">
+              <solution.icon className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold leading-tight">
-                {solution.product} for {companyName}
+              <h1 className="text-2xl font-semibold tracking-tight leading-tight">
+                {solution.product}
               </h1>
-              <p className="text-sm font-medium text-muted-foreground mt-1 border-l-2 border-primary pl-2">
-                Mapped to: {solution.challengeLabel}
+              <p className="text-sm text-muted-foreground mt-1.5 leading-snug">
+                {companyName} · <span className="text-foreground font-medium">{solution.challengeLabel}</span>
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2 mt-3 pl-[60px]">
-            <Badge className="bg-primary/10 text-primary border-primary/30 gap-1.5 font-bold px-3 py-1">
-              Impact Score: {solution.impactScore}/100
-            </Badge>
-          </div>
+          <Badge variant="outline" className="type-eyebrow normal-case tracking-normal border-border mt-2 px-2 py-0.5 h-6">
+            Impact {solution.impactScore}
+          </Badge>
         </div>
-        <div className="flex gap-2 shrink-0">
-          <Button variant="outline" size="sm" onClick={onBack} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Brief
-          </Button>
-        </div>
+        <Button variant="outline" size="sm" onClick={onBack} className="gap-2 h-8 text-xs shrink-0 border-border">
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Brief
+        </Button>
       </div>
 
-      <Separator />
+      <Separator className="bg-border" />
 
       <div className="grid gap-6 md:grid-cols-3">
-        {/* Main Content Column (2/3 width) */}
         <div className="md:col-span-2 space-y-6">
-          {/* Section 1 - Solution Overview */}
           <section>
-            <h2 className="text-xl font-bold mb-3 flex items-center gap-2 text-foreground">
-              <solution.icon className="h-5 w-5 text-primary" />
-              Solution Overview
-            </h2>
-            <Card className="border-border/50 shadow-sm">
-              <CardContent className="p-6 space-y-4">
-                {solution.details.overview.map((p, i) => (
-                  <p key={i} className="text-[15px] text-foreground/90 leading-relaxed">
-                    {p}
-                  </p>
-                ))}
-              </CardContent>
-            </Card>
-          </section>
-
-          {/* Section 3 - ESG and Business Case */}
-          <section>
-            <h2 className="text-xl font-bold mb-3 flex items-center gap-2 text-foreground">
-              <Leaf className="h-5 w-5 text-green-600" />
-              ESG & Business Case for Client
-            </h2>
-            <Card className="border-border/50 shadow-sm">
-              <CardContent className="p-6">
-                <ul className="space-y-4">
-                  {solution.details.esgCase.map((point, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-green-500 mt-[2px] shrink-0" />
-                      <span className="text-[15px] font-medium text-foreground/90 leading-snug">{point}</span>
+            <h2 className="type-section-label mb-3">Overview</h2>
+            <Card className="border-border bg-card shadow-none">
+              <CardContent className="p-4">
+                <ul className="space-y-2 list-none">
+                  {solution.details.overview.map((p, i) => (
+                    <li key={i} className="flex gap-3 text-base text-foreground leading-[1.6]">
+                      <span className="text-muted-foreground tabular-nums shrink-0 font-medium">{i + 1}.</span>
+                      <span className="max-w-prose">{p}</span>
                     </li>
                   ))}
                 </ul>
@@ -113,21 +86,37 @@ export const SolutionDetail = ({ companyName, solution, onBack }: SolutionDetail
             </Card>
           </section>
 
-          {/* Section 4 - Key Selling Points */}
           <section>
-            <h2 className="text-xl font-bold mb-3 flex items-center gap-2 text-foreground">
-              <ShieldCheck className="h-5 w-5 text-blue-600" />
-              Key Selling Points
+            <h2 className="type-section-label mb-3 flex items-center gap-2">
+              <Leaf className="h-3.5 w-3.5 text-primary" />
+              ESG / business case
             </h2>
-            <Card className="border-border/50 shadow-sm bg-blue-50/30">
-              <CardContent className="p-6">
-                <ul className="space-y-4">
+            <Card className="border-border bg-card shadow-none">
+              <CardContent className="p-4">
+                <ul className="space-y-2">
+                  {solution.details.esgCase.map((point, i) => (
+                    <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed">
+                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                      <span className="text-foreground">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </section>
+
+          <section>
+            <h2 className="type-section-label mb-3 flex items-center gap-2">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+              Angles
+            </h2>
+            <Card className="border-border bg-card shadow-none">
+              <CardContent className="p-4">
+                <ul className="space-y-2">
                   {solution.details.keySellingPoints.map((point, i) => (
-                    <li key={i} className="flex items-start gap-4">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 shrink-0">
-                        <span className="text-xs font-bold text-blue-700">{i + 1}</span>
-                      </div>
-                      <span className="text-[15px] font-bold text-blue-900 leading-snug pt-[2px]">{point}</span>
+                    <li key={i} className="flex gap-2.5 text-sm leading-relaxed">
+                      <span className="text-muted-foreground tabular-nums font-semibold shrink-0 w-4">{i + 1}</span>
+                      <span className="text-foreground font-medium">{point}</span>
                     </li>
                   ))}
                 </ul>
@@ -136,49 +125,47 @@ export const SolutionDetail = ({ companyName, solution, onBack }: SolutionDetail
           </section>
         </div>
 
-        {/* Sidebar Column (1/3 width) */}
         <div className="space-y-6">
-          {/* Section 2 - Financial Case */}
           <section>
-            <h2 className="text-lg font-bold mb-3 flex items-center gap-2 text-foreground">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Financial Case
+            <h2 className="type-section-label mb-3 flex items-center gap-2">
+              <TrendingUp className="h-3.5 w-3.5 text-primary" />
+              Revenue
             </h2>
-            <Card className="border-primary/20 bg-primary/[0.03] shadow-sm">
-              <CardHeader className="pb-3 pt-5 px-5">
-                <CardTitle className="text-sm font-semibold text-primary uppercase tracking-wider">Orange Revenue Profile</CardTitle>
+            <Card className="border-border bg-muted/20 shadow-none">
+              <CardHeader className="pb-2 pt-4 px-4 space-y-0">
+                <CardTitle className="type-section-label">Orange</CardTitle>
               </CardHeader>
-              <CardContent className="px-5 pb-5 space-y-5">
+              <CardContent className="px-4 pb-4 space-y-4">
                 <div>
-                  <div className="text-3xl font-extrabold text-foreground tracking-tight">{solution.details.financialCase.contractValue}</div>
-                  <div className="text-xs text-muted-foreground uppercase font-semibold mt-1">Est. Contract Value</div>
+                  <div className="text-2xl font-semibold tabular-nums text-foreground tracking-tight">{solution.details.financialCase.contractValue}</div>
+                  <div className="type-eyebrow mt-1">Est. contract</div>
                 </div>
                 
-                <div className="space-y-3 bg-white/60 p-3 rounded-md border border-primary/10">
-                  <div className="flex flex-col text-sm">
-                    <span className="text-muted-foreground text-xs uppercase mb-0.5">Revenue Type</span>
-                    <span className="font-semibold">{solution.details.financialCase.revenueType}</span>
+                <div className="space-y-3 rounded-md border border-border bg-card p-3 text-sm">
+                  <div>
+                    <span className="type-eyebrow">Type</span>
+                    <p className="font-medium mt-1 leading-snug">{solution.details.financialCase.revenueType}</p>
                   </div>
-                  <Separator className="bg-primary/10" />
-                  <div className="flex flex-col text-sm">
-                    <span className="text-muted-foreground text-xs uppercase mb-0.5">Upsell Potential</span>
-                    <span className="font-bold text-primary">{solution.details.financialCase.upsellPotential}</span>
+                  <Separator className="bg-border" />
+                  <div>
+                    <span className="type-eyebrow">Upsell</span>
+                    <p className="font-medium text-primary mt-1 leading-snug">{solution.details.financialCase.upsellPotential}</p>
                   </div>
                 </div>
 
-                <div className="pt-2">
+                <div>
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-primary/70 text-[10px] uppercase font-bold border-b border-primary/20">
-                        <th className="pb-2 pl-2">Year</th>
-                        <th className="pb-2 text-right pr-2">Proj. Revenue</th>
+                      <tr className="text-left type-eyebrow border-b border-border">
+                        <th className="pb-2 font-medium">Year</th>
+                        <th className="pb-2 text-right font-medium">Rev</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-primary/10">
+                    <tbody className="divide-y divide-border">
                       {solution.details.financialCase.years.map((y) => (
-                        <tr key={y.year} className="hover:bg-primary/5 transition-colors">
-                          <td className="py-3 pl-2 font-medium text-foreground/80">{y.year}</td>
-                          <td className="py-3 text-right pr-2 font-bold text-foreground">{y.revenue}</td>
+                        <tr key={y.year}>
+                          <td className="py-2.5 font-medium text-foreground tabular-nums">{y.year}</td>
+                          <td className="py-2.5 text-right tabular-nums font-semibold">{y.revenue}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -188,24 +175,20 @@ export const SolutionDetail = ({ companyName, solution, onBack }: SolutionDetail
             </Card>
           </section>
 
-          {/* Section 5 - Next Steps */}
           <section>
-            <h2 className="text-lg font-bold mb-3 flex items-center gap-2 text-foreground">
-              <ArrowLeft className="h-5 w-5 text-primary rotate-180" />
-              Suggested Next Steps
-            </h2>
-            <Card className="border-border/50 shadow-sm bg-orange-50/30">
-              <CardContent className="p-5">
-                <div className="space-y-4">
+            <h2 className="type-section-label mb-3">Next</h2>
+            <Card className="border-border bg-card shadow-none">
+              <CardContent className="p-4">
+                <ol className="space-y-3 list-none">
                   {solution.details.nextSteps.map((step, i) => (
-                    <div key={i} className="flex gap-3">
-                      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary/10 font-bold text-xs text-primary">
+                    <li key={i} className="flex gap-3 text-sm leading-relaxed">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded border border-border bg-muted type-eyebrow normal-case font-semibold tabular-nums text-muted-foreground">
                         {i + 1}
-                      </div>
-                      <p className="text-sm font-medium leading-snug">{step}</p>
-                    </div>
+                      </span>
+                      <span className="font-medium pt-0.5">{step}</span>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </CardContent>
             </Card>
           </section>

@@ -1,0 +1,806 @@
+import { useState } from "react";
+import {
+  ArrowLeft,
+  Save,
+  AlertTriangle,
+  Zap,
+  Truck,
+  Check,
+  CheckCircle2,
+  Users,
+  BarChart3,
+  ShieldCheck,
+  Leaf,
+  Globe,
+  ChevronRight,
+  Thermometer,
+  Recycle,
+  Store,
+  Laptop,
+  Building2,
+  Presentation,
+  Palette,
+  ArrowRight,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { SolutionDetail, SolutionData } from "./SolutionDetail";
+
+interface SustainabilityBriefProps {
+  companyName: string;
+  onBack: () => void;
+}
+
+const briefData = {
+  renault: {
+    name: "Renault",
+    score: 87,
+    sources: 34,
+    challenges: [
+      {
+        id: 1,
+        icon: Truck,
+        title: "Fleet Electrification and Lifecycle Emissions",
+        description:
+          "Renault faces pressure to decarbonise its full vehicle fleet lifecycle including manufacturing, logistics and end-of-life recycling. EU emissions targets for 2025 and 2030 create direct regulatory exposure.",
+        urgency: "Critical",
+        urgencyColor: "text-red-400 bg-red-950/50 border-red-500/30",
+      },
+      {
+        id: 2,
+        icon: Zap,
+        title: "Energy Consumption in Manufacturing",
+        description:
+          "Renault's production plants, particularly in France and Romania, face rising energy costs and scope 2 emissions scrutiny from investors and regulators.",
+        urgency: "High",
+        urgencyColor: "text-amber-400 bg-amber-950/40 border-amber-500/25",
+      },
+      {
+        id: 3,
+        icon: Globe,
+        title: "Supply Chain Transparency and ESG Compliance",
+        description:
+          "Tier 1 and Tier 2 supplier ESG compliance is increasingly required under CSRD and customer due diligence obligations.",
+        urgency: "High",
+        urgencyColor: "text-amber-400 bg-amber-950/40 border-amber-500/25",
+      },
+    ],
+    solutions: [
+      {
+        challengeId: 1,
+        challengeLabel: "Fleet Electrification and Lifecycle Emissions",
+        product: "Ocean + Circular Mobility",
+        detail:
+          "Ocean platform for fleet optimization and eco-driving, plus Circular Mobility for fleet electrification support",
+        icon: Truck,
+        impactScore: 94,
+        metrics: {
+          profitability: "€2.4M estimated contract value | High margin service",
+          clientBenefit: "30% reduction in fleet lifecycle emissions | CSRD compliant",
+          co2Impact: "-12,400 tCO2e/year estimated"
+        },
+        details: {
+          overview: [
+            "Orange Business's Sustainable Mobility solution combines our Ocean platform with full Circular Mobility practices to address the massive scope 1 and 3 emissions produced by Renault's logistics operations.",
+            "By implementing connected IoT sensors across the delivery and sales fleet, Orange enables eco-driving behaviors and intelligent route optimization, while also managing the lifecycle of EV batteries and connected components.",
+            "For Renault, this reduces immediate regulatory exposure ahead of 2025 and 2030 EU targets, while creating a foundation for their long-term transition to fully electrified networks."
+          ],
+          financialCase: {
+            contractValue: "€2.4M",
+            revenueType: "Software & Services Subscription",
+            upsellPotential: "High - Expansion to 3rd party logistics",
+            years: [
+              { year: "Year 1", revenue: "€600K" },
+              { year: "Year 2", revenue: "€850K" },
+              { year: "Year 3", revenue: "€950K" }
+            ]
+          },
+          esgCase: [
+            "30% reduction in fleet lifecycle emissions",
+            "Ensures compliance with EU 2025/2030 emission targets",
+            "Demonstrates direct CSRD adherence to investors",
+            "Outperforms automotive sector average fleet efficiency by 12%",
+            "Estimated CO2 reduction: -12,400 tCO2e/year"
+          ],
+          keySellingPoints: [
+            "We aren't just selling tracking; we are selling measurable regulatory compliance.",
+            "The Ocean platform provides board-ready dashboards for CSRD audits.",
+            "Orange Business operates with an intrinsically green IT backbone, unlike pure-play software vendors.",
+            "Circular Mobility offsets the battery footprint, closing the vehicle lifecycle loop."
+          ],
+          nextSteps: [
+            "Schedule a direct discovery call with Renault's Head of Fleet and Mobility Services.",
+            "Prepare the Ocean Platform dashboard demo populated with automotive logistics synthetic data.",
+            "Identify internal Orange subject matter experts who can speak to EV battery IoT telemetry."
+          ]
+        }
+      },
+      {
+        challengeId: 2,
+        challengeLabel: "Energy Consumption in Manufacturing",
+        product: "Smart Eco Energy",
+        detail:
+          "IoT-based energy monitoring and optimization for factories and facilities",
+        icon: Zap,
+        impactScore: 89,
+        metrics: {
+          profitability: "€1.8M estimated contract value | Recurring IoT revenue",
+          clientBenefit: "20-25% energy cost reduction in manufacturing facilities",
+          co2Impact: "-8,200 tCO2e/year estimated"
+        },
+        details: {
+          overview: [
+            "Smart Eco Energy leverages Orange Business's leading IoT connectivity and edge computing capabilities to provide hyper-granular visibility into factory-floor energy consumption.",
+            "By connecting CNC machines, HVAC units, and lighting arrays inside Renault's French and Romanian plants, we detect anomalous energy draws and automate shutdown sequences during non-peak production.",
+            "This tackles the immense scope 2 emissions footprint inherent to automotive manufacturing, delivering immediate operational expense reductions alongside vital sustainability metrics."
+          ],
+          financialCase: {
+            contractValue: "€1.8M",
+            revenueType: "Hardware + Recurring Platform SaaS",
+            upsellPotential: "Medium - Predictive Maintenance",
+            years: [
+              { year: "Year 1", revenue: "€800K" },
+              { year: "Year 2", revenue: "€500K" },
+              { year: "Year 3", revenue: "€500K" }
+            ]
+          },
+          esgCase: [
+            "20-25% energy cost reduction in manufacturing facilities",
+            "Direct improvement in Scope 2 category emissions",
+            "Provides verifiable data for regulatory environmental audits",
+            "Aligns with EU Taxonomy 'Do No Significant Harm' principles",
+            "Estimated CO2 reduction: -8,200 tCO2e/year"
+          ],
+          keySellingPoints: [
+            "Self-funding project: energy savings typically cover the IoT subscription cost within 14 months.",
+            "End-to-end security handled by Orange Cyberdefense (critical for manufacturing environments).",
+            "Replaces manual meter reading with real-time, actionable alerts.",
+            "Scalable from one legacy manufacturing line to gigafactory-level deployments."
+          ],
+          nextSteps: [
+            "Set up introductory meeting with the VP of Manufacturing Operations centering on OpEx reduction.",
+            "Request sample energy bill data from one Renault specific plant to run an ROI simulation.",
+            "Prepare a case study highlighting similar outcomes achieved with other heavy manufacturing clients."
+          ]
+        }
+      },
+      {
+        challengeId: 3,
+        challengeLabel: "Supply Chain Transparency and ESG Compliance",
+        product: "Evolution Platform",
+        detail:
+          "ESG-by-design platform services and GreenOps for supplier data tracking",
+        icon: Globe,
+        impactScore: 81,
+        metrics: {
+          profitability: "€900K estimated contract value | Platform upsell potential",
+          clientBenefit: "Full CSRD supplier compliance coverage by 2025 deadline",
+          co2Impact: "Indirect - enables -5,000 tCO2e supply chain reduction"
+        },
+        details: {
+          overview: [
+            "The Evolution Platform supplies the digital infrastructure necessary to securely aggregate, process, and report on Tier 1 and Tier 2 supplier ESG metrics.",
+            "Renault struggles to track the carbon intensity of thousands of varied component suppliers. By adopting Orange's secure, API-driven platform overlaid with GreenOps principles, they gain an automated view of supplier compliance.",
+            "This moves their procurement department away from passive reporting into proactive carbon management, directly addressing mandatory CSRD disclosure requirements."
+          ],
+          financialCase: {
+            contractValue: "€900K",
+            revenueType: "Professional Services & Platform Usage",
+            upsellPotential: "Very High - Core IT Modernization",
+            years: [
+              { year: "Year 1", revenue: "€400K" },
+              { year: "Year 2", revenue: "€250K" },
+              { year: "Year 3", revenue: "€250K" }
+            ]
+          },
+          esgCase: [
+            "Full CSRD supplier compliance coverage by 2025 deadline",
+            "Standardizes ESG scorecards across thousands of vendors",
+            "Applies GreenOps to reduce the carbon footprint of IT workloads",
+            "Creates verifiable audit trails for supplier due diligence legislation",
+            "Indirectly enables -5,000 tCO2e supply chain reduction"
+          ],
+          keySellingPoints: [
+            "Evolution Platform natively integrates with existing legacy procurement systems securely.",
+            "Solves the 'data silo' problem that frequently derails CSRD compliance efforts.",
+            "Provides an immediate way to enforce ESG minimums on the supplier base.",
+            "Orange Business acts as a trusted, neutral data orchestrator."
+          ],
+          nextSteps: [
+            "Organize a joint workshop with Group Procurement Director to map their current supplier data landscape.",
+            "Position GreenOps as an immediate 'quick win' for their IT and Cloud modernization initiatives.",
+            "Provide the technical whitepaper detailing Evolution Platform's data aggregation capabilities."
+          ]
+        }
+      }
+    ],
+    benchmarks: [
+      {
+        metric: "Peer average carbon intensity",
+        value: "4.2 tCO₂e",
+        context: "per vehicle in automotive manufacturing",
+      },
+      {
+        metric: "Supplier ESG scorecards",
+        value: "78%",
+        context: "of top 20 automotive OEMs now publish them",
+      },
+      {
+        metric: "EU CSRD applicability",
+        value: "FY 2024",
+        context: "applies to Renault from this financial year",
+      },
+    ],
+    contacts: [
+      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "VP of Manufacturing Operations", icon: Building2 },
+      { role: "Head of Fleet and Mobility Services", icon: Truck },
+      { role: "Group Procurement Director", icon: Users },
+    ]
+  },
+  carrefour: {
+    name: "Carrefour",
+    score: 91,
+    sources: 41,
+    challenges: [
+      {
+        id: 1,
+        icon: Thermometer,
+        title: "Cold Chain Energy Efficiency",
+        description:
+          "Carrefour operates thousands of refrigeration units across hypermarkets and logistics. Energy consumption from cold chain represents a major share of scope 1 and 2 emissions and is under direct regulatory focus.",
+        urgency: "Critical",
+        urgencyColor: "text-red-400 bg-red-950/50 border-red-500/30",
+      },
+      {
+        id: 2,
+        icon: Recycle,
+        title: "Food Waste and Circular Economy Compliance",
+        description:
+          "Under French anti-waste legislation (AGEC) and EU targets, Carrefour must demonstrate measurable reduction in food waste and packaging across its supply chain.",
+        urgency: "High",
+        urgencyColor: "text-amber-400 bg-amber-950/40 border-amber-500/25",
+      },
+      {
+        id: 3,
+        icon: Truck,
+        title: "Last-Mile Delivery Emissions",
+        description:
+          "Urban delivery fleet emissions are subject to increasing city-level restrictions across France and Europe, requiring rapid electrification and route optimization.",
+        urgency: "High",
+        urgencyColor: "text-amber-400 bg-amber-950/40 border-amber-500/25",
+      },
+    ],
+    solutions: [
+      {
+        challengeId: 1,
+        challengeLabel: "Cold Chain Energy Efficiency",
+        product: "Smart Eco Energy",
+        detail:
+          "IoT-based energy dashboards and monitoring across stores and logistics facilities",
+        icon: Thermometer,
+        impactScore: 92,
+        metrics: {
+          profitability: "€3.1M estimated contract value | High margin IoT + monitoring",
+          clientBenefit: "22% cold chain energy reduction across hypermarket network",
+          co2Impact: "-18,600 tCO2e/year estimated"
+        },
+        details: {
+          overview: [
+            "Carrefour's hypermarket model relies heavily on resource-intensive commercial refrigeration systems. Smart Eco Energy deploys connected temperature sensors and automated localized control logic directly in-store.",
+            "This continuous, real-time monitoring ensures strict food safety compliance while intelligently modulating power cycles based on foot traffic, external temperature, and grid load.",
+            "Given the escalating cost of European energy, optimizing the cold chain provides a massive return on investment, while severely cutting Carrefour's decentralized scope 2 emissions."
+          ],
+          financialCase: {
+            contractValue: "€3.1M",
+            revenueType: "IoT Hardware, Deployment + SaaS",
+            upsellPotential: "High - Global store rollout",
+            years: [
+              { year: "Year 1", revenue: "€1.5M" },
+              { year: "Year 2", revenue: "€800K" },
+              { year: "Year 3", revenue: "€800K" }
+            ]
+          },
+          esgCase: [
+            "22% cold chain energy reduction across hypermarket network",
+            "Significantly reduces Scope 2 emissions locally per store",
+            "Ensures uncompromised food safety and quality compliance",
+            "Peer leader metrics: beats retail average energy intensity by 18%",
+            "Estimated CO2 reduction: -18,600 tCO2e/year"
+          ],
+          keySellingPoints: [
+            "Direct impact on the bottom line: refrigeration is typically the #1 operating expense for a hypermarket.",
+            "Plug-and-play local deployment that doesn't disrupt store operations.",
+            "Bridges the gap between physical retail operations and corporate ESG goals.",
+            "Orange manages the full stack: from sensor hardware to cellular connectivity to the dashboard."
+          ],
+          nextSteps: [
+            "Pitch a 5-store pilot program to the VP of Store Operations focused purely on refrigeration.",
+            "Prepare an ROI calculator showing the energy cost savings offset against the hardware investment.",
+            "Coordinate with the IoT practice lead to draft a rapid deployment timeline."
+          ]
+        }
+      },
+      {
+        challengeId: 2,
+        challengeLabel: "Food Waste and Circular Economy Compliance",
+        product: "RE Program & Circular Mobility",
+        detail:
+          "Refurbishment, reuse and takeback programs adapted to retail operations",
+        icon: Recycle,
+        impactScore: 85,
+        metrics: {
+          profitability: "€1.2M estimated contract value | Circular economy services",
+          clientBenefit: "AGEC compliance achieved + packaging waste reduction target met",
+          co2Impact: "-4,800 tCO2e/year estimated"
+        },
+        details: {
+          overview: [
+            "Orange Business's RE Program focuses on instilling circular economic models into Carrefour's sprawling retail ecosystem, particularly targeting IT waste, digital signage, and connected POS systems.",
+            "We facilitate the secure take-back, refurbishment, and redeployment of enterprise electronic assets, dramatically extending hardware lifespans and reducing e-waste footprints.",
+            "This initiative perfectly aligns with France's strict AGEC anti-waste legislation, providing Carrefour with documented proof of circularity and waste reduction across its operational footprint."
+          ],
+          financialCase: {
+            contractValue: "€1.2M",
+            revenueType: "Service Retainer & Asset Management",
+            upsellPotential: "Medium - Integration into supply chain",
+            years: [
+              { year: "Year 1", revenue: "€400K" },
+              { year: "Year 2", revenue: "€400K" },
+              { year: "Year 3", revenue: "€400K" }
+            ]
+          },
+          esgCase: [
+            "AGEC compliance achieved + packaging waste reduction target met",
+            "Direct reduction in corporate Scope 3 e-waste emissions",
+            "Ensures secure data wiping and verifiable asset destruction when necessary",
+            "Puts Carrefour ahead of tightening EU WEEE directives",
+            "Estimated CO2 reduction: -4,800 tCO2e/year"
+          ],
+          keySellingPoints: [
+            "A tangible, visible sustainability win that employees and customers can see.",
+            "Replaces the traditional 'buy and scrap' IT lifecycle with a sustainable 'use and renew' model.",
+            "Orange holds top-tier certifications for secure hardware refurbishing.",
+            "Directly mitigates the risk of AGEC related financial penalties."
+          ],
+          nextSteps: [
+            "Schedule a call with the Director of Digital Transformation to map the current lifecycle of POS terminals.",
+            "Provide the 'Orange RE Program' playbook highlighting how other large organizations handled IT asset takeback.",
+            "Propose an initial audit of Carrefour's corporate IT hardware end-of-life policies."
+          ]
+        }
+      },
+      {
+        challengeId: 3,
+        challengeLabel: "Last-Mile Delivery Emissions",
+        product: "Ocean Platform",
+        detail:
+          "Ocean platform for fleet optimization, eco-driving analytics and electrification planning",
+        icon: Truck,
+        impactScore: 88,
+        metrics: {
+          profitability: "€2.0M estimated contract value | Fleet analytics subscription",
+          clientBenefit: "35% last-mile delivery emissions reduction + city access compliance",
+          co2Impact: "-9,100 tCO2e/year estimated"
+        },
+        details: {
+          overview: [
+            "With the explosive growth of hyper-local grocery delivery, Carrefour's last-mile logistics represent a rapidly growing emissions source. Orange's Ocean platform addresses this directly.",
+            "By utilizing advanced telematics, Ocean maps the most efficient, low-emission routing patterns in real-time while monitoring driver behaviors (idling, harsh braking) that unnecessarily burn fuel.",
+            "Crucially, the platform aids in identifying which delivery routes are most immediately suitable for EV replacements, allowing Carrefour to remain compliant with strict European Zero-Emission Zones (ZEZ) popping up in major cities."
+          ],
+          financialCase: {
+            contractValue: "€2.0M",
+            revenueType: "Telematics Hardware + SaaS Dashboard",
+            upsellPotential: "High - Deep logistics integration",
+            years: [
+              { year: "Year 1", revenue: "€800K" },
+              { year: "Year 2", revenue: "€600K" },
+              { year: "Year 3", revenue: "€600K" }
+            ]
+          },
+          esgCase: [
+            "35% last-mile delivery emissions reduction + city access compliance",
+            "Secures ongoing access to urban centers enforcing Zero Emission Zones",
+            "Improves road safety and reduces fleet maintenance costs",
+            "Provides transparent logistics emissions data for consumer-facing sustainability reports",
+            "Estimated CO2 reduction: -9,100 tCO2e/year"
+          ],
+          keySellingPoints: [
+            "Simultaneously reduces fuel costs, maintenance overhead, and carbon emissions.",
+            "A vital tool for navigating the messy transition from ICE to EV delivery fleets.",
+            "Produces demonstrable ESG improvements that Carrefour can market directly to end consumers.",
+            "Backed by Orange's pervasive, ultra-reliable European cellular networks."
+          ],
+          nextSteps: [
+            "Engage the Head of Supply Chain and Logistics to discuss current last-mile telematics roadblocks.",
+            "Draft a mini-proposal demonstrating ROI based on fuel savings specifically for urban delivery routes.",
+            "Showcase the Ocean platform's 'EV Transition' module that predicts battery strain in city stop-and-go traffic."
+          ]
+        }
+      }
+    ],
+    benchmarks: [
+      {
+        metric: "Retail sector average scope 2 emissions intensity",
+        value: "180 tCO₂e",
+        context: "per store per year",
+      },
+      {
+        metric: "Major European retailers",
+        value: "65%",
+        context: "now report against CSRD or equivalent frameworks",
+      },
+      {
+        metric: "AGEC full implementation deadline",
+        value: "2025",
+        context: "for Carrefour tier legislation compliance",
+      },
+    ],
+    contacts: [
+      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "VP of Store Operations", icon: Store },
+      { role: "Head of Supply Chain and Logistics", icon: Truck },
+      { role: "Director of Digital Transformation", icon: Laptop },
+    ]
+  }
+};
+
+export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBriefProps) => {
+  const { toast } = useToast();
+  const [selectedSolution, setSelectedSolution] = useState<SolutionData | null>(null);
+  
+  const queryKey = companyName.toLowerCase().includes("carrefour") ? "carrefour" : "renault";
+  const data = briefData[queryKey];
+
+  const handleSaveToCRM = () => {
+    toast({
+      title: "Saved to CRM",
+      description: `${data.name} sustainability brief has been saved to your CRM.`,
+    });
+  };
+
+  const handleExport = (type: "PowerPoint" | "Canva") => {
+    toast({
+      description: type === "PowerPoint" 
+        ? "Preparing your deck... This feature will be available in the live version."
+        : "Connecting to Canva... This feature will be available in the live version.",
+      className: "bg-primary text-primary-foreground border-primary font-medium",
+      duration: 3000,
+    });
+  };
+
+  if (selectedSolution) {
+    return (
+      <SolutionDetail 
+        companyName={data.name} 
+        solution={selectedSolution} 
+        onBack={() => setSelectedSolution(null)} 
+      />
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-10 text-sm">
+
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="min-w-0 space-y-1">
+          <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium uppercase tracking-wide">
+            <Leaf className="h-3.5 w-3.5 text-primary" />
+            Sustainability brief
+          </div>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground truncate">
+            {data.name}
+          </h1>
+        </div>
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <Button variant="outline" size="sm" onClick={onBack} className="gap-2 h-8 text-xs font-medium border-border">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Dashboard
+          </Button>
+          <Button size="sm" onClick={handleSaveToCRM} className="gap-2 h-8 text-xs font-medium">
+            <Save className="h-3.5 w-3.5" />
+            Save to CRM
+          </Button>
+        </div>
+      </div>
+
+      <Separator className="bg-border" />
+
+      {/* Executive summary */}
+      <section className="rounded-lg border border-border bg-card p-4 sm:p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Executive readout</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-prose">
+              {data.name} · validated signals · Orange portfolio map
+            </p>
+          </div>
+          <dl className="flex flex-wrap gap-x-6 gap-y-2 text-xs tabular-nums sm:text-right">
+            <div>
+              <dt className="text-muted-foreground font-normal">Confidence</dt>
+              <dd className="font-semibold text-foreground">{data.score}%</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground font-normal">Sources</dt>
+              <dd className="font-semibold text-foreground">{data.sources}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground font-normal">As of</dt>
+              <dd className="font-semibold text-foreground">18 Mar 2026</dd>
+            </div>
+          </dl>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-6 pt-2 border-t border-border">
+          <div>
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-2">Pressure points</p>
+            <ul className="space-y-1.5">
+              {data.challenges.map((c) => (
+                <li key={c.id} className="flex gap-2 items-baseline">
+                  <span className="text-muted-foreground tabular-nums text-xs w-4 shrink-0">{c.id}</span>
+                  <span className="text-foreground leading-snug">{c.title}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide mb-2">Plays</p>
+            <ul className="space-y-1.5">
+              {data.solutions.map((s) => (
+                <li key={s.challengeId} className="flex gap-2 items-baseline">
+                  <span className="text-muted-foreground tabular-nums text-xs w-4 shrink-0">{s.challengeId}</span>
+                  <span className="text-primary font-medium leading-snug">{s.product}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Challenge → play matrix */}
+      <section aria-label="Challenge to solution mapping">
+        <h2 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-2">Map</h2>
+        <div className="rounded-lg border border-border overflow-hidden">
+          <div className="grid grid-cols-[2rem_1fr_2rem_1fr] sm:grid-cols-[2rem_1fr_2.5rem_1fr] gap-x-2 gap-y-0 px-3 py-2 bg-muted/50 text-[10px] font-medium uppercase tracking-wide text-muted-foreground border-b border-border items-center">
+            <span className="tabular-nums">#</span>
+            <span>Challenge</span>
+            <span className="sr-only">To</span>
+            <span>Play</span>
+          </div>
+          {data.solutions.map((s) => {
+            const ch = data.challenges.find((c) => c.id === s.challengeId);
+            return (
+              <div
+                key={s.challengeId}
+                className="grid grid-cols-[2rem_1fr_2rem_1fr] sm:grid-cols-[2rem_1fr_2.5rem_1fr] gap-x-2 px-3 py-2.5 items-center border-b border-border last:border-b-0 text-xs sm:text-sm"
+              >
+                <span className="text-muted-foreground tabular-nums font-medium">{s.challengeId}</span>
+                <span className="min-w-0 truncate text-foreground" title={ch?.title}>{ch?.title}</span>
+                <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0 justify-self-center" aria-hidden />
+                <span className="font-medium text-primary min-w-0 truncate" title={s.product}>{s.product}</span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Challenges — compact */}
+      <section>
+        <h2 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-3 flex items-center gap-2">
+          <AlertTriangle className="h-3.5 w-3.5 text-primary" />
+          Challenges
+        </h2>
+        <div className="space-y-2">
+          {data.challenges.map((c) => {
+            const Icon = c.icon;
+            return (
+              <Card key={c.id} className="border-border bg-card shadow-none">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted border border-border">
+                      <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 gap-y-1">
+                        <span className="font-medium text-foreground leading-tight">{c.title}</span>
+                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 font-medium border ${c.urgencyColor}`}>
+                          {c.urgency}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed mt-1.5 line-clamp-2" title={c.description}>
+                        {c.description}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Solution playbooks — explicit actions */}
+      <section>
+        <h2 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-3 flex items-center gap-2">
+          <Leaf className="h-3.5 w-3.5 text-primary" />
+          Plays
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {data.solutions.map((s) => {
+            const Icon = s.icon;
+            return (
+              <button
+                key={s.challengeId}
+                type="button"
+                onClick={() => setSelectedSolution(s as SolutionData)}
+                className="group text-left rounded-lg border border-border bg-card p-3 shadow-none transition-colors hover:border-primary/40 hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-muted border border-border">
+                      <Icon className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">#{s.challengeId}</span>
+                  </div>
+                  <span className="text-lg font-semibold tabular-nums text-primary shrink-0">{s.impactScore}</span>
+                </div>
+                <p className="text-sm font-medium text-foreground leading-snug group-hover:text-primary transition-colors">
+                  {s.product}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{s.detail}</p>
+                <dl className="mt-3 space-y-2 border-t border-border pt-3">
+                  <div>
+                    <dt className="text-[9px] uppercase font-medium text-muted-foreground">Orange</dt>
+                    <dd className="text-[11px] font-medium text-foreground leading-tight mt-0.5">{s.metrics?.profitability?.split("|")[0]?.trim()}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[9px] uppercase font-medium text-muted-foreground">Client</dt>
+                    <dd className="text-[11px] font-medium text-foreground leading-tight mt-0.5">{s.metrics?.clientBenefit?.split("|")[0]?.trim()}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[9px] uppercase font-medium text-muted-foreground">CO₂</dt>
+                    <dd className="text-[11px] font-medium text-foreground leading-tight mt-0.5">{s.metrics?.co2Impact}</dd>
+                  </div>
+                </dl>
+                <span className="mt-3 flex items-center justify-between gap-2 rounded-md border border-dashed border-border bg-muted/40 px-2 py-1.5 text-[11px] font-medium text-foreground group-hover:border-primary/30 group-hover:bg-primary/5">
+                  <span className="truncate text-muted-foreground group-hover:text-foreground">{s.challengeLabel}</span>
+                  <ChevronRight className="h-3.5 w-3.5 text-primary shrink-0" aria-hidden />
+                </span>
+                <p className="mt-2 text-[11px] font-semibold text-primary">Open playbook</p>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Benchmarks */}
+      <section>
+        <h2 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-3 flex items-center gap-2">
+          <BarChart3 className="h-3.5 w-3.5 text-primary" />
+          Benchmarks
+        </h2>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {data.benchmarks.map((b) => (
+            <div key={b.metric} className="rounded-lg border border-border bg-card px-3 py-2.5">
+              <p className="text-[10px] text-muted-foreground leading-tight">{b.metric}</p>
+              <p className="text-lg font-semibold tabular-nums text-foreground mt-1">{b.value}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{b.context}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Contacts */}
+      <section>
+        <h2 className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground mb-3 flex items-center gap-2">
+          <Users className="h-3.5 w-3.5 text-primary" />
+          Targets
+        </h2>
+        <div className="rounded-lg border border-border divide-y divide-border bg-card">
+          {data.contacts.map((c) => {
+            const Icon = c.icon;
+            return (
+              <div key={c.role} className="flex items-center gap-3 px-3 py-2.5">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-muted border border-border">
+                  <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+                <span className="text-sm font-medium">{c.role}</span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Confidence */}
+      <section>
+        <div className="rounded-lg border border-border bg-card p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-2 min-w-0">
+              <ShieldCheck className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Model confidence</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {data.sources} sources · ESG, CSRD, filings, regulatory DBs
+                </p>
+              </div>
+            </div>
+            <p className="text-2xl font-semibold tabular-nums text-primary shrink-0">{data.score}%</p>
+          </div>
+          <div className="mt-3 h-1 rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-1 rounded-full bg-primary transition-all duration-1000"
+              style={{ width: `${data.score}%` }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Export — token-aligned surface */}
+      <section className="rounded-lg border border-border bg-muted/30 p-4 sm:p-5">
+        <h2 className="text-sm font-semibold flex items-center gap-2 text-foreground">
+          <Presentation className="h-4 w-4 text-primary" />
+          Pitch deck
+        </h2>
+        <p className="text-xs text-muted-foreground mt-1 mb-4">
+          Include in export (demo — selection wired in live build)
+        </p>
+        <div className="space-y-2 mb-5">
+          {data.solutions.map((s) => (
+            <label key={s.challengeId} className="flex items-start gap-3 cursor-pointer group rounded-md px-2 py-1.5 -mx-2 hover:bg-muted/60">
+              <div className="relative flex items-center justify-center mt-0.5 shrink-0">
+                <input 
+                  type="checkbox" 
+                  defaultChecked 
+                  className="peer h-4 w-4 appearance-none rounded border border-input bg-background checked:bg-primary checked:border-primary transition-colors cursor-pointer"
+                />
+                <Check className="absolute h-2.5 w-2.5 text-primary-foreground opacity-0 peer-checked:opacity-100 pointer-events-none" strokeWidth={3} />
+              </div>
+              <span className="text-xs text-foreground">
+                <span className="font-medium">{s.product}</span>
+                <span className="text-muted-foreground"> · {s.challengeLabel}</span>
+                <span className="text-muted-foreground tabular-nums"> · {s.impactScore}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button 
+            className="gap-2 font-medium h-9 text-sm"
+            onClick={() => handleExport("PowerPoint")}
+          >
+            <Presentation className="h-3.5 w-3.5" />
+            PowerPoint
+          </Button>
+          <Button 
+            variant="outline" 
+            className="gap-2 font-medium h-9 text-sm border-border bg-transparent hover:bg-muted"
+            onClick={() => handleExport("Canva")}
+          >
+            <Palette className="h-3.5 w-3.5" />
+            Canva
+          </Button>
+        </div>
+      </section>
+
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-t border-border">
+        <p className="text-[10px] text-muted-foreground">
+          Orange Business · confidential · internal
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={onBack} className="gap-2 h-8 text-xs border-border">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Dashboard
+          </Button>
+          <Button size="sm" onClick={handleSaveToCRM} className="gap-2 h-8 text-xs font-medium">
+            <Save className="h-3.5 w-3.5" />
+            Save to CRM
+          </Button>
+        </div>
+      </div>
+
+    </div>
+  );
+};

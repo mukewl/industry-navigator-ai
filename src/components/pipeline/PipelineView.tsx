@@ -26,35 +26,35 @@ const STEPS = [
   {
     id: 1,
     name: "Scraping Agent",
-    description: "Crawling public sustainability data, annual reports, ESG disclosures",
+    description: "Public ESG + filings crawl",
     icon: Globe,
     duration: 2200,
   },
   {
     id: 2,
     name: "Filtering Agent",
-    description: "Removing low-quality sources, cross-referencing for credibility",
+    description: "Source quality + cross-check",
     icon: Filter,
     duration: 1800,
   },
   {
     id: 3,
     name: "Scoring and Scoping Agent",
-    description: "Ranking sustainability challenges by urgency and regulatory exposure",
+    description: "Challenge ranking · regulatory exposure",
     icon: BarChart3,
     duration: 2000,
   },
   {
     id: 4,
     name: "Portfolio Mapping Agent",
-    description: "Matching challenges to Orange Business solutions",
+    description: "Challenge → Orange catalog",
     icon: Layers,
     duration: 1800,
   },
   {
     id: 5,
     name: "Solution Research Agent",
-    description: "Generating tailored engagement brief",
+    description: "Brief assembly",
     icon: FileText,
     duration: 1600,
   },
@@ -128,12 +128,11 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
             {allDone ? "Pipeline Complete" : "Pipeline Running"}
           </span>
         </div>
-        <h1 className="text-3xl font-bold text-foreground">
-          Sustainability Profile:{" "}
-          <span className="text-primary">{companyName}</span>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+          Profile · <span className="text-primary">{companyName}</span>
         </h1>
-        <p className="text-muted-foreground mt-1">
-          AI agents are analysing publicly available data to build a sustainability profile
+        <p className="text-xs text-muted-foreground mt-1">
+          Public data · 5 agents
         </p>
       </div>
 
@@ -149,10 +148,10 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
               <Card
                 key={step.id}
                 className={cn(
-                  "border transition-all duration-500 overflow-hidden",
-                  status === "running" && "border-primary/60 shadow-glow",
-                  status === "complete" && "border-green-500/30 bg-green-50/40",
-                  status === "pending" && "border-border/40 opacity-50"
+                  "border transition-all duration-500 overflow-hidden shadow-none bg-card",
+                  status === "running" && "border-primary/50",
+                  status === "complete" && "border-emerald-500/25 bg-emerald-950/20",
+                  status === "pending" && "border-border opacity-45"
                 )}
               >
                 <CardContent className="p-0">
@@ -162,7 +161,7 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                       className={cn(
                         "h-1 transition-all",
                         status === "complete"
-                          ? "bg-green-500 w-full"
+                          ? "bg-emerald-500 w-full"
                           : "bg-primary"
                       )}
                       style={{
@@ -178,12 +177,12 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                       className={cn(
                         "flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors",
                         status === "running" && "bg-primary/15",
-                        status === "complete" && "bg-green-500/15",
+                        status === "complete" && "bg-emerald-500/15",
                         status === "pending" && "bg-muted"
                       )}
                     >
                       {status === "complete" ? (
-                        <CheckCircle2 className="h-6 w-6 text-green-500" />
+                        <CheckCircle2 className="h-6 w-6 text-emerald-500" />
                       ) : status === "running" ? (
                         <Loader2 className="h-6 w-6 text-primary animate-spin" />
                       ) : (
@@ -198,7 +197,7 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                           className={cn(
                             "flex h-7 w-7 items-center justify-center rounded-md",
                             status === "running" && "bg-primary/10",
-                            status === "complete" && "bg-green-500/10",
+                            status === "complete" && "bg-emerald-500/10",
                             status === "pending" && "bg-muted"
                           )}
                         >
@@ -206,7 +205,7 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                             className={cn(
                               "h-4 w-4",
                               status === "running" && "text-primary",
-                              status === "complete" && "text-green-600",
+                              status === "complete" && "text-emerald-500",
                               status === "pending" && "text-muted-foreground/40"
                             )}
                           />
@@ -220,12 +219,12 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                           Step {step.id} — {step.name}
                         </p>
                         {status === "complete" && (
-                          <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-[10px] px-2">
+                          <Badge variant="outline" className="border-emerald-500/30 text-emerald-500 text-xs px-2 py-0 h-5 font-medium bg-emerald-950/30">
                             Done
                           </Badge>
                         )}
                         {status === "running" && (
-                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] px-2 animate-pulse">
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-xs px-2 py-0 h-5 font-medium animate-pulse">
                             Running
                           </Badge>
                         )}
@@ -246,7 +245,7 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                     <span
                       className={cn(
                         "text-xs font-bold tabular-nums shrink-0",
-                        status === "complete" && "text-green-500",
+                        status === "complete" && "text-emerald-500",
                         status === "running" && "text-primary",
                         status === "pending" && "text-muted-foreground/30"
                       )}
@@ -266,22 +265,22 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
               allDone ? "max-h-32 opacity-100 mt-6" : "max-h-0 opacity-0"
             )}
           >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-green-500/30 bg-green-50/60 p-5">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-lg border border-emerald-500/25 bg-emerald-950/25 p-4">
               <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-8 w-8 text-green-500 shrink-0" />
+                <CheckCircle2 className="h-7 w-7 text-emerald-500 shrink-0" />
                 <div>
-                  <p className="font-semibold text-green-800">Profile Complete</p>
-                  <p className="text-sm text-green-700">
-                    All 5 agents have finished processing {companyName}
+                  <p className="text-sm font-semibold text-foreground">Complete</p>
+                  <p className="text-xs text-muted-foreground">
+                    {companyName} · 5 agents
                   </p>
                 </div>
               </div>
               <Button
                 onClick={onComplete}
-                className="gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 shrink-0"
+                className="gap-2 font-medium px-4 shrink-0 h-9 text-sm"
               >
-                View Sustainability Brief
-                <ArrowRight className="h-4 w-4" />
+                Open brief
+                <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
@@ -313,9 +312,9 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                       <span
                         key={s}
                         className={cn(
-                          "text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold",
+                          "text-xs px-1.5 py-0.5 rounded font-mono font-semibold tabular-nums",
                           getStepStatus(s, currentStep) === "complete"
-                            ? "bg-green-500/15 text-green-600"
+                            ? "bg-emerald-500/15 text-emerald-500"
                             : getStepStatus(s, currentStep) === "running"
                             ? "bg-primary/20 text-primary"
                             : "bg-muted text-muted-foreground/50"
@@ -352,9 +351,9 @@ export const PipelineView = ({ companyName, onComplete }: PipelineViewProps) => 
                       <span
                         key={s}
                         className={cn(
-                          "text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold",
+                          "text-xs px-1.5 py-0.5 rounded font-mono font-semibold tabular-nums",
                           getStepStatus(s, currentStep) === "complete"
-                            ? "bg-green-500/15 text-green-600"
+                            ? "bg-emerald-500/15 text-emerald-500"
                             : getStepStatus(s, currentStep) === "running"
                             ? "bg-amber-400/30 text-amber-700"
                             : "bg-muted text-muted-foreground/50"

@@ -6,6 +6,7 @@ import { PipelineView } from "@/components/pipeline/PipelineView";
 import { SustainabilityBrief } from "@/components/brief/SustainabilityBrief";
 import { AccountDashboard } from "@/components/dashboard/AccountDashboard";
 import { SystemArchitecture } from "@/components/dashboard/SystemArchitecture";
+import { RoadmapView } from "@/components/dashboard/RoadmapView";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -78,7 +79,7 @@ const Index = () => {
       return (
         <SustainabilityBrief
           companyName={searchQuery}
-          onBack={() => setActiveTab("overview")}
+          onBack={() => setActiveTab("dashboard")}
         />
       );
     }
@@ -105,6 +106,10 @@ const Index = () => {
     // System Architecture View
     if (activeTab === "architecture") {
       return <SystemArchitecture />;
+    }
+
+    if (activeTab === "roadmap") {
+      return <RoadmapView />;
     }
 
     return <AccountDashboard onNewProfile={() => setActiveTab("search")} onViewBrief={() => {}} />;
