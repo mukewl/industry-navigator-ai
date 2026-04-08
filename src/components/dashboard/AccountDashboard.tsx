@@ -9,26 +9,56 @@ import {
   BRIEF_COMPANY_KEYS,
   sumContractValueLabel,
   aggregateCo2Label,
-  challengeBreakdownChart,
   type BriefCompanyKey,
 } from "@/lib/briefMetrics";
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 
-const CHART_COLORS = ["hsl(24 100% 50%)", "hsl(240 3% 38%)", "hsl(240 3% 62%)"];
+function parseRevenueK(s: string): number {
+  const mM = s.match(/€([\d.]+)M/i);
+  const mK = s.match(/€([\d.]+)K/i);
+  if (mM) return parseFloat(mM[1]) * 1000;
+  if (mK) return parseFloat(mK[1]);
+  return 0;
+}
+
+function revenueProjection(company: (typeof briefData)[BriefCompanyKey]) {
+  return ["Year 1", "Year 2", "Year 3"].map((yr) => {
+    let total = 0;
+    for (const s of company.solutions) {
+      const row = s.details?.financialCase.years.find((y) => y.year === yr);
+      if (row) total += parseRevenueK(row.revenue);
+    }
+    return { year: yr, value: total };
+  });
+}
+
+function formatK(k: number): string {
+  if (k >= 1000) return `€${(k / 1000).toFixed(1).replace(/\.0$/, "")}M`;
+  return `€${Math.round(k)}K`;
+}
 
 interface AccountDashboardProps {
   onNewProfile: () => void;
   onViewBrief: (companyName: string) => void;
 }
 
-function Stat({ label, value, small }: { label: string; value: string; small?: boolean }) {
+function Stat({ label, value, small, valueClassName }: { label: string; value: string; small?: boolean; valueClassName?: string }) {
   return (
     <div className="glass-stat">
       <p className="type-eyebrow">{label}</p>
       <p
         className={cn(
           "mt-2.5 font-semibold leading-snug tabular-nums tracking-tight text-foreground",
-          small ? "line-clamp-2 text-[0.8125rem]" : "text-[0.9375rem]"
+          small ? "line-clamp-2 text-[0.8125rem]" : "text-[0.9375rem]",
+          valueClassName
         )}
       >
         {value}
@@ -40,7 +70,10 @@ function Stat({ label, value, small }: { label: string; value: string; small?: b
 export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboardProps) => {
   const [selected, setSelected] = useState<BriefCompanyKey>("renault");
   const data = briefData[selected];
-  const pieRows = challengeBreakdownChart(data);
+  const barRows = revenueProjection(data);
+  const topUrgency = data.challenges[0]?.urgency ?? "—";
+  const urgencyValueClass =
+    topUrgency === "Critical" ? "text-red-500" : topUrgency === "High" ? "text-amber-500" : "";
 
   return (
     <div className="glass-panel-strong -mx-5 flex h-[calc(100dvh-7.5rem)] min-h-[420px] max-h-[920px] overflow-hidden sm:-mx-8 lg:-mx-10">
@@ -108,54 +141,44 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
           <Stat label="Confidence" value={`${data.score}%`} />
           <Stat label="CO₂ impact (est.)" value={aggregateCo2Label(data)} />
           <Stat label="Top challenge" value={data.challenges[0]?.title ?? "—"} small />
+          <Stat label="Point of contact" value={data.contacts[0]?.role ?? "—"} small />
+          <Stat label="ESG risk level" value={topUrgency} valueClassName={urgencyValueClass} />
         </div>
 
-        <div className="grid min-h-[220px] flex-1 grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
-          <div className="h-[220px] w-full min-w-0">
+        <div className="flex-1 min-h-[180px]">
+          <p className="type-section-label mb-4">Revenue projection (est.)</p>
+          <div className="h-[180px] w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieRows}
-                  dataKey="value"
-                  nameKey="label"
-                  innerRadius={52}
-                  outerRadius={78}
-                  strokeWidth={0}
-                  paddingAngle={2}
-                >
-                  {pieRows.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                  ))}
-                </Pie>
+              <BarChart data={barRows} margin={{ top: 4, right: 4, left: 0, bottom: 0 }} barCategoryGap="32%">
+                <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.06)" strokeDasharray="0" />
+                <XAxis
+                  dataKey="year"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: "hsl(240 3.8% 46.1%)", fontWeight: 500 }}
+                />
+                <YAxis
+                  tickFormatter={(v) => formatK(v as number)}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 11, fill: "hsl(240 3.8% 46.1%)" }}
+                  width={52}
+                />
                 <Tooltip
-                  content={({ active, payload }) => {
+                  cursor={{ fill: "rgba(0,0,0,0.04)" }}
+                  content={({ active, payload, label }) => {
                     if (!active || !payload?.length) return null;
-                    const p = payload[0].payload as (typeof pieRows)[0];
                     return (
                       <div className="rounded-lg border border-black/[0.06] bg-white/95 px-3 py-2 text-[0.8125rem] shadow-apple-sm backdrop-blur-xl">
-                        <p className="font-semibold text-foreground">{p.label}</p>
-                        <p className="text-muted-foreground">{p.urgency}</p>
+                        <p className="font-semibold text-foreground">{label}</p>
+                        <p className="text-muted-foreground">{formatK(payload[0].value as number)}</p>
                       </div>
                     );
                   }}
                 />
-              </PieChart>
+                <Bar dataKey="value" fill="hsl(24 100% 50%)" radius={[4, 4, 0, 0]} maxBarSize={56} />
+              </BarChart>
             </ResponsiveContainer>
-          </div>
-          <div className="min-w-0 space-y-4">
-            <p className="type-section-label">Challenge breakdown</p>
-            <ul className="space-y-3">
-              {pieRows.map((row, i) => (
-                <li key={row.id} className="flex min-w-0 items-center gap-2.5 text-[0.9375rem] leading-snug">
-                  <span
-                    className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
-                  />
-                  <span className="shrink-0 font-medium tabular-nums text-muted-foreground">{row.id}.</span>
-                  <span className="truncate text-foreground">{row.label}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
 
