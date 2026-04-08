@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, ArrowRight, Leaf, Building2 } from "lucide-react";
+import { Search, ArrowRight, Leaf, Building2, ChevronRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,20 +9,31 @@ interface SearchPanelProps {
   isLoading: boolean;
 }
 
-const exampleChips = [
-  "Renault",
-  "Carrefour",
-  "Stellantis",
-  "TotalEnergies",
-  "Saint-Gobain",
-  "Schneider Electric",
-  "Veolia",
-  "Air France-KLM",
-  "Danone",
-  "L'Oréal",
+const stats = ["5 AI agents", "Validated sources", "Orange portfolio map"];
+
+type EsgRisk = "Critical" | "High" | "Medium" | "Low";
+
+const recentBriefs: { name: string; sector: string; esgRisk: EsgRisk }[] = [
+  { name: "Renault", sector: "Automotive", esgRisk: "High" },
+  { name: "Carrefour", sector: "Retail", esgRisk: "Medium" },
+  { name: "TotalEnergies", sector: "Energy", esgRisk: "Critical" },
+  { name: "Air France-KLM", sector: "Aviation", esgRisk: "Critical" },
 ];
 
-const stats = ["5 AI agents", "Validated sources", "Orange portfolio map"];
+const esgRiskStyle: Record<EsgRisk, string> = {
+  Critical: "text-red-600 bg-red-50 border border-red-200/80",
+  High: "text-amber-600 bg-amber-50 border border-amber-200/80",
+  Medium: "text-yellow-700 bg-yellow-50 border border-yellow-200/80",
+  Low: "text-green-600 bg-green-50 border border-green-200/80",
+};
+
+const sectorGroups = [
+  { sector: "Automotive", companies: ["Renault", "Stellantis"] },
+  { sector: "Energy & Resources", companies: ["TotalEnergies", "Veolia"] },
+  { sector: "Retail & Consumer", companies: ["Carrefour", "Danone", "L'Oréal"] },
+  { sector: "Industry & Technology", companies: ["Schneider Electric", "Saint-Gobain"] },
+  { sector: "Aviation", companies: ["Air France-KLM"] },
+];
 
 export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
   const [query, setQuery] = useState("");
@@ -39,46 +50,41 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100dvh-3rem)] flex-col items-center justify-center overflow-hidden px-4 py-12">
+    <div className="relative flex flex-col items-center overflow-hidden px-4 pb-16 pt-10">
       {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute left-1/2 top-[46%] h-[560px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.07] blur-[130px]" />
+        <div className="absolute left-1/2 top-[22%] h-[480px] w-[860px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.07] blur-[130px]" />
         <div
           className="absolute inset-0 opacity-[0.022]"
           style={{
-            backgroundImage:
-              "radial-gradient(circle, hsl(0 0% 80%) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, hsl(0 0% 80%) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
           }}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_48%,transparent_40%,hsl(var(--background)/0.6)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_20%,transparent_40%,hsl(var(--background)/0.55)_100%)]" />
       </div>
 
       {/*
-        Two-tier width: outer container (44rem) gives chips room to breathe;
-        inner wrapper (32rem) keeps the hero and card tight and readable.
+        Two-tier width: outer (44rem) for full-width sections;
+        inner (32rem) keeps hero and card tight and readable.
       */}
-      <div className="relative flex w-full max-w-[44rem] animate-fade-in flex-col items-center">
+      <div className="relative flex w-full max-w-[44rem] animate-fade-in flex-col items-center gap-10">
 
-        {/* Hero + card — narrower column */}
+        {/* Hero + search card — narrower column */}
         <div className="w-full max-w-[32rem]">
-
-          {/* Hero copy — center-aligned, non-uniform spacing for rhythm */}
           <div className="mb-10 flex flex-col items-center text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.08] px-3 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-primary">
               <Leaf className="h-2.5 w-2.5 shrink-0" aria-hidden />
               New profile
             </span>
 
-            {/* Tight to badge (same concept), generous gap below toward stats */}
             <h1
               id="search-company-heading"
-              className="mt-3 font-display text-balance text-[2.75rem] font-semibold leading-[1.05] tracking-[-0.025em] text-foreground sm:text-[3.25rem]"
+              className="mt-3 text-balance text-[2.75rem] font-semibold leading-[1.05] tracking-[-0.025em] text-foreground sm:text-[3.25rem]"
             >
               Generate a sustainability brief.
             </h1>
 
-            {/* Stats sit at comfortable distance from the big headline */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               {stats.map((s) => (
                 <span
@@ -92,7 +98,6 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
             </div>
           </div>
 
-          {/* Search card */}
           <Card className="glass-panel-strong border-0 shadow-none">
             <CardContent className="p-6 sm:p-8">
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -135,30 +140,67 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
           </Card>
         </div>
 
-        {/*
-          Chips — spans the full 44rem outer width so 10 items of varying length
-          wrap into two clean, roughly-equal rows instead of ragged columns.
-          mt-10 mirrors the mb-10 above the card for consistent section rhythm.
-        */}
-        <div className="mt-10 w-full">
-          <p className="type-section-label mb-4 text-center">
-            10 available companies
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {exampleChips.map((chip) => (
+        {/* Recent Briefs */}
+        <div className="w-full">
+          <div className="mb-3 flex items-center gap-2">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+            <p className="type-section-label">Recent briefs</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            {recentBriefs.map((brief) => (
               <button
-                key={chip}
+                key={brief.name}
                 type="button"
-                onClick={() => handleChip(chip)}
+                onClick={() => handleChip(brief.name)}
                 disabled={isLoading}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.13] bg-white/[0.06] px-3.5 py-1.5 text-[0.8125rem] font-normal tracking-tight text-foreground/75 transition-[background-color,color] duration-150 hover:bg-white/[0.13] hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="group glass-panel flex flex-col gap-2.5 rounded-xl p-4 text-left transition-shadow duration-150 hover:shadow-apple-soft disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <Building2 className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />
-                {chip}
+                <div className="flex items-start justify-between gap-1">
+                  <span className="text-[0.8125rem] font-medium leading-tight text-foreground">
+                    {brief.name}
+                  </span>
+                  <ChevronRight
+                    className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5"
+                    aria-hidden
+                  />
+                </div>
+                <span className="type-eyebrow text-muted-foreground">{brief.sector}</span>
+                <span
+                  className={`inline-flex w-fit items-center rounded-full px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em] ${esgRiskStyle[brief.esgRisk]}`}
+                >
+                  {brief.esgRisk} risk
+                </span>
               </button>
             ))}
           </div>
         </div>
+
+        {/* Sector-grouped companies */}
+        <div className="w-full">
+          <p className="type-section-label mb-4">10 available companies</p>
+          <div className="flex flex-col gap-2.5">
+            {sectorGroups.map((group) => (
+              <div key={group.sector} className="glass-panel rounded-xl p-4">
+                <p className="type-eyebrow mb-3 text-muted-foreground">{group.sector}</p>
+                <div className="flex flex-wrap gap-2">
+                  {group.companies.map((company) => (
+                    <button
+                      key={company}
+                      type="button"
+                      onClick={() => handleChip(company)}
+                      disabled={isLoading}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-black/[0.07] bg-white/70 px-3 py-1.5 text-[0.8125rem] font-normal text-foreground/80 transition-colors duration-150 hover:bg-white hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <Building2 className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />
+                      {company}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );

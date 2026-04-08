@@ -14,16 +14,16 @@ const navPrimary = [
 ];
 
 const navSecondary = [
-  { id: "renault-brief", label: "Renault Brief", icon: FileText },
-  { id: "carrefour-brief", label: "Carrefour Brief", icon: FileText },
-  { id: "stellantis-brief", label: "Stellantis Brief", icon: FileText },
-  { id: "totalenergies-brief", label: "TotalEnergies Brief", icon: FileText },
-  { id: "saintgobain-brief", label: "Saint-Gobain Brief", icon: FileText },
-  { id: "schneiderelectric-brief", label: "Schneider Electric Brief", icon: FileText },
-  { id: "veolia-brief", label: "Veolia Brief", icon: FileText },
-  { id: "airfranceklm-brief", label: "Air France-KLM Brief", icon: FileText },
-  { id: "danone-brief", label: "Danone Brief", icon: FileText },
-  { id: "loreal-brief", label: "L'Oréal Brief", icon: FileText },
+  { id: "renault-brief", label: "Renault", icon: FileText },
+  { id: "carrefour-brief", label: "Carrefour", icon: FileText },
+  { id: "stellantis-brief", label: "Stellantis", icon: FileText },
+  { id: "totalenergies-brief", label: "TotalEnergies", icon: FileText },
+  { id: "saintgobain-brief", label: "Saint-Gobain", icon: FileText },
+  { id: "schneiderelectric-brief", label: "Schneider Electric", icon: FileText },
+  { id: "veolia-brief", label: "Veolia", icon: FileText },
+  { id: "airfranceklm-brief", label: "Air France-KLM", icon: FileText },
+  { id: "danone-brief", label: "Danone", icon: FileText },
+  { id: "loreal-brief", label: "L'Oréal", icon: FileText },
   { id: "roadmap", label: "Roadmap", icon: Map },
 ];
 
@@ -61,7 +61,7 @@ export const Sidebar = ({ activeTab, onTabChange, embedded }: SidebarProps) => {
             >
               <div className="flex min-w-0 items-center gap-2.5">
                 <item.icon className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden />
-                <span className="truncate">{item.label}</span>
+                <span className="break-words leading-snug">{item.label}</span>
               </div>
               {activeTab === item.id && <ChevronRight className="h-3 w-3 shrink-0 text-primary" aria-hidden />}
             </button>
@@ -84,7 +84,7 @@ export const Sidebar = ({ activeTab, onTabChange, embedded }: SidebarProps) => {
             >
               <div className="flex min-w-0 items-center gap-2.5">
                 <item.icon className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden />
-                <span className="truncate">{item.label}</span>
+                <span className="break-words leading-snug">{item.label}</span>
               </div>
               {activeTab === item.id && <ChevronRight className="h-3 w-3 shrink-0 text-primary" aria-hidden />}
             </button>
