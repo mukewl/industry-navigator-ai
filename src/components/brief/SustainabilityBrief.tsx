@@ -54,8 +54,8 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
     loreal: "loreal",
     "l'oreal": "loreal",
   };
-  const queryKey = nameMap[companyName.toLowerCase()] ?? "renault";
-  const data = briefData[queryKey];
+  const queryKey = nameMap[companyName.toLowerCase()] ?? null;
+  const data = queryKey ? briefData[queryKey] : null;
 
   const handleSaveToCRM = () => {
     toast({
@@ -74,6 +74,40 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
       duration: 3000,
     });
   };
+
+  if (!data) {
+    return (
+      <div className="mx-auto max-w-4xl animate-fade-in pb-16 sm:pb-20">
+        <header className="mb-10 flex items-center gap-3">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="h-9 min-w-9 shrink-0 rounded-lg px-2 text-muted-foreground hover:bg-black/[0.05]"
+            aria-label="Back to dashboard"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden />
+          </Button>
+          <div className="type-section-label flex items-center gap-2">
+            <Leaf className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+            Brief
+          </div>
+        </header>
+        <div className="glass-panel-strong rounded-2xl px-8 py-14 text-center">
+          <p className="font-display text-lg font-semibold tracking-tight text-foreground">
+            No brief available for &ldquo;{companyName}&rdquo;
+          </p>
+          <p className="mt-2 text-[0.9375rem] text-muted-foreground">
+            This demo includes profiles for Renault, Carrefour, Stellantis, TotalEnergies, Saint-Gobain, Schneider Electric, Veolia, Air France-KLM, Danone, and L&apos;Oréal.
+          </p>
+          <Button type="button" className="mt-8" onClick={onBack}>
+            Back to dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (selectedSolution) {
     return (

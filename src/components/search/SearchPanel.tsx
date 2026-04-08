@@ -9,7 +9,18 @@ interface SearchPanelProps {
   isLoading: boolean;
 }
 
-const exampleChips = ["Renault", "Carrefour"];
+const exampleChips = [
+  "Renault",
+  "Carrefour",
+  "Stellantis",
+  "TotalEnergies",
+  "Saint-Gobain",
+  "Schneider Electric",
+  "Veolia",
+  "Air France-KLM",
+  "Danone",
+  "L'Oréal",
+];
 
 export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
   const [query, setQuery] = useState("");
@@ -57,7 +68,7 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
                   autoComplete="organization"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="e.g. Renault, Carrefour…"
+                  placeholder="e.g. Renault, TotalEnergies, L'Oréal…"
                   className="h-11 border-[3px] border-black/[0.04] bg-[#fafafc] pl-10"
                   aria-labelledby="search-company-heading"
                   autoFocus
