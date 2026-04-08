@@ -26,40 +26,44 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md animate-fade-in">
-        <div className="mb-8">
-          <div className="type-section-label flex items-center gap-2 mb-3">
-            <Leaf className="h-3.5 w-3.5 text-primary" />
+    <div className="flex min-h-[calc(100dvh-3rem)] flex-col items-center justify-center px-4 py-16 sm:py-20">
+      <div className="w-full max-w-[28rem] animate-fade-in">
+        <div className="mb-12 space-y-4">
+          <div className="type-section-label flex items-center gap-2">
+            <Leaf className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
             New profile
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground leading-tight">
+          <h1
+            id="search-company-heading"
+            className="font-display text-balance text-3xl font-semibold leading-[1.12] tracking-tight text-foreground sm:text-[2rem]"
+          >
             Company name
           </h1>
-          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+          <p className="text-[1.0625rem] font-normal leading-[1.47] tracking-tight text-muted-foreground">
             5 agents · validated sources · portfolio map
           </p>
         </div>
 
-        <Card className="border-border bg-card shadow-none">
-          <CardContent className="p-4">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <Card className="glass-panel-strong border-0 shadow-none">
+          <CardContent className="p-8 sm:p-10">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <Search
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
                 <Input
+                  name="company"
+                  autoComplete="organization"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="e.g. Renault, Carrefour"
-                  className="h-11 pl-9 text-base border-border bg-background focus-visible:ring-1 focus-visible:ring-ring"
+                  placeholder="e.g. Renault, Carrefour…"
+                  className="h-11 border-[3px] border-black/[0.04] bg-[#fafafc] pl-10"
+                  aria-labelledby="search-company-heading"
                   autoFocus
                 />
               </div>
-              <Button
-                type="submit"
-                size="sm"
-                disabled={isLoading || !query.trim()}
-                className="gap-2 h-9 w-full font-medium"
-              >
+              <Button type="submit" size="sm" disabled={isLoading || !query.trim()} className="h-11 w-full gap-2 rounded-lg">
                 {isLoading ? (
                   <>
                     <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
@@ -68,7 +72,7 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
                 ) : (
                   <>
                     Run profile
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                   </>
                 )}
               </Button>
@@ -76,17 +80,17 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
           </CardContent>
         </Card>
 
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-          <span className="type-section-label w-full text-center sm:w-auto sm:inline mr-0 sm:mr-1">Examples</span>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <span className="type-section-label w-full text-center sm:mr-1 sm:inline sm:w-auto">Examples</span>
           {exampleChips.map((chip) => (
             <button
               key={chip}
               type="button"
               onClick={() => handleChip(chip)}
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-2.5 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="inline-flex items-center gap-2 rounded-full border border-black/[0.08] bg-[#fafafc] px-4 py-2 text-[0.9375rem] font-normal tracking-tight text-foreground shadow-apple-sm transition-[background,box-shadow] duration-200 hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <Building2 className="h-3 w-3 text-muted-foreground" />
+              <Building2 className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
               {chip}
             </button>
           ))}

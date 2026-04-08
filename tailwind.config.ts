@@ -15,14 +15,25 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'"IBM Plex Sans"',
-  				'ui-sans-serif',
+  				'-apple-system',
+  				'BlinkMacSystemFont',
+  				'"SF Pro Text"',
+  				'"SF Pro Display"',
+  				'"Helvetica Neue"',
+  				'Helvetica',
+  				'Arial',
   				'system-ui',
-  				'sans-serif',
-  				'Apple Color Emoji',
-  				'Segoe UI Emoji',
-  				'Segoe UI Symbol',
-  				'Noto Color Emoji'
+  				'sans-serif'
+  			],
+  			display: [
+  				'-apple-system',
+  				'BlinkMacSystemFont',
+  				'"SF Pro Display"',
+  				'"SF Pro Text"',
+  				'"Helvetica Neue"',
+  				'Helvetica',
+  				'Arial',
+  				'sans-serif'
   			],
   			mono: [
   				'ui-monospace',
@@ -148,7 +159,13 @@ export default {
   		boxShadow: {
   			glow: 'var(--shadow-glow)',
   			card: 'var(--shadow-card)',
-  			elevated: 'var(--shadow-elevated)'
+  			elevated: 'var(--shadow-elevated)',
+  			apple: '3px 5px 30px 0 rgba(0, 0, 0, 0.22)',
+  			'apple-sm': '3px 5px 24px 0 rgba(0, 0, 0, 0.08)',
+  			/* legacy aliases */
+  			vision: '3px 5px 30px 0 rgba(0, 0, 0, 0.22)',
+  			'vision-sm': '3px 5px 24px 0 rgba(0, 0, 0, 0.08)',
+  			'vision-inset': 'inset 0 0 0 1px rgba(0, 0, 0, 0.04)'
   		}
   	}
   },
