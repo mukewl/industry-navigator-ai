@@ -2,7 +2,18 @@ import { briefData } from "@/data/briefData";
 
 export type BriefCompanyKey = keyof typeof briefData;
 
-export const BRIEF_COMPANY_KEYS: BriefCompanyKey[] = ["renault", "carrefour"];
+export const BRIEF_COMPANY_KEYS: BriefCompanyKey[] = [
+  "renault",
+  "carrefour",
+  "stellantis",
+  "totalenergies",
+  "saintgobain",
+  "schneiderelectric",
+  "veolia",
+  "airfranceklm",
+  "danone",
+  "loreal",
+];
 
 export function sumContractValueLabel(company: (typeof briefData)[BriefCompanyKey]): string {
   let sumM = 0;

@@ -32,7 +32,29 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
   const { toast } = useToast();
   const [selectedSolution, setSelectedSolution] = useState<SolutionData | null>(null);
 
-  const queryKey = companyName.toLowerCase().includes("carrefour") ? "carrefour" : "renault";
+  const nameMap: Record<string, keyof typeof briefData> = {
+    renault: "renault",
+    carrefour: "carrefour",
+    stellantis: "stellantis",
+    totalenergies: "totalenergies",
+    "total energies": "totalenergies",
+    "saint-gobain": "saintgobain",
+    "saint gobain": "saintgobain",
+    saintgobain: "saintgobain",
+    "schneider electric": "schneiderelectric",
+    schneiderelectric: "schneiderelectric",
+    schneider: "schneiderelectric",
+    veolia: "veolia",
+    "air france": "airfranceklm",
+    "air france-klm": "airfranceklm",
+    "air france klm": "airfranceklm",
+    airfranceklm: "airfranceklm",
+    danone: "danone",
+    "l'oréal": "loreal",
+    loreal: "loreal",
+    "l'oreal": "loreal",
+  };
+  const queryKey = nameMap[companyName.toLowerCase()] ?? "renault";
   const data = briefData[queryKey];
 
   const handleSaveToCRM = () => {
