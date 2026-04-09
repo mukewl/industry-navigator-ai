@@ -177,21 +177,21 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
 
         {/* Sector-grouped companies */}
         <div className="w-full">
-          <p className="type-section-label mb-4">10 available companies</p>
-          <div className="flex flex-col gap-2.5">
+          <p className="type-section-label mb-3">10 available companies</p>
+          <div className="flex flex-col divide-y divide-black/[0.05] rounded-xl border border-black/[0.06] bg-white/50">
             {sectorGroups.map((group) => (
-              <div key={group.sector} className="glass-panel rounded-xl p-4">
-                <p className="type-eyebrow mb-3 text-muted-foreground">{group.sector}</p>
-                <div className="flex flex-wrap gap-2">
+              <div key={group.sector} className="flex items-baseline gap-4 px-4 py-3">
+                <p className="type-eyebrow w-32 shrink-0 text-muted-foreground/70">{group.sector}</p>
+                <div className="flex flex-wrap gap-1.5">
                   {group.companies.map((company) => (
                     <button
                       key={company}
                       type="button"
                       onClick={() => handleChip(company)}
                       disabled={isLoading}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-black/[0.07] bg-white/70 px-3 py-1.5 text-[0.8125rem] font-normal text-foreground/80 transition-colors duration-150 hover:bg-white hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="inline-flex items-center gap-1 rounded-md border border-black/[0.06] bg-white/80 px-2.5 py-1 text-[0.75rem] font-normal text-foreground/70 transition-colors duration-150 hover:bg-white hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
-                      <Building2 className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />
+                      <Building2 className="h-2.5 w-2.5 shrink-0 text-muted-foreground/60" aria-hidden />
                       {company}
                     </button>
                   ))}

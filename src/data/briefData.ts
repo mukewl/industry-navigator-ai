@@ -215,11 +215,25 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Sophie Marchand", email: "s.marchand@renault.com", icon: Leaf },
       { role: "VP of Manufacturing Operations", icon: Building2 },
       { role: "Head of Fleet and Mobility Services", icon: Truck },
       { role: "Group Procurement Director", icon: Users },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "EV Lifecycle Intelligence Platform",
+        challengeAddressed: "Fleet battery lifecycle tracking and end-of-life compliance across EV fleet",
+        divisions: ["IoT & Datavenue", "Live Intelligence", "Digital Services"],
+        description: "Sovereign AI platform combining IoT sensor networks with fleet telemetry to model battery health, recycling eligibility, and lifecycle CO₂ across the full EV estate.",
+      },
+      {
+        title: "Automated CSRD Reporting Agent",
+        challengeAddressed: "Multi-entity CSRD compliance consolidation across all Renault subsidiaries",
+        divisions: ["Live Intelligence", "Digital Services", "Orange Cyberdefense"],
+        description: "GenAI-powered regulatory agent aggregating ESG data across all subsidiaries, drafting CSRD disclosures, and flagging compliance gaps in real time.",
+      },
+    ],
   },
   carrefour: {
     name: "Carrefour",
@@ -421,11 +435,25 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Laurent Dubois", email: "l.dubois@carrefour.com", icon: Leaf },
       { role: "VP of Store Operations", icon: Store },
       { role: "Head of Supply Chain and Logistics", icon: Truck },
       { role: "Director of Digital Transformation", icon: Laptop },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "Predictive Cold Chain AI",
+        challengeAddressed: "Reactive refrigeration maintenance driving energy spikes and food spoilage",
+        divisions: ["IoT & Datavenue", "Live Intelligence"],
+        description: "ML-driven anomaly detection across cold chain sensors to predict equipment failure 48–72 hours in advance, minimising spoilage and energy waste across all stores.",
+      },
+      {
+        title: "Supplier Sustainability Intelligence Hub",
+        challengeAddressed: "Real-time ESG compliance visibility across thousands of food and non-food suppliers",
+        divisions: ["Digital Services", "Orange Cyberdefense", "Live Intelligence"],
+        description: "Secure data ingestion and AI analysis platform providing real-time supplier ESG scores, audit trails, and compliance flags under CSRD, AGEC, and EU deforestation rules.",
+      },
+    ],
   },
   stellantis: {
     name: "Stellantis",
@@ -627,7 +655,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Chiara Romano", email: "c.romano@stellantis.com", icon: Leaf },
       { role: "VP of Manufacturing Operations", icon: Building2 },
       { role: "Head of Electrification Strategy", icon: Zap },
       { role: "Group Supply Chain Director", icon: Globe },
@@ -833,7 +861,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Group Chief Sustainability Officer", icon: Leaf },
+      { role: "Group Chief Sustainability Officer", name: "Antoine Girard", email: "a.girard@totalenergies.com", icon: Leaf },
       { role: "VP of Operational Excellence", icon: Building2 },
       { role: "Head of ESG Reporting & Investor Relations", icon: Globe },
       { role: "Director of Energy Transition", icon: Zap },
@@ -1039,7 +1067,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Pierre-Henri Blanchard", email: "ph.blanchard@saint-gobain.com", icon: Leaf },
       { role: "VP of Industrial Operations", icon: Building2 },
       { role: "Head of Product Compliance & Certification", icon: Globe },
       { role: "Group Procurement Director", icon: Users },
@@ -1245,7 +1273,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Isabelle Fontaine", email: "i.fontaine@se.com", icon: Leaf },
       { role: "VP Supply Chain & Procurement", icon: Users },
       { role: "Head of Circular Economy", icon: Recycle },
       { role: "Director of Digital Infrastructure", icon: Laptop },
@@ -1451,7 +1479,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Nicolas Perrin", email: "n.perrin@veolia.com", icon: Leaf },
       { role: "VP Water Treatment Operations", icon: Droplets },
       { role: "Head of Fleet Management", icon: Truck },
       { role: "Director of Regulatory Affairs", icon: Building2 },
@@ -1657,7 +1685,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Anne-Sophie Leroy", email: "as.leroy@airfranceklm.com", icon: Leaf },
       { role: "VP Ground Operations", icon: Building2 },
       { role: "Head of SAF Procurement & Strategy", icon: Plane },
       { role: "Director of Fleet & Engineering", icon: Truck },
@@ -1863,7 +1891,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Marc-Antoine Boucher", email: "ma.boucher@danone.com", icon: Leaf },
       { role: "VP Agricultural Sourcing & Supply Chain", icon: Globe },
       { role: "Head of Packaging Sustainability", icon: Recycle },
       { role: "Director of Industrial Operations", icon: Building2 },
@@ -2069,7 +2097,7 @@ export const briefData = {
       },
     ],
     contacts: [
-      { role: "Chief Sustainability Officer", icon: Leaf },
+      { role: "Chief Sustainability Officer", name: "Céline Duchamp", email: "c.duchamp@loreal.com", icon: Leaf },
       { role: "VP Global Sourcing & Procurement", icon: Globe },
       { role: "Head of Packaging Innovation", icon: Recycle },
       { role: "Director of Industrial Excellence", icon: Building2 },

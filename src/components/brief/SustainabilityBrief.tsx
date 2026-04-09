@@ -9,16 +9,8 @@ import {
   ChevronDown,
   ChevronRight,
   Leaf,
+  CheckCircle2,
 } from "lucide-react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -27,6 +19,13 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { SolutionDetail, SolutionData } from "./SolutionDetail";
 import { briefData } from "@/data/briefData";
@@ -37,8 +36,39 @@ interface SustainabilityBriefProps {
   onBack: () => void;
 }
 
-const TAB_ORDER = ["overview", "challenges", "solutions", "export"] as const;
+const TAB_ORDER = ["overview", "challenges", "solutions", "nextsteps", "export"] as const;
 type TabId = (typeof TAB_ORDER)[number];
+
+type ContactEntry = (typeof briefData)[keyof typeof briefData]["contacts"][number];
+
+function impactBadgeClass(score: number): string {
+  if (score >= 90) return "text-emerald-600 bg-emerald-50 border border-emerald-200/80";
+  if (score >= 75) return "text-amber-600 bg-amber-50 border border-amber-200/80";
+  return "text-red-600 bg-red-50 border border-red-200/80";
+}
+
+function buildDraftEmail(
+  contactRole: string,
+  companyName: string,
+  challenge: { title: string; description: string },
+  solution: { product: string; detail: string; metrics?: { clientBenefit: string } }
+): string {
+  return `Subject: Orange Business × ${companyName} — ${solution.product}
+
+Dear ${contactRole},
+
+I'm reaching out from Orange Business regarding ${companyName}'s sustainability priorities, particularly around ${challenge.title}.
+
+${solution.detail}
+
+${solution.metrics?.clientBenefit ?? ""}
+
+I'd welcome a brief discovery call to explore how Orange Business can support your ESG objectives.
+
+Best regards,
+[Your name]
+Orange Business`;
+}
 
 export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBriefProps) => {
   const { toast } = useToast();
@@ -46,6 +76,9 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [slideKey, setSlideKey] = useState(0);
   const [slideDir, setSlideDir] = useState<"right" | "left">("right");
+  const [draftContact, setDraftContact] = useState<ContactEntry | null>(null);
+  const [isDraftOpen, setIsDraftOpen] = useState(false);
+  const [highlightedSolutionId, setHighlightedSolutionId] = useState<number | null>(null);
 
   const nameMap: Record<string, keyof typeof briefData> = {
     renault: "renault",
@@ -144,12 +177,11 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
   }
 
   // Derived data for overview additions
-  const topPlay = [...data.solutions].sort((a, b) => b.impactScore - a.impactScore)[0];
-  const chartData = data.solutions.map((s) => ({
-    label: `#${s.challengeId}`,
-    fullName: s.product,
-    score: s.impactScore,
-  }));
+  const rankedSolutions = [...data.solutions].sort((a, b) => b.impactScore - a.impactScore);
+  const topPlay = rankedSolutions[0];
+  const topChallenge = data.challenges[0];
+  const topChallengeSolution =
+    data.solutions.find((s) => s.challengeId === topChallenge?.id) ?? topPlay;
 
   return (
     <div className="mx-auto max-w-4xl animate-fade-in pb-16 sm:pb-20">
@@ -184,6 +216,7 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
               ["overview", "Overview"],
               ["challenges", "Challenges"],
               ["solutions", "Solutions"],
+              ["nextsteps", "Next Steps"],
               ["export", "Export"],
             ] as const
           ).map(([v, label]) => (
@@ -192,7 +225,7 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
               value={v}
               className={cn(
                 "rounded-lg border-0 px-5 py-3 text-[0.9375rem] font-normal text-muted-foreground shadow-none transition-[background,box-shadow,color] duration-200",
-                "data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-apple-sm",
+                "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-apple-sm",
                 "data-[state=inactive]:hover:bg-black/[0.04]"
               )}
             >
@@ -240,10 +273,39 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
                     {data.challenges.map((c) => {
                       const play = data.solutions.find((s) => s.challengeId === c.id);
                       return (
-                        <tr key={c.id} className="border-b border-black/[0.05] last:border-0">
+                        <tr
+                          key={c.id}
+                          className="group/row border-b border-black/[0.05] transition-colors duration-100 hover:bg-primary/[0.04] last:border-0"
+                        >
                           <td className="px-3 py-3 tabular-nums text-muted-foreground align-top">{c.id}</td>
                           <td className="px-3 py-3 font-medium leading-snug text-foreground align-top">{c.title}</td>
-                          <td className="px-3 py-3 font-medium leading-snug text-primary align-top">{play?.product ?? "—"}</td>
+                          <td className="px-3 py-3 align-top">
+                            {play ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setHighlightedSolutionId(play.challengeId);
+                                    handleTabChange("solutions");
+                                  }}
+                                  className="font-medium leading-snug text-primary text-left hover:underline"
+                                >
+                                  {play.product}
+                                </button>
+                                <div className="mt-0.5 flex items-center gap-1.5 opacity-0 transition-opacity duration-150 group-hover/row:opacity-100">
+                                  <span className="text-[0.6875rem] tabular-nums text-muted-foreground">
+                                    {(play as any).details?.financialCase?.contractValue ?? "—"}
+                                  </span>
+                                  <span className="text-[0.6875rem] text-muted-foreground">·</span>
+                                  <span className="text-[0.6875rem] font-semibold tabular-nums text-primary">
+                                    score {play.impactScore}
+                                  </span>
+                                </div>
+                              </>
+                            ) : (
+                              <span className="font-medium leading-snug text-muted-foreground">—</span>
+                            )}
+                          </td>
                         </tr>
                       );
                     })}
@@ -251,73 +313,66 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
                 </table>
               </div>
 
-              {/* ── Solution impact scores bar chart ── */}
+              {/* ── Solution impact scores ── */}
               <section className="mt-8">
                 <p className="type-section-label mb-3">Solution impact scores</p>
-                <div className="glass-panel rounded-xl p-4 sm:p-5">
-                  <div className="h-[140px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={chartData}
-                        margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
-                        barCategoryGap="36%"
+                <div className="glass-panel divide-y divide-black/[0.05] overflow-hidden rounded-xl">
+                  {rankedSolutions.map((s, idx) => (
+                    <div key={s.challengeId} className="flex items-center gap-4 px-4 py-3">
+                      <span className="type-eyebrow w-4 shrink-0 tabular-nums text-muted-foreground/60 normal-case">
+                        {idx + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium leading-snug text-foreground">{s.product}</p>
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground">{s.challengeLabel}</p>
+                      </div>
+                      <span
+                        className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums ${impactBadgeClass(s.impactScore)}`}
                       >
-                        <CartesianGrid
-                          vertical={false}
-                          stroke="rgba(0,0,0,0.06)"
-                          strokeDasharray="0"
-                        />
-                        <XAxis
-                          dataKey="label"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 11, fill: "hsl(240 3.8% 46.1%)", fontWeight: 500 }}
-                        />
-                        <YAxis
-                          domain={[0, 100]}
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fontSize: 11, fill: "hsl(240 3.8% 46.1%)" }}
-                          width={32}
-                        />
-                        <Tooltip
-                          cursor={{ fill: "rgba(0,0,0,0.04)" }}
-                          content={({ active, payload }) => {
-                            if (!active || !payload?.length) return null;
-                            const d = payload[0].payload as (typeof chartData)[number];
-                            return (
-                              <div className="rounded-lg border border-black/[0.06] bg-white/95 px-3 py-2 text-[0.8125rem] shadow-apple-sm backdrop-blur-xl">
-                                <p className="font-semibold text-foreground">{d.fullName}</p>
-                                <p className="text-muted-foreground">Impact score: {d.score}</p>
-                              </div>
-                            );
-                          }}
-                        />
-                        <Bar
-                          dataKey="score"
-                          fill="hsl(24 100% 50%)"
-                          radius={[4, 4, 0, 0]}
-                          maxBarSize={80}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+                        {s.impactScore}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </section>
 
               {/* ── Key contacts ── */}
               <section className="mt-6">
                 <p className="type-section-label mb-3">Key contacts</p>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {data.contacts.map((c) => {
                     const Icon = c.icon;
+                    const linkedInUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.role + " " + companyName)}`;
                     return (
                       <div
                         key={c.role}
-                        className="glass-panel flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.875rem] font-medium text-foreground"
+                        className="glass-panel flex flex-col gap-3 rounded-xl p-4"
                       >
-                        <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
-                        {c.role}
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/[0.06] bg-[#fafafc]">
+                            <Icon className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+                          </div>
+                          <span className="text-sm font-medium leading-snug text-foreground">
+                            {c.role}
+                          </span>
+                        </div>
+                        <div className="flex gap-2">
+                          <a
+                            href={linkedInUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex h-7 items-center rounded-md border border-black/[0.08] bg-[#fafafc] px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-black/[0.05]"
+                          >
+                            LinkedIn
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => { setDraftContact(c); setIsDraftOpen(true); }}
+                            className="inline-flex h-7 items-center rounded-md bg-primary/10 px-2.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+                          >
+                            Draft Email
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -362,6 +417,7 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
                   </button>
                 </div>
               </section>
+
             </div>
           )}
 
@@ -411,12 +467,16 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
             <div className="grid gap-5 focus-visible:outline-none sm:grid-cols-3 sm:gap-6">
               {data.solutions.map((s) => {
                 const Icon = s.icon;
+                const isHighlighted = highlightedSolutionId === s.challengeId;
                 return (
                   <button
                     key={s.challengeId}
                     type="button"
-                    onClick={() => setSelectedSolution(s as SolutionData)}
-                    className="glass-panel rounded-xl p-5 text-left shadow-apple-sm transition-[box-shadow,background] duration-200 hover:bg-white hover:shadow-apple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    onClick={() => { setHighlightedSolutionId(null); setSelectedSolution(s as SolutionData); }}
+                    className={cn(
+                      "glass-panel rounded-xl p-5 text-left shadow-apple-sm transition-[box-shadow,background,outline] duration-200 hover:bg-white hover:shadow-apple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      isHighlighted && "ring-2 ring-primary/40 bg-primary/[0.03]"
+                    )}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex min-w-0 items-center gap-2">
@@ -465,6 +525,38 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
                       Open playbook
                     </p>
                   </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ── NEXT STEPS ── */}
+          {activeTab === "nextsteps" && (
+            <div className="focus-visible:outline-none">
+              {data.solutions.map((s) => {
+                const steps = (s as any).details?.nextSteps as string[] | undefined;
+                if (!steps?.length) return null;
+                const Icon = s.icon;
+                return (
+                  <section key={s.challengeId} className="mb-8 last:mb-0">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-black/[0.06] bg-[#fafafc]">
+                        <Icon className="h-3 w-3 text-primary" aria-hidden />
+                      </div>
+                      <p className="type-section-label">{s.product}</p>
+                    </div>
+                    <ol className="space-y-2">
+                      {steps.slice(0, 3).map((step, idx) => (
+                        <li
+                          key={idx}
+                          className="glass-panel flex items-start gap-3 rounded-xl px-4 py-3"
+                        >
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                          <span className="text-sm leading-snug text-foreground">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </section>
                 );
               })}
             </div>
@@ -583,6 +675,49 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
           )}
         </div>
       </Tabs>
+
+      {/* ── Draft Email Modal ── */}
+      <Dialog open={isDraftOpen} onOpenChange={setIsDraftOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle>Draft Email</DialogTitle>
+            <DialogDescription>
+              {draftContact?.role} · {companyName}
+            </DialogDescription>
+          </DialogHeader>
+          {draftContact && topChallenge && (
+            <>
+              <pre className="mt-2 max-h-80 overflow-y-auto whitespace-pre-wrap rounded-lg border border-black/[0.06] bg-[#fafafc] p-4 font-sans text-[0.8125rem] leading-relaxed text-foreground">
+                {buildDraftEmail(
+                  draftContact.role,
+                  companyName,
+                  topChallenge,
+                  topChallengeSolution
+                )}
+              </pre>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      buildDraftEmail(
+                        draftContact.role,
+                        companyName,
+                        topChallenge,
+                        topChallengeSolution
+                      )
+                    );
+                    toast({ title: "Copied", description: "Email draft copied to clipboard." });
+                  }}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  Copy to clipboard
+                </button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
