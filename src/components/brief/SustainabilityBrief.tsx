@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Save,
@@ -34,6 +34,14 @@ import { cn } from "@/lib/utils";
 interface SustainabilityBriefProps {
   companyName: string;
   onBack: () => void;
+}
+
+interface CustomSolution {
+  title: string;
+  challengeAddressed: string;
+  divisions: string[];
+  description: string;
+  feasibilityNotes: string;
 }
 
 const TAB_ORDER = ["overview", "challenges", "solutions", "nextsteps", "export"] as const;
@@ -79,6 +87,9 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
   const [draftContact, setDraftContact] = useState<ContactEntry | null>(null);
   const [isDraftOpen, setIsDraftOpen] = useState(false);
   const [highlightedSolutionId, setHighlightedSolutionId] = useState<number | null>(null);
+  const [feasibilityCustom, setFeasibilityCustom] = useState<CustomSolution | null>(null);
+  const [isFeasibilityOpen, setIsFeasibilityOpen] = useState(false);
+  const [focusedCustomIdx, setFocusedCustomIdx] = useState<number | null>(null);
 
   const nameMap: Record<string, keyof typeof briefData> = {
     renault: "renault",
@@ -112,6 +123,19 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
     setActiveTab(tab as TabId);
     setSlideKey((k) => k + 1);
   };
+
+  // Scroll to focused custom solution after tab animation completes
+  useEffect(() => {
+    if (activeTab === "solutions" && focusedCustomIdx !== null) {
+      const timer = setTimeout(() => {
+        document.getElementById(`custom-solution-${focusedCustomIdx}`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 280);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, focusedCustomIdx, slideKey]);
 
   const handleSaveToCRM = () => {
     toast({
@@ -411,12 +435,53 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
                   <button
                     type="button"
                     onClick={() => setSelectedSolution(topPlay as SolutionData)}
-                    className="mt-4 text-xs font-medium tracking-tight text-primary transition-opacity hover:opacity-75"
+                    className="mt-4 inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
                   >
-                    Open playbook →
+                    View Full Solution →
                   </button>
                 </div>
               </section>
+
+              {/* ── OBS Custom Capabilities preview ── */}
+              {(() => {
+                const customSolutions = (data as any).customSolutions as CustomSolution[] | undefined;
+                if (!customSolutions?.length) return null;
+                return (
+                  <section className="mt-6">
+                    <p className="type-section-label mb-3">OBS Custom Capabilities</p>
+                    <div className="flex flex-col gap-2.5">
+                      {customSolutions.map((cs, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setFocusedCustomIdx(idx);
+                            handleTabChange("solutions");
+                          }}
+                          className="glass-panel group flex w-full items-start gap-3 rounded-xl px-4 py-3 text-left transition-[box-shadow,background] duration-150 hover:bg-white hover:shadow-apple-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium leading-snug tracking-tight text-foreground">
+                              {cs.title}
+                            </p>
+                            <div className="mt-1.5 flex flex-wrap gap-1">
+                              {cs.divisions.map((d) => (
+                                <span
+                                  key={d}
+                                  className="rounded-full border border-sky-200/70 bg-sky-50 px-1.5 py-0.5 text-[0.625rem] font-medium text-sky-700"
+                                >
+                                  {d}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100" aria-hidden />
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })()}
 
             </div>
           )}
@@ -464,69 +529,135 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
 
           {/* ── SOLUTIONS ── */}
           {activeTab === "solutions" && (
-            <div className="grid gap-5 focus-visible:outline-none sm:grid-cols-3 sm:gap-6">
-              {data.solutions.map((s) => {
-                const Icon = s.icon;
-                const isHighlighted = highlightedSolutionId === s.challengeId;
-                return (
-                  <button
-                    key={s.challengeId}
-                    type="button"
-                    onClick={() => { setHighlightedSolutionId(null); setSelectedSolution(s as SolutionData); }}
-                    className={cn(
-                      "glass-panel rounded-xl p-5 text-left shadow-apple-sm transition-[box-shadow,background,outline] duration-200 hover:bg-white hover:shadow-apple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                      isHighlighted && "ring-2 ring-primary/40 bg-primary/[0.03]"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/[0.06] bg-[#fafafc]">
-                          <Icon className="h-3.5 w-3.5 text-primary" aria-hidden />
+            <div className="focus-visible:outline-none">
+              <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
+                {data.solutions.map((s) => {
+                  const Icon = s.icon;
+                  const isHighlighted = highlightedSolutionId === s.challengeId;
+                  return (
+                    <button
+                      key={s.challengeId}
+                      type="button"
+                      onClick={() => { setHighlightedSolutionId(null); setSelectedSolution(s as SolutionData); }}
+                      className={cn(
+                        "glass-panel flex flex-col rounded-xl p-5 text-left shadow-apple-sm transition-[box-shadow,background,outline] duration-200 hover:bg-white hover:shadow-apple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        isHighlighted && "ring-2 ring-primary/40 bg-primary/[0.03]"
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/[0.06] bg-[#fafafc]">
+                            <Icon className="h-3.5 w-3.5 text-primary" aria-hidden />
+                          </div>
+                          <span className="type-eyebrow normal-case tracking-normal text-muted-foreground">
+                            #{s.challengeId}
+                          </span>
                         </div>
-                        <span className="type-eyebrow normal-case tracking-normal text-muted-foreground">
-                          #{s.challengeId}
+                        <span className="text-xl font-medium tabular-nums tracking-tight text-primary">
+                          {s.impactScore}
                         </span>
                       </div>
-                      <span className="text-xl font-medium tabular-nums tracking-tight text-primary">
-                        {s.impactScore}
+                      <p className="mt-2 text-sm font-medium leading-snug tracking-tight text-foreground">
+                        {s.product}
+                      </p>
+                      <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-relaxed text-muted-foreground">
+                        {s.detail}
+                      </p>
+                      <dl className="mt-4 space-y-2 border-t border-black/[0.06] pt-4 text-xs">
+                        <div>
+                          <dt className="type-eyebrow normal-case">Revenue (est.)</dt>
+                          <dd className="mt-1 font-medium leading-snug text-foreground">
+                            {s.metrics?.profitability}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="type-eyebrow normal-case">Client benefit</dt>
+                          <dd className="mt-1 font-medium leading-snug text-foreground">
+                            {s.metrics?.clientBenefit}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="type-eyebrow normal-case">CO₂</dt>
+                          <dd className="mt-1 font-medium leading-snug text-foreground">
+                            {s.metrics?.co2Impact}
+                          </dd>
+                        </div>
+                      </dl>
+                      <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-dashed border-black/[0.1] bg-[#fafafc] px-2 py-1.5 text-xs leading-snug text-muted-foreground">
+                        <span className="truncate">Mapped: {s.challengeLabel}</span>
+                        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+                      </div>
+                      <div className="mt-3 flex-1 flex items-end">
+                        <div className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
+                          View Full Solution →
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* ── Custom Solutions via OBS Capabilities ── */}
+              {(() => {
+                const customSolutions = (data as any).customSolutions as CustomSolution[] | undefined;
+                if (!customSolutions?.length) return null;
+                return (
+                  <section className="mt-10">
+                    <div className="mb-4 flex flex-wrap items-baseline gap-3">
+                      <p className="type-section-label">Custom Solutions via OBS Capabilities</p>
+                      <span className="rounded-full border border-sky-200/80 bg-sky-50 px-2.5 py-0.5 text-[0.6875rem] font-medium text-sky-700">
+                        Built with OBS Capabilities — not in current portfolio
                       </span>
                     </div>
-                    <p className="mt-2 text-sm font-medium leading-snug tracking-tight text-foreground">
-                      {s.product}
-                    </p>
-                    <p className="mt-1.5 line-clamp-2 text-sm font-normal leading-relaxed text-muted-foreground">
-                      {s.detail}
-                    </p>
-                    <dl className="mt-4 space-y-2 border-t border-black/[0.06] pt-4 text-xs">
-                      <div>
-                        <dt className="type-eyebrow normal-case">Revenue (est.)</dt>
-                        <dd className="mt-1 font-medium leading-snug text-foreground">
-                          {s.metrics?.profitability}
-                        </dd>
+                    <div className="rounded-2xl border border-sky-200/50 bg-sky-50/60 p-5 sm:p-6">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        {customSolutions.map((cs, idx) => (
+                          <div
+                            id={`custom-solution-${idx}`}
+                            key={idx}
+                            className={cn(
+                              "glass-panel rounded-xl p-5 transition-[box-shadow,ring] duration-300",
+                              focusedCustomIdx === idx && "ring-2 ring-primary/40"
+                            )}
+                          >
+                            <p className="text-sm font-semibold leading-snug tracking-tight text-foreground">
+                              {cs.title}
+                            </p>
+                            <p className="mt-2 text-sm font-normal leading-relaxed text-muted-foreground">
+                              {cs.description}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1.5">
+                              {cs.divisions.map((d) => (
+                                <span
+                                  key={d}
+                                  className="rounded-full border border-sky-200/70 bg-sky-100/70 px-2 py-0.5 text-[0.6875rem] font-medium text-sky-700"
+                                >
+                                  {d}
+                                </span>
+                              ))}
+                            </div>
+                            <p className="mt-3 text-xs text-muted-foreground">
+                              <span className="font-medium text-foreground">Challenge: </span>
+                              {cs.challengeAddressed}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFocusedCustomIdx(null);
+                                setFeasibilityCustom(cs);
+                                setIsFeasibilityOpen(true);
+                              }}
+                              className="mt-4 inline-flex h-7 items-center gap-1 rounded-md border border-primary/40 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/5"
+                            >
+                              Explore Feasibility
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                      <div>
-                        <dt className="type-eyebrow normal-case">Client benefit</dt>
-                        <dd className="mt-1 font-medium leading-snug text-foreground">
-                          {s.metrics?.clientBenefit}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="type-eyebrow normal-case">CO₂</dt>
-                        <dd className="mt-1 font-medium leading-snug text-foreground">
-                          {s.metrics?.co2Impact}
-                        </dd>
-                      </div>
-                    </dl>
-                    <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-dashed border-black/[0.1] bg-[#fafafc] px-2 py-1.5 text-xs leading-snug text-muted-foreground">
-                      <span className="truncate">Mapped: {s.challengeLabel}</span>
-                      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
                     </div>
-                    <p className="mt-2 text-xs font-medium tracking-tight text-primary">
-                      Open playbook
-                    </p>
-                  </button>
+                  </section>
                 );
-              })}
+              })()}
             </div>
           )}
 
@@ -675,6 +806,69 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
           )}
         </div>
       </Tabs>
+
+      {/* ── Feasibility Modal ── */}
+      <Dialog open={isFeasibilityOpen} onOpenChange={setIsFeasibilityOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="leading-snug tracking-tight">
+              {feasibilityCustom?.title}
+            </DialogTitle>
+            <DialogDescription className="mt-1 leading-relaxed">
+              {feasibilityCustom?.description}
+            </DialogDescription>
+          </DialogHeader>
+          {feasibilityCustom && (
+            <div className="mt-1 space-y-5">
+              {/* Divisions */}
+              <div>
+                <p className="type-eyebrow mb-2">OBS Divisions Involved</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {feasibilityCustom.divisions.map((d) => (
+                    <span
+                      key={d}
+                      className="rounded-full border border-sky-200/70 bg-sky-50 px-2.5 py-0.5 text-[0.75rem] font-medium text-sky-700"
+                    >
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Feasibility Notes */}
+              <div>
+                <p className="type-eyebrow mb-2">Feasibility Notes</p>
+                <p className="rounded-lg border border-black/[0.06] bg-[#fafafc] px-4 py-3 text-[0.8125rem] leading-relaxed text-foreground">
+                  {feasibilityCustom.feasibilityNotes}
+                </p>
+              </div>
+
+              {/* Challenge addressed */}
+              <div>
+                <p className="type-eyebrow mb-1">Challenge Addressed</p>
+                <p className="text-sm text-muted-foreground">{feasibilityCustom.challengeAddressed}</p>
+              </div>
+
+              {/* CTA row */}
+              <div className="flex items-center justify-between gap-3 border-t border-black/[0.06] pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsFeasibilityOpen(false)}
+                  className="inline-flex h-9 items-center rounded-lg border border-black/[0.1] bg-transparent px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-black/[0.04]"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-primary px-4 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
+                >
+                  Schedule Internal Review
+                </button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* ── Draft Email Modal ── */}
       <Dialog open={isDraftOpen} onOpenChange={setIsDraftOpen}>

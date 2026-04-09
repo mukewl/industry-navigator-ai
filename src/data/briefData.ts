@@ -226,12 +226,14 @@ export const briefData = {
         challengeAddressed: "Fleet battery lifecycle tracking and end-of-life compliance across EV fleet",
         divisions: ["IoT & Datavenue", "Live Intelligence", "Digital Services"],
         description: "Sovereign AI platform combining IoT sensor networks with fleet telemetry to model battery health, recycling eligibility, and lifecycle CO₂ across the full EV estate.",
+        feasibilityNotes: "Medium-high complexity requiring coordination between IoT & Datavenue for sensor deployment and Live Intelligence for AI model training on battery telemetry. Digital Services leads the platform architecture and integration with Renault's fleet management systems. Suggested first step: a battery data-mapping workshop with Renault's Head of Fleet and Mobility Services to define telemetry schemas and recycling-eligibility thresholds.",
       },
       {
         title: "Automated CSRD Reporting Agent",
         challengeAddressed: "Multi-entity CSRD compliance consolidation across all Renault subsidiaries",
         divisions: ["Live Intelligence", "Digital Services", "Orange Cyberdefense"],
         description: "GenAI-powered regulatory agent aggregating ESG data across all subsidiaries, drafting CSRD disclosures, and flagging compliance gaps in real time.",
+        feasibilityNotes: "Medium complexity — leverageable on Orange's existing Live Intelligence AI platform with a CSRD-specific fine-tuning layer. Live Intelligence leads the GenAI agent, Digital Services handles the multi-entity data pipeline, and Orange Cyberdefense ensures data sovereignty across Renault's subsidiaries. Suggested first step: a scoping session with Renault's Group Procurement Director to inventory current data sources and identify the three highest-priority subsidiary consolidation gaps.",
       },
     ],
   },
@@ -446,12 +448,14 @@ export const briefData = {
         challengeAddressed: "Reactive refrigeration maintenance driving energy spikes and food spoilage",
         divisions: ["IoT & Datavenue", "Live Intelligence"],
         description: "ML-driven anomaly detection across cold chain sensors to predict equipment failure 48–72 hours in advance, minimising spoilage and energy waste across all stores.",
+        feasibilityNotes: "Medium complexity — builds directly on the Smart Eco Energy IoT sensor infrastructure already in scope for Carrefour's cold chain. IoT & Datavenue leads the sensor layer and data ingestion, Live Intelligence develops the ML failure-prediction models. Suggested first step: identify 5 pilot stores with the highest cold chain maintenance incident rates to provide the training dataset for the anomaly detection model.",
       },
       {
         title: "Supplier Sustainability Intelligence Hub",
         challengeAddressed: "Real-time ESG compliance visibility across thousands of food and non-food suppliers",
         divisions: ["Digital Services", "Orange Cyberdefense", "Live Intelligence"],
         description: "Secure data ingestion and AI analysis platform providing real-time supplier ESG scores, audit trails, and compliance flags under CSRD, AGEC, and EU deforestation rules.",
+        feasibilityNotes: "High complexity given the scale of Carrefour's supplier network, but achievable in phases targeting the highest-risk categories first. Digital Services and Orange Cyberdefense co-lead on secure data ingestion architecture, with Live Intelligence providing the AI scoring engine. Suggested first step: a supplier data-landscape workshop with Carrefour's Head of Supply Chain to map current ESG data flows and prioritise the 200 highest-spend suppliers for the initial cohort.",
       },
     ],
   },
@@ -659,7 +663,23 @@ export const briefData = {
       { role: "VP of Manufacturing Operations", icon: Building2 },
       { role: "Head of Electrification Strategy", icon: Zap },
       { role: "Group Supply Chain Director", icon: Globe },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "Multi-Brand Battery Digital Passport Hub",
+        challengeAddressed: "EU Battery Regulation digital passport issuance across all 15 Stellantis brands from 2027",
+        divisions: ["IoT & Datavenue", "Digital Services", "Orange Cyberdefense"],
+        description: "Unified sovereign data platform aggregating battery cell telemetry, recycled content records, and mineral sourcing documentation to auto-generate EU Battery Regulation passports across every Stellantis marque.",
+        feasibilityNotes: "High complexity due to the multi-brand architecture and the EU Battery Regulation's strict data sovereignty requirements. IoT & Datavenue leads the telemetry ingestion layer, Digital Services designs the passport data schema and EU customs API, and Orange Cyberdefense enforces secure multi-supplier data exchange. Suggested first step: a battery regulation readiness workshop with Stellantis's Group Supply Chain Director to map current data availability per brand and identify the two highest-volume cell suppliers for the pilot integration.",
+      },
+      {
+        title: "Multi-Market EV Penalty Avoidance Intelligence",
+        challengeAddressed: "EU fleet CO2 penalty exposure across 15 brands with divergent electrification rates",
+        divisions: ["Live Intelligence", "Digital Services"],
+        description: "GenAI regulatory agent that models real-time fleet CO2 trajectories per brand, simulates penalty exposure under different sales mix scenarios, and recommends electrification prioritisation actions to stay below EU thresholds.",
+        feasibilityNotes: "Medium complexity — deployable on top of existing Ocean platform fleet data with a regulatory modelling layer added by Live Intelligence. Digital Services provides the brand-level dashboard and reporting layer. Suggested first step: a data discovery call with Stellantis's Head of Electrification Strategy to map current BEV sales-mix data availability per brand and confirm the penalty calculation methodology to embed in the model.",
+      },
+    ],
   },
   totalenergies: {
     name: "TotalEnergies",
@@ -865,7 +885,23 @@ export const briefData = {
       { role: "VP of Operational Excellence", icon: Building2 },
       { role: "Head of ESG Reporting & Investor Relations", icon: Globe },
       { role: "Director of Energy Transition", icon: Zap },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "Refinery Decarbonisation Digital Twin",
+        challengeAddressed: "Scope 1 EU ETS exposure from refining combustion and flaring across European facilities",
+        divisions: ["Digital Infrastructure", "IoT & Datavenue", "Live Intelligence"],
+        description: "Physics-informed AI digital twin of refinery process units that continuously simulates energy optimisation and flare reduction scenarios to minimise EU ETS carbon allowance consumption in real time.",
+        feasibilityNotes: "High complexity — requires ATEX Zone 2 certification for in-refinery IoT deployment and bespoke integration with existing SCADA control systems. Digital Infrastructure leads private 5G/LTE network connectivity inside the refinery perimeter, IoT & Datavenue develops the edge sensing layer, and Live Intelligence builds the physics-informed AI simulation model. Suggested first step: a refinery data-access and integration scoping workshop with TotalEnergies' VP of Operational Excellence at the Gonfreville site to assess SCADA interoperability.",
+      },
+      {
+        title: "EU Taxonomy CapEx Classification Engine",
+        challengeAddressed: "Credible EU Taxonomy alignment for €5B+ annual low-carbon investment portfolio",
+        divisions: ["Live Intelligence", "Digital Services", "Orange Cyberdefense"],
+        description: "Sovereign AI platform that continuously monitors TotalEnergies' renewables project portfolio against EU Taxonomy Technical Screening Criteria, auto-classifying CapEx and flagging DNSH risks ahead of CSRD disclosure.",
+        feasibilityNotes: "Medium complexity — primarily a data integration and AI classification challenge with well-defined regulatory schemas. Live Intelligence leads the Taxonomy activity mapping AI, Digital Services handles the regulatory data pipeline and audit-trail architecture. Suggested first step: a structured workshop with TotalEnergies' Head of ESG Reporting & Investor Relations to map the current manual Taxonomy classification workflow and identify the highest-volume CapEx activity codes for the initial AI automation pilot.",
+      },
+    ],
   },
   saintgobain: {
     name: "Saint-Gobain",
@@ -1071,7 +1107,23 @@ export const briefData = {
       { role: "VP of Industrial Operations", icon: Building2 },
       { role: "Head of Product Compliance & Certification", icon: Globe },
       { role: "Group Procurement Director", icon: Users },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "Furnace Hydrogen Transition Simulator",
+        challengeAddressed: "De-risking capital decisions for glass furnace electrification and hydrogen conversion pathways",
+        divisions: ["Digital Infrastructure", "Live Intelligence", "IoT & Datavenue"],
+        description: "Physics-informed AI model that simulates hydrogen, electric, and hybrid furnace transition scenarios using live plant telemetry, quantifying decarbonisation timelines, capital requirements, and EU ETS savings for each pathway.",
+        feasibilityNotes: "High complexity — requires bespoke thermodynamic modelling of float glass furnace physics combined with live IoT sensor data integration. Digital Infrastructure leads the simulation platform architecture, IoT & Datavenue provides real-time furnace telemetry, and Live Intelligence builds the AI scenario engine. Suggested first step: a technical workshop with Saint-Gobain's VP of Industrial Operations to define furnace process parameters, transition constraints, and the priority pathways (hydrogen vs electric) for the initial simulation scope.",
+      },
+      {
+        title: "Automated EPD Generation Platform",
+        challengeAddressed: "Environmental Product Declaration coverage across thousands of construction product SKUs",
+        divisions: ["Digital Services", "Live Intelligence"],
+        description: "AI-powered platform that auto-generates ISO 14044-compliant Environmental Product Declarations from manufacturing IoT data feeds, cutting EPD production time from months to days per product family.",
+        feasibilityNotes: "Medium complexity — builds on Evolution Platform data infrastructure with an ISO 14044 calculation module added by Digital Services. Live Intelligence automates the LCA data extraction and EPD drafting layer. Suggested first step: map Saint-Gobain's top 15 product SKUs by EPD demand from construction customers to define the initial data schema and prioritise the glass insulation family as the first automation target.",
+      },
+    ],
   },
   schneiderelectric: {
     name: "Schneider Electric",
@@ -1277,7 +1329,23 @@ export const briefData = {
       { role: "VP Supply Chain & Procurement", icon: Users },
       { role: "Head of Circular Economy", icon: Recycle },
       { role: "Director of Digital Infrastructure", icon: Laptop },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "Avoided Emissions Intelligence Platform",
+        challengeAddressed: "CSRD ESRS E1 Scope 3 Category 11 product-in-use emissions measurement at customer site level",
+        divisions: ["Live Intelligence", "Digital Services", "Digital Infrastructure"],
+        description: "Sovereign AI platform that calculates verified real-world energy savings and avoided emissions achieved by Schneider products deployed at customer sites, enabling product-level carbon impact guarantees in sales proposals.",
+        feasibilityNotes: "Medium complexity — requires integration with Schneider's installed-base telemetry across a large and diverse customer site population. Live Intelligence leads the avoided-emissions calculation engine, Digital Services builds the data pipeline and API layer, and Digital Infrastructure provides secure connectivity to customer-site energy management systems. Suggested first step: a pilot scope definition with Schneider's Chief Sustainability Officer to select 2–3 product families and a 50-customer cohort for the initial avoided-emissions calculation and credibility validation.",
+      },
+      {
+        title: "Smart WEEE Recovery Network Optimizer",
+        challengeAddressed: "EU WEEE Directive 85% collection rate target across Schneider's European producer responsibility obligations",
+        divisions: ["IoT & Datavenue", "Digital Services"],
+        description: "AI-driven network planning tool that models optimal WEEE collection depot locations, vehicle routing, and take-back incentive schemes to maximise recovery rates across Europe at minimum logistics cost.",
+        feasibilityNotes: "Medium complexity — leverageable on Ocean platform routing capabilities with a WEEE-specific network optimisation layer. IoT & Datavenue leads collection-point sensor integration for fill-rate monitoring, Digital Services builds the network optimisation model and EPR reporting module. Suggested first step: map Schneider's current French WEEE take-back collection network coverage and reported collection rate to establish the gap versus the 85% target and identify the highest-priority recovery corridors for the pilot optimisation.",
+      },
+    ],
   },
   veolia: {
     name: "Veolia",
@@ -1483,7 +1551,23 @@ export const briefData = {
       { role: "VP Water Treatment Operations", icon: Droplets },
       { role: "Head of Fleet Management", icon: Truck },
       { role: "Director of Regulatory Affairs", icon: Building2 },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "PFAS Real-Time Sentinel Network",
+        challengeAddressed: "EU Drinking Water Directive PFAS limit compliance across Veolia's managed water treatment concessions",
+        divisions: ["IoT & Datavenue", "Orange Cyberdefense", "Digital Services"],
+        description: "Secure network of real-time PFAS and emerging contaminant sensors with AI-driven anomaly detection, regulatory breach prevention alerts, and automated municipal client compliance reporting.",
+        feasibilityNotes: "Medium-high complexity requiring integration across diverse existing SCADA and water-quality monitoring infrastructure at multiple treatment sites. IoT & Datavenue leads sensor integration and the real-time data ingestion layer, Orange Cyberdefense secures the regulatory compliance data environment, and Digital Services builds the white-label municipal client reporting portal. Suggested first step: a water-treatment site survey with Veolia's VP of Water Treatment Operations to assess current PFAS monitoring coverage and identify the 3–5 concessions closest to the EU DWD threshold as the priority pilot sites.",
+      },
+      {
+        title: "WtE Carbon Optimisation Co-Pilot",
+        challengeAddressed: "EU ETS exposure minimisation at waste-to-energy plants ahead of the 2028 incineration inclusion date",
+        divisions: ["Live Intelligence", "IoT & Datavenue", "Digital Infrastructure"],
+        description: "GenAI operational co-pilot for WtE plant operators that models real-time combustion optimisation scenarios, methane capture improvements, and load-shifting strategies to minimise EU ETS carbon allowance consumption.",
+        feasibilityNotes: "High complexity — combustion process optimisation requires both industrial AI expertise and deep WtE domain knowledge. Live Intelligence leads the GenAI co-pilot engine, IoT & Datavenue provides real-time plant sensor feeds via edge computing, and Digital Infrastructure delivers the secure OT network backbone inside the plant perimeter. Suggested first step: a 90-day sensor baseline data collection phase at one Veolia WtE facility to build the training dataset for the combustion optimisation model before any AI inference layer is deployed.",
+      },
+    ],
   },
   airfranceklm: {
     name: "Air France-KLM",
@@ -1689,7 +1773,23 @@ export const briefData = {
       { role: "VP Ground Operations", icon: Building2 },
       { role: "Head of SAF Procurement & Strategy", icon: Plane },
       { role: "Director of Fleet & Engineering", icon: Truck },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "SAF Chain-of-Custody Intelligence Hub",
+        challengeAddressed: "ReFuelEU Aviation mass balance traceability and CORSIA lifecycle documentation across all EU hub airports",
+        divisions: ["Digital Services", "Live Intelligence", "Orange Cyberdefense"],
+        description: "Secure AI platform that aggregates SAF producer sustainability certificates, mass balance records, and CORSIA lifecycle GHG data from multi-supplier chains, auto-generating ReFuelEU-compliant regulatory submissions per airport.",
+        feasibilityNotes: "Medium complexity with well-defined regulatory data schemas providing a clear integration target. Digital Services leads the platform architecture and regulatory submission workflow, Live Intelligence automates the mass balance reconciliation and lifecycle GHG attribution, and Orange Cyberdefense ensures secure multi-supplier certificate data exchange. Suggested first step: map Air France-KLM's current SAF supplier roster and existing sustainability certificate formats to define the platform integration specifications and prioritise the two highest-volume SAF airports for the pilot deployment.",
+      },
+      {
+        title: "Airside Zero-Emission Transition Planner",
+        challengeAddressed: "Ground support equipment electrification planning at CDG and Schiphol ahead of zero-emission airside deadlines",
+        divisions: ["IoT & Datavenue", "Digital Infrastructure", "Live Intelligence"],
+        description: "AI-powered operations planning tool that models GSE electrification scenarios, charging infrastructure placement, and grid load optimisation across Air France-KLM's main hubs against regulatory zero-emission timelines.",
+        feasibilityNotes: "Medium complexity — builds on Ocean platform fleet analytics with an airport-specific GSE electrification planning module layered on top. IoT & Datavenue leads the GSE telemetry integration, Digital Infrastructure models the airside charging grid requirements and grid capacity constraints, and Live Intelligence runs the electrification scenario optimisation engine. Suggested first step: a CDG airside operations data review with Air France-KLM's Director of Fleet & Engineering to map current GSE fleet composition, daily utilisation cycles, and charging infrastructure constraints by terminal zone.",
+      },
+    ],
   },
   danone: {
     name: "Danone",
@@ -1895,7 +1995,23 @@ export const briefData = {
       { role: "VP Agricultural Sourcing & Supply Chain", icon: Globe },
       { role: "Head of Packaging Sustainability", icon: Recycle },
       { role: "Director of Industrial Operations", icon: Building2 },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "Farm-Level Carbon Intelligence Platform",
+        challengeAddressed: "CSRD Scope 3 Category 1 farm-level GHG measurement across 20,000+ dairy and crop suppliers",
+        divisions: ["IoT & Datavenue", "Live Intelligence", "Digital Services"],
+        description: "IoT-enabled precision agriculture monitoring platform combining herd management data, soil sensors, and satellite imagery to calculate real-time farm-level GHG intensity scores across Danone's full milk supplier base.",
+        feasibilityNotes: "High complexity due to the scale (20,000+ farms) and the heterogeneity of farm management data environments across France, the Netherlands, and North America. IoT & Datavenue leads the precision agriculture sensor integration layer, Live Intelligence builds the farm-level GHG intensity calculation engine, and Digital Services delivers the farmer-facing data collection portal. Suggested first step: a pilot with 100 high-volume French dairy suppliers to validate the data collection workflow and GHG calculation methodology before rolling out to the full supplier base.",
+      },
+      {
+        title: "Aquifer Stewardship Sentinel",
+        challengeAddressed: "Water extraction regulatory compliance and community scrutiny at Évian and Volvic bottling sites",
+        divisions: ["IoT & Datavenue", "Digital Infrastructure"],
+        description: "Hydrological IoT sensor network monitoring aquifer levels, extraction rates, and recharge dynamics at water-stressed bottling sites, with real-time regulatory threshold alerts and prefecture-ready compliance reporting.",
+        feasibilityNotes: "Medium complexity — hydrological sensor placement requires specialist hydrogeology input to ensure measurement accuracy, but the data platform architecture is straightforward. IoT & Datavenue leads the aquifer monitoring sensor network, Digital Infrastructure provides the secure, resilient data transmission layer from remote sites. Suggested first step: a site survey at the Évian-les-Bains aquifer zone with Danone's Director of Industrial Operations to map current extraction monitoring infrastructure, identify monitoring gaps, and define the regulatory threshold parameters for alerting.",
+      },
+    ],
   },
   loreal: {
     name: "L'Oréal",
@@ -2101,6 +2217,22 @@ export const briefData = {
       { role: "VP Global Sourcing & Procurement", icon: Globe },
       { role: "Head of Packaging Innovation", icon: Recycle },
       { role: "Director of Industrial Excellence", icon: Building2 },
-    ]
+    ],
+    customSolutions: [
+      {
+        title: "Ingredient Deforestation Sentinel",
+        challengeAddressed: "EUDR real-time due diligence maintenance across 1,500+ natural ingredients with dynamic deforestation risk",
+        divisions: ["Live Intelligence", "Digital Services", "Orange Cyberdefense"],
+        description: "AI platform that continuously cross-references ingredient supplier GPS polygon data against live satellite deforestation alerts, dynamically updating EUDR due diligence statements and flagging at-risk lots before EU customs clearance.",
+        feasibilityNotes: "Medium complexity with well-established satellite monitoring data APIs providing a defined integration path. Live Intelligence leads the AI cross-referencing and dynamic due diligence update engine, Digital Services builds the EUDR statement workflow and EU customs API integration, and Orange Cyberdefense ensures the secure geolocation data custody environment. Suggested first step: a pilot with L'Oréal's palm oil supply chain — the highest deforestation-risk commodity — to validate the GPS polygon data collection workflow and satellite monitoring accuracy before extending to soy and wood-derived ingredients.",
+      },
+      {
+        title: "Beauty Circularity Intelligence Network",
+        challengeAddressed: "EU PPWR recycled content targets and EPR compliance across cosmetics packaging across five European markets",
+        divisions: ["IoT & Datavenue", "Digital Services", "Live Intelligence"],
+        description: "Sensor-equipped smart packaging take-back network with AI-optimised collection routing, real-time fill-rate monitoring, and automated EPR compliance reporting across L'Oréal's retail and e-commerce return channels.",
+        feasibilityNotes: "Medium complexity — builds on Ocean platform reverse logistics capabilities with cosmetics-packaging-specific collection network optimisation. IoT & Datavenue leads smart container sensor integration, Digital Services builds the EPR compliance reporting module aligned to French and German producer compliance schemes, and Live Intelligence runs the collection-route optimisation engine. Suggested first step: map L'Oréal's current in-store take-back network coverage across the top three French retail partners to identify the highest-density collection corridors for an initial routing optimisation pilot.",
+      },
+    ],
   }
 };
