@@ -19,6 +19,8 @@ export const briefData = {
     name: "Renault",
     score: 87,
     sources: 34,
+    sector: "Automotive",
+    esgRiskLevel: "High",
     challenges: [
       {
         id: 1,
@@ -241,6 +243,8 @@ export const briefData = {
     name: "Carrefour",
     score: 91,
     sources: 41,
+    sector: "Retail & Consumer",
+    esgRiskLevel: "Medium",
     challenges: [
       {
         id: 1,
@@ -463,6 +467,8 @@ export const briefData = {
     name: "Stellantis",
     score: 83,
     sources: 38,
+    sector: "Automotive",
+    esgRiskLevel: "High",
     challenges: [
       {
         id: 1,
@@ -685,6 +691,8 @@ export const briefData = {
     name: "TotalEnergies",
     score: 76,
     sources: 52,
+    sector: "Energy & Resources",
+    esgRiskLevel: "Critical",
     challenges: [
       {
         id: 1,
@@ -907,6 +915,8 @@ export const briefData = {
     name: "Saint-Gobain",
     score: 84,
     sources: 29,
+    sector: "Industry & Technology",
+    esgRiskLevel: "High",
     challenges: [
       {
         id: 1,
@@ -1129,6 +1139,8 @@ export const briefData = {
     name: "Schneider Electric",
     score: 89,
     sources: 44,
+    sector: "Industry & Technology",
+    esgRiskLevel: "Medium",
     challenges: [
       {
         id: 1,
@@ -1351,6 +1363,8 @@ export const briefData = {
     name: "Veolia",
     score: 82,
     sources: 36,
+    sector: "Energy & Resources",
+    esgRiskLevel: "Critical",
     challenges: [
       {
         id: 1,
@@ -1573,6 +1587,8 @@ export const briefData = {
     name: "Air France-KLM",
     score: 71,
     sources: 47,
+    sector: "Aviation",
+    esgRiskLevel: "Critical",
     challenges: [
       {
         id: 1,
@@ -1795,6 +1811,8 @@ export const briefData = {
     name: "Danone",
     score: 85,
     sources: 38,
+    sector: "Retail & Consumer",
+    esgRiskLevel: "High",
     challenges: [
       {
         id: 1,
@@ -2017,6 +2035,8 @@ export const briefData = {
     name: "L'Oréal",
     score: 88,
     sources: 41,
+    sector: "Retail & Consumer",
+    esgRiskLevel: "Medium",
     challenges: [
       {
         id: 1,
