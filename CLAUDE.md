@@ -152,26 +152,40 @@ src/
 ## What is built (feature checklist)
 
 - [x] **Dashboard** — Two-panel layout: scrollable client list (Renault / Carrefour), selection, summary stats, Recharts bar chart, **Open full brief** CTA.
-- [x] **New profile / hero page** — Redesigned: full-bleed background with radial orange glow + dot grid, large headline "Generate a sustainability brief.", stat row, search card, all 10 company chips. Two-tier container width (44rem outer for chips, 32rem inner for card).
+- [x] **New profile / hero page** — Redesigned: full-bleed background with radial orange glow + dot grid, large headline "Generate a sustainability brief.", search card, Solution Type filter only (Recent Briefs, Available Companies, ESG Risk filter, and Sector filter removed). Two-tier container width (44rem outer, 32rem inner for card).
 - [x] **Pipeline** — Five named steps with progress animation and sidebar "parallel agents" / live stats (illustrative).
 - [x] **Brief — tab animation** — Tab switching uses directional CSS slide animation (right for forward, left for backward). Tabs component is controlled; content re-mounts on switch via `key`.
-- [x] **Brief — Overview tab** — Meta row + pressure/play table + **impact score bar chart** (Recharts) + **key contacts pills** + **Top Recommended Play card** (highest impactScore, contract value, CO₂ impact, link to playbook).
+- [x] **Brief — Overview tab** — Meta row + pressure/play table + **impact score bar chart** (Recharts) + **Top Recommended Play card** (highest impactScore, contract value, CO₂ impact, link to playbook). Key Contacts and OBS Custom Capabilities (customSolutions preview) have been **removed** from this tab.
 - [x] **Brief — Challenges tab** — Collapsible cards with urgency badges.
-- [x] **Brief — Solutions tab** — Cards → SolutionDetail playbook view.
-- [x] **Brief — Export tab** — Checkboxes, PowerPoint/Canva toasts, Save to CRM toast, confidence bar, benchmarks, targets.
+- [x] **Brief — Solutions tab** — Cards → SolutionDetail playbook view. **Win Strategy tab built** inside SolutionDetail (per-solution win strategy content). Win Strategy is currently being **moved into each solution card** and the standalone Win Strategy tab is being **removed** — in progress on `final-changes` branch.
+- [x] **Brief — Export tab** — Checkboxes, PowerPoint/Canva toasts, Save to CRM toast, confidence bar, benchmarks, targets. **Next Steps** section moved here from Overview.
 - [x] **Brief — empty state** — Proper "no brief available" screen for unrecognised companies; lists all 10 supported names.
+- [x] **POC card** — Fixed.
+- [x] **Back button** — Fixed (returns correctly from SolutionDetail to Solutions list).
 - [x] **Roadmap** — Static Phase 2 feature list.
 - [x] **System architecture** — Separate informational view.
 - [x] **Responsive shell** — Sidebar (lg+), sheet + header on small screens.
 - [x] **404** — `NotFound` route for unknown paths.
 
+### In progress (2026-04-14, `final-changes` branch)
+
+- [ ] **Win Strategy → solution cards** — Moving Win Strategy content out of the standalone tab and into each individual solution card inside SolutionDetail. Win Strategy tab will be removed once complete. **Do not merge to `master` until finished.**
+
 ---
 
-## Recently changed files (last session)
+## Recently changed files (current session — 2026-04-14)
 
 | File | What changed |
 |------|-------------|
-| `src/components/search/SearchPanel.tsx` | Full redesign: background decoration layers (radial glow + dot grid + vignette), enlarged headline, stat row, eyebrow badge pill, two-tier container (44rem / 32rem), all 10 chips, centered alignment, non-uniform spacing rhythm |
+| `src/components/search/SearchPanel.tsx` | Stripped to search input + Solution Type filter only. Removed: Recent Briefs section, Available Companies (sector-grouped list), ESG Risk filter row, Sector filter row, and all related dead code (`recentBriefs`, `sectorGroups`, `companyFilterMeta`, `getMatchDimScore`, `sortedSectorGroups`, unused imports) |
+| `src/components/brief/SustainabilityBrief.tsx` | Removed Key Contacts pills and OBS Custom Capabilities preview from Overview tab; Next Steps moved into Export tab; Win Strategy tab built inside SolutionDetail |
+| `src/components/brief/SolutionDetail.tsx` | Win Strategy tab added; POC card fixed; back button fixed |
+
+## Previously changed files (prior sessions)
+
+| File | What changed |
+|------|-------------|
+| `src/components/search/SearchPanel.tsx` | Full redesign: background decoration layers (radial glow + dot grid + vignette), enlarged headline, stat row, eyebrow badge pill, two-tier container (44rem / 32rem), all 10 chips, centered alignment |
 | `src/components/brief/SustainabilityBrief.tsx` | Controlled tabs with directional slide animation; Overview tab additions (bar chart, contacts, Top Play card); silent Renault fallback replaced with proper null/empty state |
 | `src/index.css` | Added `animate-tab-from-right`, `animate-tab-from-left`, `@keyframes tabSlideFromRight`, `@keyframes tabSlideFromLeft` |
 
@@ -302,4 +316,6 @@ npm run lint
 
 ---
 
-*Last updated: 2026-04-08. Reflects all work through the SearchPanel redesign, /arrange layout pass, and SustainabilityBrief tab animation + Overview additions session.*
+**Active branch:** `final-changes` — all current and pending work lives here. **Do not touch `master`** until the Win Strategy migration is complete and signed off.
+
+*Last updated: 2026-04-14. Reflects SearchPanel strip-down, Overview removals (Key Contacts, OBS Capabilities), Next Steps → Export, Win Strategy tab built, POC card + back button fixes. Win Strategy → solution cards migration in progress.*

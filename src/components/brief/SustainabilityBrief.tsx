@@ -49,7 +49,7 @@ interface CustomSolution {
   feasibilityNotes: string;
 }
 
-const TAB_ORDER = ["overview", "challenges", "solutions", "winstrategy", "export"] as const;
+const TAB_ORDER = ["overview", "challenges", "solutions", "export"] as const;
 type TabId = (typeof TAB_ORDER)[number];
 
 type ContactEntry = (typeof briefData)[keyof typeof briefData]["contacts"][number];
@@ -95,6 +95,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
   const [feasibilityCustom, setFeasibilityCustom] = useState<CustomSolution | null>(null);
   const [isFeasibilityOpen, setIsFeasibilityOpen] = useState(false);
   const [focusedCustomIdx, setFocusedCustomIdx] = useState<number | null>(null);
+  const [winStrategyModal, setWinStrategyModal] = useState<SolutionData | null>(null);
 
   const nameMap: Record<string, keyof typeof briefData> = {
     renault: "renault",
@@ -245,7 +246,6 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
               ["overview", "Overview"],
               ["challenges", "Challenges"],
               ["solutions", "Solutions"],
-              ["winstrategy", "Win Strategy"],
               ["export", "Export"],
             ] as const
           ).map(([v, label]) => (
@@ -454,7 +454,9 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           {activeTab === "solutions" && (
             <div className="focus-visible:outline-none">
               <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
-                {data.solutions.map((s) => {
+                {(() => {
+                  const ws = winStrategyData[queryKey ?? ""] ?? null;
+                  return data.solutions.map((s) => {
                   const Icon = s.icon;
                   const isHighlighted = highlightedSolutionId === s.challengeId;
                   return (
@@ -510,14 +512,35 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                         <span className="truncate">Mapped: {s.challengeLabel}</span>
                         <ChevronRight className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
                       </div>
-                      <div className="mt-3 flex-1 flex items-end">
+                      <div className="mt-3 flex-1 flex items-end gap-2">
                         <div className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
                           View Full Solution →
                         </div>
+                        {ws && (
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setWinStrategyModal(s as SolutionData);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                setWinStrategyModal(s as SolutionData);
+                              }
+                            }}
+                            className="inline-flex items-center gap-1 rounded-md border border-black/[0.12] bg-transparent px-3 py-1.5 text-xs font-semibold text-foreground/70 transition-colors hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            Win Strategy
+                          </div>
+                        )}
                       </div>
                     </button>
                   );
-                })}
+                  });
+                })()}
               </div>
 
               {/* ── Custom Solutions via OBS Capabilities ── */}
@@ -583,116 +606,6 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
               })()}
             </div>
           )}
-
-          {/* ── WIN STRATEGY ── */}
-          {activeTab === "winstrategy" && (() => {
-            const ws = winStrategyData[queryKey ?? ""];
-            if (!ws) return <p className="text-sm text-muted-foreground">No win strategy available.</p>;
-            return (
-              <div className="space-y-4 focus-visible:outline-none">
-
-                {/* Section 1: Why Now */}
-                <Collapsible defaultOpen>
-                  <CollapsibleTrigger className="group flex w-full items-center gap-3 glass-panel rounded-xl px-4 py-3 text-left hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&[data-state=open]>svg:first-child]:rotate-180">
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform" aria-hidden />
-                    <AlertCircle className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-                    <span className="flex-1 text-sm font-medium text-foreground">Why Now</span>
-                    <span className="type-eyebrow normal-case">{ws.whyNow.length} signals</span>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="mt-2 space-y-3">
-                      {ws.whyNow.map((signal, i) => (
-                        <div key={i} className="glass-panel rounded-xl px-4 py-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium leading-snug text-foreground">{signal.title}</p>
-                              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{signal.description}</p>
-                            </div>
-                            <div className="flex shrink-0 flex-col items-end gap-1.5">
-                              <span className={cn(
-                                "inline-flex items-center rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em]",
-                                signal.urgency === "Critical" && "text-red-600 bg-red-50 border-red-200/80",
-                                signal.urgency === "High" && "text-amber-600 bg-amber-50 border-amber-200/80",
-                                signal.urgency === "Medium" && "text-yellow-700 bg-yellow-50 border-yellow-200/80",
-                              )}>
-                                {signal.urgency}
-                              </span>
-                              {signal.daysUntilDeadline !== undefined && (
-                                <span className={cn(
-                                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold tabular-nums",
-                                  signal.daysUntilDeadline <= 30
-                                    ? "border-red-200/80 bg-red-50 text-red-600"
-                                    : "border-black/[0.08] bg-[#fafafc] text-muted-foreground"
-                                )}>
-                                  <Calendar className="h-2.5 w-2.5" aria-hidden />
-                                  {signal.daysUntilDeadline}d
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Section 2: Why OBS */}
-                <Collapsible defaultOpen>
-                  <CollapsibleTrigger className="group flex w-full items-center gap-3 glass-panel rounded-xl px-4 py-3 text-left hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&[data-state=open]>svg:first-child]:rotate-180">
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform" aria-hidden />
-                    <ShieldCheck className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-                    <span className="flex-1 text-sm font-medium text-foreground">Why OBS</span>
-                    <span className="type-eyebrow normal-case">{ws.whyOBS.length} solutions</span>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="mt-2 space-y-4">
-                      {ws.whyOBS.map((card, i) => (
-                        <div key={i} className="glass-panel rounded-xl px-4 py-4">
-                          <div className="mb-3 flex items-center justify-between gap-3">
-                            <p className="text-sm font-semibold leading-snug text-foreground">{card.solution}</p>
-                            <p className="type-eyebrow normal-case shrink-0">vs {card.competitors.join(' · ')}</p>
-                          </div>
-                          <ul className="space-y-2">
-                            {card.differentiators.map((d, j) => (
-                              <li key={j} className="flex items-start gap-2.5 text-sm leading-relaxed">
-                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                                <span className="text-foreground">{d}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Section 3: How to Win */}
-                <Collapsible defaultOpen>
-                  <CollapsibleTrigger className="group flex w-full items-center gap-3 glass-panel rounded-xl px-4 py-3 text-left hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&[data-state=open]>svg:first-child]:rotate-180">
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform" aria-hidden />
-                    <Users className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-                    <span className="flex-1 text-sm font-medium text-foreground">How to Win</span>
-                    <span className="type-eyebrow normal-case">{ws.howToWin.length} stakeholders</span>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                      {ws.howToWin.map((s, i) => (
-                        <div key={i} className="glass-panel rounded-xl px-4 py-4">
-                          <p className="type-eyebrow mb-1">{s.archetype}</p>
-                          <p className="text-sm font-semibold leading-snug text-foreground">{s.title}</p>
-                          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{s.concern}</p>
-                          <div className="mt-3 rounded-lg border border-primary/20 bg-primary/[0.04] px-3 py-2">
-                            <p className="text-xs leading-relaxed text-foreground">"{s.opener}"</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-              </div>
-            );
-          })()}
 
           {/* ── EXPORT ── */}
           {activeTab === "export" && (
@@ -837,6 +750,112 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
       </Tabs>
 
       {/* ── Feasibility Modal ── */}
+      {/* ── Win Strategy Modal ── */}
+      {(() => {
+        const ws = winStrategyData[queryKey ?? ""] ?? null;
+        const obsCard = winStrategyModal
+          ? (ws?.whyOBS.find((c) => c.solution === winStrategyModal.product) ?? null)
+          : null;
+        return (
+          <Dialog open={!!winStrategyModal} onOpenChange={(open) => { if (!open) setWinStrategyModal(null); }}>
+            <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="leading-snug tracking-tight">
+                  {winStrategyModal?.product}
+                </DialogTitle>
+                <DialogDescription>Win Strategy</DialogDescription>
+              </DialogHeader>
+              {ws && winStrategyModal && (
+                <div className="mt-2 space-y-6">
+
+                  {/* Why Now */}
+                  <div>
+                    <p className="type-eyebrow mb-2 flex items-center gap-1.5">
+                      <AlertCircle className="h-3 w-3 text-primary" aria-hidden /> Why Now
+                    </p>
+                    <div className="space-y-2">
+                      {ws.whyNow.map((sig, i) => (
+                        <div key={i} className="glass-panel rounded-xl px-4 py-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium leading-snug text-foreground">{sig.title}</p>
+                              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{sig.description}</p>
+                            </div>
+                            <div className="flex shrink-0 flex-col items-end gap-1.5">
+                              <span className={cn(
+                                "inline-flex items-center rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em]",
+                                sig.urgency === "Critical" && "text-red-600 bg-red-50 border-red-200/80",
+                                sig.urgency === "High" && "text-amber-600 bg-amber-50 border-amber-200/80",
+                                sig.urgency === "Medium" && "text-yellow-700 bg-yellow-50 border-yellow-200/80",
+                              )}>
+                                {sig.urgency}
+                              </span>
+                              {sig.daysUntilDeadline !== undefined && (
+                                <span className={cn(
+                                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold tabular-nums",
+                                  sig.daysUntilDeadline <= 30
+                                    ? "border-red-200/80 bg-red-50 text-red-600"
+                                    : "border-black/[0.08] bg-[#fafafc] text-muted-foreground"
+                                )}>
+                                  <Calendar className="h-2.5 w-2.5" aria-hidden />
+                                  {sig.daysUntilDeadline}d
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Why OBS — only if a card matches this solution */}
+                  {obsCard && (
+                    <div>
+                      <p className="type-eyebrow mb-2 flex items-center gap-1.5">
+                        <ShieldCheck className="h-3 w-3 text-primary" aria-hidden /> Why OBS
+                      </p>
+                      <div className="glass-panel rounded-xl px-4 py-4">
+                        <p className="type-eyebrow normal-case mb-2 text-muted-foreground">
+                          vs {obsCard.competitors.join(" · ")}
+                        </p>
+                        <ul className="space-y-2">
+                          {obsCard.differentiators.map((d, j) => (
+                            <li key={j} className="flex items-start gap-2.5 text-sm leading-relaxed">
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                              <span className="text-foreground">{d}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* How to Win */}
+                  <div>
+                    <p className="type-eyebrow mb-2 flex items-center gap-1.5">
+                      <Users className="h-3 w-3 text-primary" aria-hidden /> How to Win
+                    </p>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {ws.howToWin.map((st, i) => (
+                        <div key={i} className="glass-panel rounded-xl px-4 py-4">
+                          <p className="type-eyebrow mb-1">{st.archetype}</p>
+                          <p className="text-sm font-semibold leading-snug text-foreground">{st.title}</p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{st.concern}</p>
+                          <div className="mt-3 rounded-lg border border-primary/20 bg-primary/[0.04] px-3 py-2">
+                            <p className="text-xs leading-relaxed text-foreground">"{st.opener}"</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
+
       <Dialog open={isFeasibilityOpen} onOpenChange={setIsFeasibilityOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
