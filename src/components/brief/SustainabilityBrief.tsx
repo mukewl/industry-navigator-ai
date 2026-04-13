@@ -10,6 +10,9 @@ import {
   ChevronRight,
   Leaf,
   CheckCircle2,
+  AlertCircle,
+  Users,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,11 +32,13 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { SolutionDetail, SolutionData } from "./SolutionDetail";
 import { briefData } from "@/data/briefData";
+import { winStrategyData } from "@/data/winStrategyData";
 import { cn } from "@/lib/utils";
 
 interface SustainabilityBriefProps {
   companyName: string;
-  onBack: () => void;
+  onBack: (returnTo: string) => void;
+  returnTo: string;
 }
 
 interface CustomSolution {
@@ -44,7 +49,7 @@ interface CustomSolution {
   feasibilityNotes: string;
 }
 
-const TAB_ORDER = ["overview", "challenges", "solutions", "nextsteps", "export"] as const;
+const TAB_ORDER = ["overview", "challenges", "solutions", "nextsteps", "winstrategy", "export"] as const;
 type TabId = (typeof TAB_ORDER)[number];
 
 type ContactEntry = (typeof briefData)[keyof typeof briefData]["contacts"][number];
@@ -78,7 +83,7 @@ Best regards,
 Orange Business`;
 }
 
-export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBriefProps) => {
+export const SustainabilityBrief = ({ companyName, onBack, returnTo }: SustainabilityBriefProps) => {
   const { toast } = useToast();
   const [selectedSolution, setSelectedSolution] = useState<SolutionData | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
@@ -163,7 +168,7 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
             type="button"
             variant="ghost"
             size="sm"
-            onClick={onBack}
+            onClick={() => onBack(returnTo)}
             className="h-9 min-w-9 shrink-0 rounded-lg px-2 text-muted-foreground hover:bg-black/[0.05]"
             aria-label="Back to dashboard"
           >
@@ -182,7 +187,7 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
             This demo includes profiles for Renault, Carrefour, Stellantis, TotalEnergies,
             Saint-Gobain, Schneider Electric, Veolia, Air France-KLM, Danone, and L&apos;Oréal.
           </p>
-          <Button type="button" className="mt-8" onClick={onBack}>
+          <Button type="button" className="mt-8" onClick={() => onBack(returnTo)}>
             Back to dashboard
           </Button>
         </div>
@@ -215,7 +220,7 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
             type="button"
             variant="ghost"
             size="sm"
-            onClick={onBack}
+            onClick={() => onBack(returnTo)}
             className="h-9 min-w-9 shrink-0 rounded-lg px-2 text-muted-foreground hover:bg-black/[0.05]"
             aria-label="Back to dashboard"
           >
@@ -241,6 +246,7 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
               ["challenges", "Challenges"],
               ["solutions", "Solutions"],
               ["nextsteps", "Next Steps"],
+              ["winstrategy", "Win Strategy"],
               ["export", "Export"],
             ] as const
           ).map(([v, label]) => (
@@ -692,6 +698,116 @@ export const SustainabilityBrief = ({ companyName, onBack }: SustainabilityBrief
               })}
             </div>
           )}
+
+          {/* ── WIN STRATEGY ── */}
+          {activeTab === "winstrategy" && (() => {
+            const ws = winStrategyData[queryKey ?? ""];
+            if (!ws) return <p className="text-sm text-muted-foreground">No win strategy available.</p>;
+            return (
+              <div className="space-y-4 focus-visible:outline-none">
+
+                {/* Section 1: Why Now */}
+                <Collapsible defaultOpen>
+                  <CollapsibleTrigger className="group flex w-full items-center gap-3 glass-panel rounded-xl px-4 py-3 text-left hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&[data-state=open]>svg:first-child]:rotate-180">
+                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform" aria-hidden />
+                    <AlertCircle className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                    <span className="flex-1 text-sm font-medium text-foreground">Why Now</span>
+                    <span className="type-eyebrow normal-case">{ws.whyNow.length} signals</span>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="mt-2 space-y-3">
+                      {ws.whyNow.map((signal, i) => (
+                        <div key={i} className="glass-panel rounded-xl px-4 py-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium leading-snug text-foreground">{signal.title}</p>
+                              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{signal.description}</p>
+                            </div>
+                            <div className="flex shrink-0 flex-col items-end gap-1.5">
+                              <span className={cn(
+                                "inline-flex items-center rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em]",
+                                signal.urgency === "Critical" && "text-red-600 bg-red-50 border-red-200/80",
+                                signal.urgency === "High" && "text-amber-600 bg-amber-50 border-amber-200/80",
+                                signal.urgency === "Medium" && "text-yellow-700 bg-yellow-50 border-yellow-200/80",
+                              )}>
+                                {signal.urgency}
+                              </span>
+                              {signal.daysUntilDeadline !== undefined && (
+                                <span className={cn(
+                                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold tabular-nums",
+                                  signal.daysUntilDeadline <= 30
+                                    ? "border-red-200/80 bg-red-50 text-red-600"
+                                    : "border-black/[0.08] bg-[#fafafc] text-muted-foreground"
+                                )}>
+                                  <Calendar className="h-2.5 w-2.5" aria-hidden />
+                                  {signal.daysUntilDeadline}d
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Section 2: Why OBS */}
+                <Collapsible defaultOpen>
+                  <CollapsibleTrigger className="group flex w-full items-center gap-3 glass-panel rounded-xl px-4 py-3 text-left hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&[data-state=open]>svg:first-child]:rotate-180">
+                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform" aria-hidden />
+                    <ShieldCheck className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                    <span className="flex-1 text-sm font-medium text-foreground">Why OBS</span>
+                    <span className="type-eyebrow normal-case">{ws.whyOBS.length} solutions</span>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="mt-2 space-y-4">
+                      {ws.whyOBS.map((card, i) => (
+                        <div key={i} className="glass-panel rounded-xl px-4 py-4">
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <p className="text-sm font-semibold leading-snug text-foreground">{card.solution}</p>
+                            <p className="type-eyebrow normal-case shrink-0">vs {card.competitors.join(' · ')}</p>
+                          </div>
+                          <ul className="space-y-2">
+                            {card.differentiators.map((d, j) => (
+                              <li key={j} className="flex items-start gap-2.5 text-sm leading-relaxed">
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                                <span className="text-foreground">{d}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Section 3: How to Win */}
+                <Collapsible defaultOpen>
+                  <CollapsibleTrigger className="group flex w-full items-center gap-3 glass-panel rounded-xl px-4 py-3 text-left hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&[data-state=open]>svg:first-child]:rotate-180">
+                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform" aria-hidden />
+                    <Users className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                    <span className="flex-1 text-sm font-medium text-foreground">How to Win</span>
+                    <span className="type-eyebrow normal-case">{ws.howToWin.length} stakeholders</span>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                      {ws.howToWin.map((s, i) => (
+                        <div key={i} className="glass-panel rounded-xl px-4 py-4">
+                          <p className="type-eyebrow mb-1">{s.archetype}</p>
+                          <p className="text-sm font-semibold leading-snug text-foreground">{s.title}</p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{s.concern}</p>
+                          <div className="mt-3 rounded-lg border border-primary/20 bg-primary/[0.04] px-3 py-2">
+                            <p className="text-xs leading-relaxed text-foreground">"{s.opener}"</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+
+              </div>
+            );
+          })()}
 
           {/* ── EXPORT ── */}
           {activeTab === "export" && (

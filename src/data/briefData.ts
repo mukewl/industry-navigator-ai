@@ -1,4 +1,5 @@
 import {
+  type LucideIcon,
   Truck,
   Zap,
   Globe,
@@ -13,6 +14,13 @@ import {
   Droplets,
   FlameKindling,
 } from "lucide-react";
+
+export interface Contact {
+  role: string;
+  icon: LucideIcon;
+  name?: string;
+  email?: string;
+}
 
 export const briefData = {
   renault: {
@@ -221,7 +229,7 @@ export const briefData = {
       { role: "VP of Manufacturing Operations", icon: Building2 },
       { role: "Head of Fleet and Mobility Services", icon: Truck },
       { role: "Group Procurement Director", icon: Users },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "EV Lifecycle Intelligence Platform",
@@ -445,7 +453,7 @@ export const briefData = {
       { role: "VP of Store Operations", icon: Store },
       { role: "Head of Supply Chain and Logistics", icon: Truck },
       { role: "Director of Digital Transformation", icon: Laptop },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "Predictive Cold Chain AI",
@@ -669,7 +677,7 @@ export const briefData = {
       { role: "VP of Manufacturing Operations", icon: Building2 },
       { role: "Head of Electrification Strategy", icon: Zap },
       { role: "Group Supply Chain Director", icon: Globe },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "Multi-Brand Battery Digital Passport Hub",
@@ -893,7 +901,7 @@ export const briefData = {
       { role: "VP of Operational Excellence", icon: Building2 },
       { role: "Head of ESG Reporting & Investor Relations", icon: Globe },
       { role: "Director of Energy Transition", icon: Zap },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "Refinery Decarbonisation Digital Twin",
@@ -1117,7 +1125,7 @@ export const briefData = {
       { role: "VP of Industrial Operations", icon: Building2 },
       { role: "Head of Product Compliance & Certification", icon: Globe },
       { role: "Group Procurement Director", icon: Users },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "Furnace Hydrogen Transition Simulator",
@@ -1341,7 +1349,7 @@ export const briefData = {
       { role: "VP Supply Chain & Procurement", icon: Users },
       { role: "Head of Circular Economy", icon: Recycle },
       { role: "Director of Digital Infrastructure", icon: Laptop },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "Avoided Emissions Intelligence Platform",
@@ -1565,7 +1573,7 @@ export const briefData = {
       { role: "VP Water Treatment Operations", icon: Droplets },
       { role: "Head of Fleet Management", icon: Truck },
       { role: "Director of Regulatory Affairs", icon: Building2 },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "PFAS Real-Time Sentinel Network",
@@ -1789,7 +1797,7 @@ export const briefData = {
       { role: "VP Ground Operations", icon: Building2 },
       { role: "Head of SAF Procurement & Strategy", icon: Plane },
       { role: "Director of Fleet & Engineering", icon: Truck },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "SAF Chain-of-Custody Intelligence Hub",
@@ -2013,7 +2021,7 @@ export const briefData = {
       { role: "VP Agricultural Sourcing & Supply Chain", icon: Globe },
       { role: "Head of Packaging Sustainability", icon: Recycle },
       { role: "Director of Industrial Operations", icon: Building2 },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "Farm-Level Carbon Intelligence Platform",
@@ -2237,7 +2245,7 @@ export const briefData = {
       { role: "VP Global Sourcing & Procurement", icon: Globe },
       { role: "Head of Packaging Innovation", icon: Recycle },
       { role: "Director of Industrial Excellence", icon: Building2 },
-    ],
+    ] as Contact[],
     customSolutions: [
       {
         title: "Ingredient Deforestation Sentinel",

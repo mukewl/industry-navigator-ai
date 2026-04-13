@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { briefData } from "@/data/briefData";
+import { briefData, type Contact } from "@/data/briefData";
 import {
   BRIEF_COMPANY_KEYS,
   sumContractValueLabel,
@@ -68,10 +68,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
   const urgencyValueClass =
     topUrgency === "Critical" ? "text-red-500" : topUrgency === "High" ? "text-amber-500" : "";
 
-  const primaryContact = data.contacts[0] as (typeof data.contacts)[0] & {
-    name?: string;
-    email?: string;
-  };
+  const primaryContact: Contact | undefined = data.contacts[0];
 
   const topPlay = [...data.solutions].sort((a, b) => b.impactScore - a.impactScore)[0];
 

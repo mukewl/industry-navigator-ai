@@ -9,6 +9,7 @@ import { RoadmapView } from "@/components/dashboard/RoadmapView";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [previousTab, setPreviousTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -18,6 +19,7 @@ const Index = () => {
     if (!query) return;
     setSearchQuery(query);
     setHasSearched(true);
+    setPreviousTab(activeTab);
     setActiveTab("brief");
   };
 
@@ -44,6 +46,7 @@ const Index = () => {
           onViewBrief={(companyName) => {
             setSearchQuery(companyName);
             setHasSearched(true);
+            setPreviousTab(activeTab);
             setActiveTab("brief");
           }}
         />
@@ -60,7 +63,8 @@ const Index = () => {
       return (
         <SustainabilityBrief
           companyName={searchQuery}
-          onBack={() => setActiveTab("dashboard")}
+          onBack={(returnTo) => setActiveTab(returnTo)}
+          returnTo={previousTab}
         />
       );
     }
@@ -82,7 +86,8 @@ const Index = () => {
       return (
         <SustainabilityBrief
           companyName={briefTabMap[activeTab]}
-          onBack={() => setActiveTab("dashboard")}
+          onBack={(returnTo) => setActiveTab(returnTo)}
+          returnTo={previousTab}
         />
       );
     }
