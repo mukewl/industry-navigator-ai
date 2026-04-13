@@ -49,7 +49,7 @@ interface CustomSolution {
   feasibilityNotes: string;
 }
 
-const TAB_ORDER = ["overview", "challenges", "solutions", "nextsteps", "winstrategy", "export"] as const;
+const TAB_ORDER = ["overview", "challenges", "solutions", "winstrategy", "export"] as const;
 type TabId = (typeof TAB_ORDER)[number];
 
 type ContactEntry = (typeof briefData)[keyof typeof briefData]["contacts"][number];
@@ -245,7 +245,6 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
               ["overview", "Overview"],
               ["challenges", "Challenges"],
               ["solutions", "Solutions"],
-              ["nextsteps", "Next Steps"],
               ["winstrategy", "Win Strategy"],
               ["export", "Export"],
             ] as const
@@ -366,48 +365,6 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                 </div>
               </section>
 
-              {/* ── Key contacts ── */}
-              <section className="mt-6">
-                <p className="type-section-label mb-3">Key contacts</p>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {data.contacts.map((c) => {
-                    const Icon = c.icon;
-                    const linkedInUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(c.role + " " + companyName)}`;
-                    return (
-                      <div
-                        key={c.role}
-                        className="glass-panel flex flex-col gap-3 rounded-xl p-4"
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/[0.06] bg-[#fafafc]">
-                            <Icon className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
-                          </div>
-                          <span className="text-sm font-medium leading-snug text-foreground">
-                            {c.role}
-                          </span>
-                        </div>
-                        <div className="flex gap-2">
-                          <a
-                            href={linkedInUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex h-7 items-center rounded-md border border-black/[0.08] bg-[#fafafc] px-2.5 text-xs font-medium text-foreground transition-colors hover:bg-black/[0.05]"
-                          >
-                            LinkedIn
-                          </a>
-                          <button
-                            type="button"
-                            onClick={() => { setDraftContact(c); setIsDraftOpen(true); }}
-                            className="inline-flex h-7 items-center rounded-md bg-primary/10 px-2.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
-                          >
-                            Draft Email
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
 
               {/* ── Top recommended play ── */}
               <section className="mt-6">
@@ -448,46 +405,6 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                 </div>
               </section>
 
-              {/* ── OBS Custom Capabilities preview ── */}
-              {(() => {
-                const customSolutions = (data as any).customSolutions as CustomSolution[] | undefined;
-                if (!customSolutions?.length) return null;
-                return (
-                  <section className="mt-6">
-                    <p className="type-section-label mb-3">OBS Custom Capabilities</p>
-                    <div className="flex flex-col gap-2.5">
-                      {customSolutions.map((cs, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => {
-                            setFocusedCustomIdx(idx);
-                            handleTabChange("solutions");
-                          }}
-                          className="glass-panel group flex w-full items-start gap-3 rounded-xl px-4 py-3 text-left transition-[box-shadow,background] duration-150 hover:bg-white hover:shadow-apple-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        >
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium leading-snug tracking-tight text-foreground">
-                              {cs.title}
-                            </p>
-                            <div className="mt-1.5 flex flex-wrap gap-1">
-                              {cs.divisions.map((d) => (
-                                <span
-                                  key={d}
-                                  className="rounded-full border border-sky-200/70 bg-sky-50 px-1.5 py-0.5 text-[0.625rem] font-medium text-sky-700"
-                                >
-                                  {d}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100" aria-hidden />
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                );
-              })()}
 
             </div>
           )}
@@ -667,38 +584,6 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
             </div>
           )}
 
-          {/* ── NEXT STEPS ── */}
-          {activeTab === "nextsteps" && (
-            <div className="focus-visible:outline-none">
-              {data.solutions.map((s) => {
-                const steps = (s as any).details?.nextSteps as string[] | undefined;
-                if (!steps?.length) return null;
-                const Icon = s.icon;
-                return (
-                  <section key={s.challengeId} className="mb-8 last:mb-0">
-                    <div className="mb-3 flex items-center gap-2">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-black/[0.06] bg-[#fafafc]">
-                        <Icon className="h-3 w-3 text-primary" aria-hidden />
-                      </div>
-                      <p className="type-section-label">{s.product}</p>
-                    </div>
-                    <ol className="space-y-2">
-                      {steps.slice(0, 3).map((step, idx) => (
-                        <li
-                          key={idx}
-                          className="glass-panel flex items-start gap-3 rounded-xl px-4 py-3"
-                        >
-                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                          <span className="text-sm leading-snug text-foreground">{step}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </section>
-                );
-              })}
-            </div>
-          )}
-
           {/* ── WIN STRATEGY ── */}
           {activeTab === "winstrategy" && (() => {
             const ws = winStrategyData[queryKey ?? ""];
@@ -812,6 +697,34 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           {/* ── EXPORT ── */}
           {activeTab === "export" && (
             <div className="space-y-12 focus-visible:outline-none">
+              {/* ── Next Steps ── */}
+              <section>
+                <h2 className="type-section-label mb-4">Next Steps</h2>
+                {data.solutions.map((s) => {
+                  const steps = (s as any).details?.nextSteps as string[] | undefined;
+                  if (!steps?.length) return null;
+                  const Icon = s.icon;
+                  return (
+                    <section key={s.challengeId} className="mb-8 last:mb-0">
+                      <div className="mb-3 flex items-center gap-2">
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-black/[0.06] bg-[#fafafc]">
+                          <Icon className="h-3 w-3 text-primary" aria-hidden />
+                        </div>
+                        <p className="type-section-label">{s.product}</p>
+                      </div>
+                      <ol className="space-y-2">
+                        {steps.slice(0, 3).map((step, idx) => (
+                          <li key={idx} className="glass-panel flex items-start gap-3 rounded-xl px-4 py-3">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                            <span className="text-sm leading-snug text-foreground">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </section>
+                  );
+                })}
+              </section>
+
               <section className="glass-panel-strong space-y-6 rounded-xl p-8 sm:p-10">
                 <h2 className="type-section-label">Pitch deck</h2>
                 <div className="space-y-2">
