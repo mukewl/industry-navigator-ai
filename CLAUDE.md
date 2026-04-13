@@ -156,12 +156,13 @@ src/
 - [x] **Pipeline** — Five named steps with progress animation and sidebar "parallel agents" / live stats (illustrative).
 - [x] **Brief — tab animation** — Tab switching uses directional CSS slide animation (right for forward, left for backward). Tabs component is controlled; content re-mounts on switch via `key`.
 - [x] **Brief — Overview tab** — Meta row + pressure/play table + **impact score bar chart** (Recharts) + **Top Recommended Play card** (highest impactScore, contract value, CO₂ impact, link to playbook). Key Contacts and OBS Custom Capabilities (customSolutions preview) have been **removed** from this tab.
-- [x] **Brief — Challenges tab** — Collapsible cards with urgency badges.
+- [x] **Brief — Challenges tab** — Redesigned as a table with columns: #, Challenge, Urgency badge, Solution Type (pulled from matched solution's `product` field), Description (truncated). Replaces the previous collapsible cards.
 - [x] **Brief — Solutions tab** — Cards → SolutionDetail playbook view. **Win Strategy tab built** inside SolutionDetail (per-solution win strategy content). Win Strategy is currently being **moved into each solution card** and the standalone Win Strategy tab is being **removed** — in progress on `final-changes` branch.
 - [x] **Brief — Export tab** — Checkboxes, PowerPoint/Canva toasts, Save to CRM toast, confidence bar, benchmarks, targets. **Next Steps** section moved here from Overview.
 - [x] **Brief — empty state** — Proper "no brief available" screen for unrecognised companies; lists all 10 supported names.
 - [x] **POC card** — Fixed.
 - [x] **Back button** — Fixed (returns correctly from SolutionDetail to Solutions list).
+- [x] **Sidebar — Library with Recent + solution-type groups** — Recent section (up to 3, persisted to localStorage) + three collapsible solution-type groups (Smart Eco Energy, Evolution Platform, Ocean + Circular Mobility). Group membership is derived dynamically from `briefData` — a company only appears under a group if it has a solution whose `product` field matches. Groups with no members are hidden.
 - [x] **Roadmap** — Static Phase 2 feature list.
 - [x] **System architecture** — Separate informational view.
 - [x] **Responsive shell** — Sidebar (lg+), sheet + header on small screens.
@@ -171,15 +172,25 @@ src/
 
 - [ ] **Win Strategy → solution cards** — Moving Win Strategy content out of the standalone tab and into each individual solution card inside SolutionDetail. Win Strategy tab will be removed once complete. **Do not merge to `master` until finished.**
 
+### Upcoming / to do
+
+- [ ] **Score tooltip on hover** — Impact score bar chart (Overview tab) should show a tooltip on bar hover with score value and context.
+- [ ] **Competitor info under non-portfolio solutions** — For challenges not addressed by an OBS solution, surface competitor landscape / market context in the Solutions or Challenges view.
+- [ ] **Existing vs New Prospect tag + last updated + refresh** — Overview meta row should show whether the account is an existing client or a new prospect, a "last updated" timestamp, and a manual refresh trigger.
+- [ ] **Dashboard advanced filters** — AccountDashboard client list needs filter controls (sector, urgency, contract size, etc.) beyond the current static two-client view.
+- [ ] **Presentation details card in dashboard** — A card or panel in AccountDashboard surfacing presentation-ready deal highlights (top play, contract value, next step) for each client.
+- [ ] **Architecture page** — `SystemArchitecture` view is a placeholder; needs real content (agent topology diagram, data flow, integration points).
+
 ---
 
 ## Recently changed files (current session — 2026-04-14)
 
 | File | What changed |
 |------|-------------|
-| `src/components/search/SearchPanel.tsx` | Stripped to search input + Solution Type filter only. Removed: Recent Briefs section, Available Companies (sector-grouped list), ESG Risk filter row, Sector filter row, and all related dead code (`recentBriefs`, `sectorGroups`, `companyFilterMeta`, `getMatchDimScore`, `sortedSectorGroups`, unused imports) |
-| `src/components/brief/SustainabilityBrief.tsx` | Removed Key Contacts pills and OBS Custom Capabilities preview from Overview tab; Next Steps moved into Export tab; Win Strategy tab built inside SolutionDetail |
+| `src/components/search/SearchPanel.tsx` | Stripped to search input + Solution Type filter only. Removed: Recent Briefs section, Available Companies (sector-grouped list), ESG Risk filter row, Sector filter row, and all related dead code |
+| `src/components/brief/SustainabilityBrief.tsx` | Overview: removed Key Contacts + OBS Capabilities, moved Next Steps → Export, added Win Strategy tab in SolutionDetail. Challenges: replaced collapsible cards with table (columns: #, Challenge, Urgency, Solution Type, Description). Removed `Collapsible`/`ChevronDown` imports. |
 | `src/components/brief/SolutionDetail.tsx` | Win Strategy tab added; POC card fixed; back button fixed |
+| `src/components/layout/Sidebar.tsx` | Library section restructured: Recent (localStorage, up to 3) + solution-type groups derived dynamically from `briefData` (company appears in group only if it has a matching `product`). Removed hardcoded id arrays; added `COMPANY_KEY_TO_TAB` map and `briefData` import. |
 
 ## Previously changed files (prior sessions)
 
@@ -261,10 +272,9 @@ They may be leftovers from an earlier layout or Lovable scaffold. Safe to remove
 
 ### Highest priority (product completeness)
 
-1. **Sidebar company list** — Only Renault and Carrefour appear in the sidebar Library and as direct brief links. The other 8 companies are accessible via search but not via the sidebar. Either expand the sidebar list to all 10 or add a "Browse all" entry point.
-2. **`briefMetrics.ts` covers only 2 companies** — Dashboard stats (contract sum, CO₂ label) only aggregate Renault + Carrefour. If the dashboard expands to show all clients, this file needs updating.
-3. **Search `isLoading`** — `Index.tsx` never sets `isLoading` to true; the "Running" button state in `SearchPanel` is dead. Wire the loading state through the pipeline transition.
-4. **Export** — Implement real PowerPoint / Canva generation; wire checkboxes to actual selection state (currently `defaultChecked` only).
+1. **`briefMetrics.ts` covers only 2 companies** — Dashboard stats (contract sum, CO₂ label) only aggregate Renault + Carrefour. If the dashboard expands to show all clients, this file needs updating.
+2. **Search `isLoading`** — `Index.tsx` never sets `isLoading` to true; the "Running" button state in `SearchPanel` is dead. Wire the loading state through the pipeline transition.
+3. **Export** — Implement real PowerPoint / Canva generation; wire checkboxes to actual selection state (currently `defaultChecked` only).
 
 ### Product / backend
 
@@ -318,4 +328,4 @@ npm run lint
 
 **Active branch:** `final-changes` — all current and pending work lives here. **Do not touch `master`** until the Win Strategy migration is complete and signed off.
 
-*Last updated: 2026-04-14. Reflects SearchPanel strip-down, Overview removals (Key Contacts, OBS Capabilities), Next Steps → Export, Win Strategy tab built, POC card + back button fixes. Win Strategy → solution cards migration in progress.*
+*Last updated: 2026-04-14. Reflects SearchPanel strip-down, Overview removals, Next Steps → Export, Win Strategy tab built, POC card + back button fixes, Sidebar Library restructured with data-driven solution-type groups, Challenges tab redesigned as table. Win Strategy → solution cards migration in progress. Upcoming: score tooltip, competitor info, Existing/New Prospect tag, dashboard filters, presentation card, architecture page content.*

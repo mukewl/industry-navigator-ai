@@ -6,7 +6,6 @@ import {
   Presentation,
   Palette,
   ShieldCheck,
-  ChevronDown,
   ChevronRight,
   Leaf,
   CheckCircle2,
@@ -16,11 +15,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -411,42 +405,55 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
 
           {/* ── CHALLENGES ── */}
           {activeTab === "challenges" && (
-            <div className="space-y-4 focus-visible:outline-none">
-              {data.challenges.map((c) => {
-                const Icon = c.icon;
-                return (
-                  <Collapsible key={c.id} className="glass-panel rounded-xl">
-                    <CollapsibleTrigger className="group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&[data-state=open]>svg:first-child]:rotate-180">
-                      <ChevronDown
-                        className="h-4 w-4 shrink-0 text-muted-foreground transition-transform"
-                        aria-hidden
-                      />
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-black/[0.06] bg-[#fafafc]">
-                        <Icon className="h-4 w-4 text-muted-foreground" aria-hidden />
-                      </div>
-                      <span className="min-w-0 flex-1 text-sm font-medium leading-snug tracking-tight text-foreground">
-                        {c.title}
-                      </span>
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "type-eyebrow h-5 shrink-0 border px-1.5 py-0 font-medium normal-case tracking-normal",
-                          c.urgencyColor
-                        )}
-                      >
-                        {c.urgency}
-                      </Badge>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="px-3 pb-3 pl-[52px] pr-4 pt-0">
-                        <p className="max-w-prose border-l-2 border-primary/25 pl-3 text-base font-normal leading-[1.6] text-muted-foreground">
-                          {c.description}
-                        </p>
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                );
-              })}
+            <div className="focus-visible:outline-none">
+              <div className="glass-panel overflow-hidden rounded-xl">
+                <table className="w-full border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b border-black/[0.06]">
+                      <th className="type-eyebrow w-10 px-4 py-3 text-left text-muted-foreground">#</th>
+                      <th className="type-eyebrow px-4 py-3 text-left text-muted-foreground">Challenge</th>
+                      <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Urgency</th>
+                      <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Solution Type</th>
+                      <th className="type-eyebrow px-4 py-3 text-left text-muted-foreground">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.challenges.map((c) => {
+                      const solution = data.solutions.find((s) => s.challengeId === c.id);
+                      return (
+                        <tr
+                          key={c.id}
+                          className="border-b border-black/[0.04] transition-colors last:border-0 hover:bg-black/[0.02]"
+                        >
+                          <td className="px-4 py-3 font-mono text-xs tabular-nums text-muted-foreground">
+                            {c.id}
+                          </td>
+                          <td className="px-4 py-3 font-medium leading-snug tracking-tight text-foreground">
+                            {c.title}
+                          </td>
+                          <td className="px-4 py-3">
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "type-eyebrow h-5 shrink-0 border px-1.5 py-0 font-medium normal-case tracking-normal",
+                                c.urgencyColor
+                              )}
+                            >
+                              {c.urgency}
+                            </Badge>
+                          </td>
+                          <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
+                            {solution?.product ?? "—"}
+                          </td>
+                          <td className="max-w-xs px-4 py-3 text-xs text-muted-foreground">
+                            <span className="block truncate">{c.description}</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
