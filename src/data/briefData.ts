@@ -29,6 +29,8 @@ export const briefData = {
     sources: 34,
     sector: "Automotive",
     esgRiskLevel: "High",
+    clientStatus: "existing" as const,
+    presentation: { status: "Presented" as const, date: "12 Feb 2026", solution: "Ocean + Circular Mobility" },
     challenges: [
       {
         id: 1,
@@ -253,6 +255,8 @@ export const briefData = {
     sources: 41,
     sector: "Retail & Consumer",
     esgRiskLevel: "Medium",
+    clientStatus: "existing" as const,
+    presentation: { status: "Presented" as const, date: "28 Jan 2026", solution: "Smart Eco Energy" },
     challenges: [
       {
         id: 1,
@@ -477,6 +481,8 @@ export const briefData = {
     sources: 38,
     sector: "Automotive",
     esgRiskLevel: "High",
+    clientStatus: "prospect" as const,
+    presentation: { status: "Scheduled" as const, date: "30 Apr 2026", solution: "Ocean + Circular Mobility" },
     challenges: [
       {
         id: 1,
@@ -701,6 +707,8 @@ export const briefData = {
     sources: 52,
     sector: "Energy & Resources",
     esgRiskLevel: "Critical",
+    clientStatus: "existing" as const,
+    presentation: { status: "Scheduled" as const, date: "22 Apr 2026", solution: "Smart Eco Energy" },
     challenges: [
       {
         id: 1,
@@ -925,6 +933,8 @@ export const briefData = {
     sources: 29,
     sector: "Industry & Technology",
     esgRiskLevel: "High",
+    clientStatus: "prospect" as const,
+    presentation: { status: "Not Started" as const, date: "N/A", solution: "N/A" },
     challenges: [
       {
         id: 1,
@@ -1149,6 +1159,8 @@ export const briefData = {
     sources: 44,
     sector: "Industry & Technology",
     esgRiskLevel: "Medium",
+    clientStatus: "existing" as const,
+    presentation: { status: "Presented" as const, date: "5 Mar 2026", solution: "Evolution Platform" },
     challenges: [
       {
         id: 1,
@@ -1373,6 +1385,8 @@ export const briefData = {
     sources: 36,
     sector: "Energy & Resources",
     esgRiskLevel: "Critical",
+    clientStatus: "prospect" as const,
+    presentation: { status: "Not Started" as const, date: "N/A", solution: "N/A" },
     challenges: [
       {
         id: 1,
@@ -1597,6 +1611,8 @@ export const briefData = {
     sources: 47,
     sector: "Aviation",
     esgRiskLevel: "Critical",
+    clientStatus: "prospect" as const,
+    presentation: { status: "Not Started" as const, date: "N/A", solution: "N/A" },
     challenges: [
       {
         id: 1,
@@ -1821,6 +1837,8 @@ export const briefData = {
     sources: 38,
     sector: "Retail & Consumer",
     esgRiskLevel: "High",
+    clientStatus: "prospect" as const,
+    presentation: { status: "Not Started" as const, date: "N/A", solution: "N/A" },
     challenges: [
       {
         id: 1,
@@ -2045,6 +2063,8 @@ export const briefData = {
     sources: 41,
     sector: "Retail & Consumer",
     esgRiskLevel: "Medium",
+    clientStatus: "prospect" as const,
+    presentation: { status: "Not Started" as const, date: "N/A", solution: "N/A" },
     challenges: [
       {
         id: 1,

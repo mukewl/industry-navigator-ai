@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { Plus, TrendingUp, Leaf, ShieldAlert, Target, Mail, ArrowRight } from "lucide-react";
+import { Plus, TrendingUp, Leaf, ShieldAlert, Target, Mail, ArrowRight, Presentation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { briefData, type Contact } from "@/data/briefData";
 import {
@@ -11,6 +18,16 @@ import {
   aggregateCo2Label,
   type BriefCompanyKey,
 } from "@/lib/briefMetrics";
+
+const SECTOR_OPTIONS = [
+  { label: "All sectors",    value: "__all__" },
+  { label: "Automotive",     value: "Automotive" },
+  { label: "Retail",         value: "Retail & Consumer" },
+  { label: "Energy",         value: "Energy & Resources" },
+  { label: "Industrial",     value: "Industry & Technology" },
+  { label: "Travel",         value: "Aviation" },
+  { label: "Food & Beverage",value: "Food & Beverage" },
+] as const;
 import {
   ResponsiveContainer,
   BarChart,
@@ -62,6 +79,22 @@ interface AccountDashboardProps {
 
 export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboardProps) => {
   const [selected, setSelected] = useState<BriefCompanyKey>("renault");
+  const [filterSector,     setFilterSector]     = useState("__all__");
+  const [filterClient,     setFilterClient]     = useState("");
+  const [filterConfidence, setFilterConfidence] = useState("");
+  const [filterEsg,        setFilterEsg]        = useState("");
+
+  const filteredKeys = BRIEF_COMPANY_KEYS.filter((key) => {
+    const c = briefData[key];
+    if (filterSector !== "__all__" && c.sector !== filterSector) return false;
+    if (filterClient && (c as any).clientStatus !== filterClient) return false;
+    if (filterConfidence === "high"   && c.score < 80) return false;
+    if (filterConfidence === "medium" && (c.score < 60 || c.score >= 80)) return false;
+    if (filterConfidence === "low"    && c.score >= 60) return false;
+    if (filterEsg && c.esgRiskLevel !== filterEsg) return false;
+    return true;
+  });
+
   const data = briefData[selected];
   const barRows = revenueProjection(data);
   const topUrgency = data.challenges[0]?.urgency ?? "—";
@@ -82,8 +115,95 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
             New profile
           </Button>
         </div>
+
+        {/* Filter bar */}
+        <div className="shrink-0 space-y-2.5 border-b border-black/[0.06] px-3 py-3">
+          <Select value={filterSector} onValueChange={setFilterSector}>
+            <SelectTrigger className="h-7 w-full border-black/[0.08] bg-white/60 text-[0.6875rem]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SECTOR_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value} className="text-[0.6875rem]">
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Client type */}
+          <div>
+            <p className="type-eyebrow mb-1">Client type</p>
+            <div className="flex flex-wrap gap-1">
+              {([["All", ""], ["Existing", "existing"], ["Prospect", "prospect"]] as const).map(([label, val]) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => setFilterClient(val)}
+                  className={cn(
+                    "rounded px-2 py-0.5 text-[0.625rem] font-medium transition-colors",
+                    filterClient === val
+                      ? "bg-primary/10 text-primary ring-1 ring-primary/20"
+                      : "text-muted-foreground hover:bg-black/[0.04]"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Confidence */}
+          <div>
+            <p className="type-eyebrow mb-1">Confidence</p>
+            <div className="flex flex-wrap gap-1">
+              {([["All", ""], ["High", "high"], ["Med", "medium"], ["Low", "low"]] as const).map(([label, val]) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => setFilterConfidence(val)}
+                  className={cn(
+                    "rounded px-2 py-0.5 text-[0.625rem] font-medium transition-colors",
+                    filterConfidence === val
+                      ? "bg-primary/10 text-primary ring-1 ring-primary/20"
+                      : "text-muted-foreground hover:bg-black/[0.04]"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ESG risk */}
+          <div>
+            <p className="type-eyebrow mb-1">ESG risk</p>
+            <div className="flex flex-wrap gap-1">
+              {([["All", ""], ["Critical", "Critical"], ["High", "High"], ["Med", "Medium"]] as const).map(([label, val]) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => setFilterEsg(val)}
+                  className={cn(
+                    "rounded px-2 py-0.5 text-[0.625rem] font-medium transition-colors",
+                    filterEsg === val
+                      ? "bg-primary/10 text-primary ring-1 ring-primary/20"
+                      : "text-muted-foreground hover:bg-black/[0.04]"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
-          {BRIEF_COMPANY_KEYS.map((key) => {
+          {filteredKeys.length === 0 ? (
+            <p className="px-2 py-6 text-center text-[0.75rem] italic text-muted-foreground/60">
+              No companies match filters
+            </p>
+          ) : filteredKeys.map((key) => {
             const c = briefData[key];
             const topRisk = c.challenges[0]?.urgency ?? "—";
             const topPlay = c.solutions[0]?.product ?? "—";
@@ -249,7 +369,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
         </div>
 
         {/* Revenue projection chart */}
-        <div className="flex-1 min-h-[160px]">
+        <div className="min-h-[160px]">
           <p className="type-section-label mb-4">Revenue projection (est.)</p>
           <div className="h-[160px] w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -285,6 +405,42 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
             </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Presentation Details */}
+        {(() => {
+          const pres = (data as any).presentation as { status: "Presented" | "Scheduled" | "Not Started"; date: string; solution: string } | undefined;
+          if (!pres) return null;
+          const badgeClass =
+            pres.status === "Presented"
+              ? "text-emerald-700 bg-emerald-50 border border-emerald-200/80"
+              : pres.status === "Scheduled"
+              ? "text-amber-600 bg-amber-50 border border-amber-200/80"
+              : "text-muted-foreground bg-black/[0.04] border border-black/[0.06]";
+          return (
+            <div className="rounded-xl border border-black/[0.06] bg-white/70 p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <Presentation className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+                <p className="type-section-label">Presentation Details</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-[0.75rem] text-muted-foreground">Status</p>
+                  <span className={`rounded-md px-2 py-0.5 text-[0.6875rem] font-medium ${badgeClass}`}>
+                    {pres.status}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-[0.75rem] text-muted-foreground">Date</p>
+                  <p className="text-[0.75rem] font-medium text-foreground">{pres.date}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-[0.75rem] text-muted-foreground">Solution</p>
+                  <p className="text-[0.75rem] font-medium text-foreground">{pres.solution}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* CTA */}
         <div className="mt-auto border-t border-black/[0.06] pt-6">

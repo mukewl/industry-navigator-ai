@@ -12,10 +12,17 @@ import {
   AlertCircle,
   Users,
   Calendar,
+  RefreshCw,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -54,6 +61,75 @@ function impactBadgeClass(score: number): string {
   return "text-red-600 bg-red-50 border border-red-200/80";
 }
 
+// Competitor names keyed by custom solution title
+const CUSTOM_SOLUTION_COMPETITORS: Record<string, [string, string]> = {
+  // Renault
+  "EV Lifecycle Intelligence Platform":           ["Siemens Xcelerator", "Capgemini"],
+  "Automated CSRD Reporting Agent":               ["SAP Sustainability", "IBM Envizi"],
+  // Carrefour
+  "Predictive Cold Chain AI":                     ["Honeywell", "Siemens Building Tech"],
+  "Supplier Sustainability Intelligence Hub":     ["SAP Ariba", "Accenture"],
+  // Stellantis
+  "Multi-Brand Battery Digital Passport Hub":     ["IBM", "Siemens"],
+  "Multi-Market EV Penalty Avoidance Intelligence": ["Accenture", "Capgemini"],
+  // TotalEnergies
+  "Refinery Decarbonisation Digital Twin":        ["Siemens", "Honeywell"],
+  "EU Taxonomy CapEx Classification Engine":      ["SAP", "IBM Envizi"],
+  // Saint-Gobain
+  "Furnace Hydrogen Transition Simulator":        ["Siemens", "Emerson"],
+  "Automated EPD Generation Platform":            ["Sphera", "EcoVadis"],
+  // Schneider Electric
+  "Avoided Emissions Intelligence Platform":      ["Accenture", "IBM Envizi"],
+  "Smart WEEE Recovery Network Optimizer":        ["SAP", "Capgemini"],
+  // Veolia
+  "PFAS Real-Time Sentinel Network":              ["Xylem", "Siemens Water"],
+  "WtE Carbon Optimisation Co-Pilot":             ["Siemens", "Honeywell"],
+  // Air France-KLM
+  "SAF Chain-of-Custody Intelligence Hub":        ["IBM", "Accenture"],
+  "Airside Zero-Emission Transition Planner":     ["Siemens", "Capgemini"],
+  // Danone
+  "Farm-Level Carbon Intelligence Platform":      ["IBM Food Trust", "SAP"],
+  "Aquifer Stewardship Sentinel":                 ["Xylem", "Siemens Water"],
+  // L'Oréal
+  "Ingredient Deforestation Sentinel":            ["IBM", "Accenture"],
+  "Beauty Circularity Intelligence Network":      ["SAP", "Capgemini"],
+};
+
+// Tooltip explanations keyed by "companyKey:challengeId"
+// Each entry: [ESG urgency line, revenue + CO₂ line]
+const SCORE_TOOLTIPS: Record<string, [string, string]> = {
+  "renault:1":           ["Critical EU 2025/2030 fleet CO₂ targets risk direct financial penalties — peak ESG urgency.", "€2.4M contract with high upsell; -12,400 tCO₂e/year is Renault's highest CO₂ play."],
+  "renault:2":           ["High Scope 2 investor scrutiny at French and Romanian manufacturing plants drives strong urgency.", "€1.8M recurring IoT contract; 20-25% energy reduction delivers -8,200 tCO₂e/year."],
+  "renault:3":           ["CSRD 2025 supplier compliance deadline creates urgency, though CO₂ impact is indirect.", "€900K with very high IT modernisation upsell; enables -5,000 tCO₂e supply chain reduction."],
+  "carrefour:1":         ["Refrigeration is Carrefour's #1 operating cost and primary Scope 2 source — critical regulatory focus.", "€3.1M with global store rollout potential; -18,600 tCO₂e/year is the strongest CO₂ case for Carrefour."],
+  "carrefour:2":         ["AGEC anti-waste legislation creates direct financial penalty risk — high compliance urgency.", "€1.2M steady recurring contract; achieves AGEC compliance and eliminates regulatory exposure."],
+  "carrefour:3":         ["Urban ZEZ restrictions threatening last-mile delivery access across major French cities create high operational urgency.", "€2.0M with deep logistics integration upsell; 35% delivery emissions cut yields -9,100 tCO₂e/year."],
+  "stellantis:1":        ["EU fleet CO₂ penalties of €95/g/km across 6M+ vehicles create >€1B potential exposure — peak ESG urgency.", "€3.2M with very high multi-brand upsell; -15,800 tCO₂e/year spanning all 15 Stellantis marques."],
+  "stellantis:2":        ["Rising EU ETS prices and Dare Forward 2030 Scope 2 intensity targets create direct cost and compliance pressure.", "€2.1M recurring contract; 18-22% energy reduction across 40+ plants yields -11,400 tCO₂e/year."],
+  "stellantis:3":        ["EU Battery Regulation digital passport mandate from 2027 sets a hard compliance deadline for the full EV portfolio.", "€1.1M with very high upsell potential; supply chain traceability enables -6,200 tCO₂e indirect reduction."],
+  "totalenergies:1":     ["Full EU ETS exposure on refining with free allocations phasing out through 2030 — every avoided tonne is direct cost savings.", "€4.2M high-value industrial contract; -28,000 tCO₂e/year is the largest CO₂ impact across all solutions."],
+  "totalenergies:2":     ["Green Bond access and institutional mandates require credible EU Taxonomy alignment for €5B+ annual CapEx.", "€2.4M with very high ESG data management upsell; creates the infrastructure for a credible net-zero trajectory."],
+  "totalenergies:3":     ["Climate litigation risk in France amplifies urgency to demonstrate verifiable Scope 3 action beyond disclosure.", "€1.6M subscription; 25% fleet emissions cut delivers -7,400 tCO₂e/year with CSRD-compliant telemetry data."],
+  "saintgobain:1":       ["EU ETS exposure on hard-to-abate glass furnaces is critical and growing — efficiency ROI funds the platform within 22 months.", "€3.6M with European plant network expansion; -24,200 tCO₂e/year is the strongest CO₂ case for Saint-Gobain."],
+  "saintgobain:2":       ["EPDs are becoming a commercial disqualifier in European construction procurement — high urgency for revenue protection.", "€1.4M with very high CSRD expansion; EPD coverage unlocks green building and public infrastructure project access."],
+  "saintgobain:3":       ["CSRD circularity reporting and 30% recycled glass target by 2030 create medium urgency for reverse logistics.", "€1.0M contract; optimised cullet collection directly supports the recycled content commitment with -4,600 tCO₂e/year."],
+  "schneiderelectric:1": ["92% of Schneider's GHG footprint is Scope 3 Cat 11 — CSRD demands product-level data, creating critical disclosure pressure.", "€2.8M with customer-facing carbon reporting upsell; enables visibility of -40,000 tCO₂e in customer energy savings."],
+  "schneiderelectric:2": ["WEEE non-compliance penalties can reach 4% of annual EU revenue — strong financial urgency to hit the 85% collection rate.", "€1.5M contract; achieves WEEE and Right to Repair compliance with -5,200 tCO₂e/year."],
+  "schneiderelectric:3": ["CSDDD and CSRD extend ESG due diligence to 50,000+ suppliers — significant compliance and operational urgency.", "€1.3M with high Tier 2 expansion potential; automates 60% of manual supplier ESG data collection cost."],
+  "veolia:1":            ["2028 EU ETS inclusion of waste incineration is a confirmed deadline — efficiency gains now set the carbon allowance baseline.", "€2.9M with European WtE network expansion; -19,800 tCO₂e/year including methane capture optimisation."],
+  "veolia:2":            ["January 2026 EU PFAS limit of 0.5 μg/L creates a hard regulatory deadline across Veolia's 90M-person water network.", "€1.8M with very high global water utility upsell; white-label portal strengthens municipal contract renewals."],
+  "veolia:3":            ["30,000+ vehicles face Zero Emission Zone bans in Paris (2024) and Amsterdam (2025) — immediate operational access risk.", "€2.2M with global fleet expansion potential; 8-12% fuel savings from day one and -11,600 tCO₂e/year."],
+  "airfranceklm:1":      ["CDG and Schiphol zero-emission GSE deadlines carry operating-licence risk — high urgency for ground operations wins.", "€1.9M with full European hub expansion; -8,700 tCO₂e/year from proven ground vehicle electrification."],
+  "airfranceklm:2":      ["EU ETS aviation free allocations reach zero by 2026 — every verified Scope 2 reduction is directly financially valuable.", "€2.6M with outstation expansion; 20% ground facilities energy reduction yields -16,400 tCO₂e/year."],
+  "airfranceklm:3":      ["ReFuelEU non-compliance carries €50/GJ penalties from 2025 — direct financial and reputational urgency for SAF traceability.", "€2.1M contract; SAF chain-of-custody data feeds directly into CSRD climate disclosure from one platform."],
+  "danone:1":            ["70%+ of Danone's footprint is agricultural Scope 3 Cat 1 — CSRD auditors flag aggregated estimates, forcing farm-level data.", "€2.2M with very high value chain expansion; farm-level infrastructure enables -85,000 tCO₂e supply chain reduction."],
+  "danone:2":            ["EU PPWR 50% recycled plastic content mandate by 2030 requires transformed reverse logistics — high commercial urgency.", "€1.6M with European market expansion; -7,900 tCO₂e/year while directly improving recycled PET supply economics."],
+  "danone:3":            ["Regulatory scrutiny on water extraction at Évian and Volvic creates dual energy and water urgency at bottling sites.", "€1.8M self-funding within 20 months; 18% energy reduction yields -10,200 tCO₂e/year across processing plants."],
+  "loreal:1":            ["EUDR non-compliance risks EU market access suspension for in-scope ingredients by December 2025 — existential product urgency.", "€2.5M with very high CSRD expansion; EUDR and ESRS E4 biodiversity disclosure served from one platform."],
+  "loreal:2":            ["EU PPWR 50% recycled content target and ECHA microplastic ban by 2027 create compounding packaging compliance pressure.", "€1.4M with European retail network expansion; -5,400 tCO₂e/year while improving EPR audit trail quality."],
+  "loreal:3":            ["L'Oréal's 2025 carbon neutrality commitment requires verified site-level energy data — high urgency for credible measurement.", "€1.9M scaling to 38-site European network; -8,600 tCO₂e/year with 20% water intensity reduction at bottling sites."],
+};
+
 function buildDraftEmail(
   contactRole: string,
   companyName: string,
@@ -90,6 +166,20 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
   const [isFeasibilityOpen, setIsFeasibilityOpen] = useState(false);
   const [focusedCustomIdx, setFocusedCustomIdx] = useState<number | null>(null);
   const [winStrategyModal, setWinStrategyModal] = useState<SolutionData | null>(null);
+  const [briefDate, setBriefDate] = useState("18 Mar 2026");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    setTimeout(() => {
+      const now = new Date();
+      const formatted = now.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      setBriefDate(formatted);
+      setIsRefreshing(false);
+      toast({ title: "Brief refreshed", description: "Data updated to today's date." });
+    }, 1500);
+  };
 
   const nameMap: Record<string, keyof typeof briefData> = {
     renault: "renault",
@@ -267,7 +357,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           {activeTab === "overview" && (
             <div className="focus-visible:outline-none">
               {/* Meta row */}
-              <div className="mb-8 flex flex-wrap gap-10 tabular-nums border-b border-black/[0.06] pb-8 sm:gap-12">
+              <div className="mb-8 flex flex-wrap items-end gap-10 tabular-nums border-b border-black/[0.06] pb-8 sm:gap-12">
                 <div>
                   <p className="type-eyebrow">Confidence</p>
                   <p className="mt-1 text-base font-medium tracking-tight text-foreground">{data.score}%</p>
@@ -277,8 +367,34 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                   <p className="mt-1 text-base font-medium tracking-tight text-foreground">{data.sources}</p>
                 </div>
                 <div>
-                  <p className="type-eyebrow">Date</p>
-                  <p className="mt-1 text-base font-medium tracking-tight text-foreground">18 Mar 2026</p>
+                  <p className="type-eyebrow">Last Updated</p>
+                  <div className="mt-1 flex items-center gap-1.5">
+                    <p className="text-base font-medium tracking-tight text-foreground">{briefDate}</p>
+                    <button
+                      type="button"
+                      onClick={handleRefresh}
+                      disabled={isRefreshing}
+                      aria-label="Refresh brief date"
+                      className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground/50 transition-colors hover:text-muted-foreground disabled:cursor-not-allowed"
+                    >
+                      {isRefreshing
+                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                        : <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+                      }
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <p className="type-eyebrow">Account</p>
+                  {(data as any).clientStatus === "existing" ? (
+                    <span className="mt-1 inline-flex items-center rounded-full border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-[0.6875rem] font-medium text-emerald-700">
+                      Existing Client
+                    </span>
+                  ) : (
+                    <span className="mt-1 inline-flex items-center rounded-full border border-sky-200/80 bg-sky-50 px-2.5 py-0.5 text-[0.6875rem] font-medium text-sky-700">
+                      New Prospect
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -485,9 +601,26 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                             #{s.challengeId}
                           </span>
                         </div>
-                        <span className="text-xl font-medium tabular-nums tracking-tight text-primary">
-                          {s.impactScore}
-                        </span>
+                        {(() => {
+                          const tip = SCORE_TOOLTIPS[`${queryKey}:${s.challengeId}`];
+                          return tip ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-default text-xl font-medium tabular-nums tracking-tight text-primary">
+                                  {s.impactScore}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[240px] px-3 py-2.5">
+                                <p className="text-xs leading-snug">{tip[0]}</p>
+                                <p className="mt-1 text-xs leading-snug opacity-70">{tip[1]}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <span className="text-xl font-medium tabular-nums tracking-tight text-primary">
+                              {s.impactScore}
+                            </span>
+                          );
+                        })()}
                       </div>
                       <p className="mt-2 text-sm font-medium leading-snug tracking-tight text-foreground">
                         {s.product}
@@ -593,6 +726,16 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                               <span className="font-medium text-foreground">Challenge: </span>
                               {cs.challengeAddressed}
                             </p>
+                            {(() => {
+                              const competitors = CUSTOM_SOLUTION_COMPETITORS[cs.title];
+                              if (!competitors) return null;
+                              return (
+                                <div className="mt-3 flex items-center gap-1.5 text-[0.6875rem] text-muted-foreground/55">
+                                  <AlertCircle className="h-3 w-3 shrink-0" aria-hidden />
+                                  <span>Competitors in this space: {competitors[0]}, {competitors[1]}</span>
+                                </div>
+                              );
+                            })()}
                             <button
                               type="button"
                               onClick={() => {
