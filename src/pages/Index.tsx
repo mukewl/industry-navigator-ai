@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { SearchPanel } from "@/components/search/SearchPanel";
 import { SustainabilityBrief } from "@/components/brief/SustainabilityBrief";
 import { AccountDashboard } from "@/components/dashboard/AccountDashboard";
-import { SystemArchitecture } from "@/components/dashboard/SystemArchitecture";
+import { ArchitectureView } from "@/components/architecture/ArchitectureView";
 import { RoadmapView } from "@/components/dashboard/RoadmapView";
 
 const Index = () => {
@@ -94,7 +94,7 @@ const Index = () => {
 
     // System Architecture View
     if (activeTab === "architecture") {
-      return <SystemArchitecture />;
+      return <ArchitectureView />;
     }
 
     if (activeTab === "roadmap") {

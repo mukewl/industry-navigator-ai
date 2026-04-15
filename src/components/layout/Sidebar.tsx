@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, LayoutDashboard, FileText, ChevronRight, Map, ChevronDown, Clock } from "lucide-react";
+import { Search, LayoutDashboard, FileText, ChevronRight, Map, ChevronDown, Clock, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { briefData } from "@/data/briefData";
 
@@ -243,8 +243,25 @@ export const Sidebar = ({ activeTab, onTabChange, embedded }: SidebarProps) => {
           )}
         </div>
 
-        {/* Roadmap — pinned at bottom with top divider */}
-        <div className="mt-auto border-t border-white/10 pt-3">
+        {/* Architecture + Roadmap — pinned at bottom with top divider */}
+        <div className="mt-auto border-t border-white/10 pt-3 space-y-0.5">
+          <button
+            type="button"
+            onClick={() => onTabChange("architecture")}
+            className={cn(
+              "group flex min-h-11 w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-[12px] font-normal tracking-tight transition-colors duration-200",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black/80",
+              activeTab === "architecture"
+                ? "bg-white/12 text-primary"
+                : "text-white/80 hover:bg-white/8 hover:text-white"
+            )}
+          >
+            <div className="flex min-w-0 items-center gap-2.5">
+              <GitBranch className="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden />
+              <span className="break-words leading-snug">Architecture</span>
+            </div>
+            {activeTab === "architecture" && <ChevronRight className="h-3 w-3 shrink-0 text-primary" aria-hidden />}
+          </button>
           <button
             type="button"
             onClick={() => onTabChange("roadmap")}
