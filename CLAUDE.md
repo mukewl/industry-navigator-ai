@@ -168,19 +168,22 @@ src/
 - [x] **Responsive shell** — Sidebar (lg+), sheet + header on small screens.
 - [x] **404** — `NotFound` route for unknown paths.
 
-### Build status (2026-04-15, `final-changes` branch)
+### In progress (2026-04-14, `final-changes` branch)
 
-**All 13 builds are complete.** Do not rebuild anything already built. Working branch is `final-changes` — do not touch `master`.
+- [ ] **Win Strategy → solution cards** — Moving Win Strategy content out of the standalone tab and into each individual solution card inside SolutionDetail. Win Strategy tab will be removed once complete. **Do not merge to `master` until finished.**
 
-### Remaining tasks
+### Upcoming / to do
 
-- [ ] **Win Strategy modal scrolling** — Fix scrolling in the Win Strategy modal inside SolutionDetail. Two approved approaches: (a) add tabs inside the modal for Why Now / Why OBS / How to Win so no scrolling is needed, or (b) make the modal taller with `max-h-screen` and `overflow-y-auto`. Either is acceptable — pick whichever is cleaner for the existing markup.
-- [ ] **Dashboard filters polish pass** — Polish pass on the AccountDashboard filter controls (sector, urgency, contract size, etc.).
-- [ ] **Push all changes to GitHub** — Push `final-changes` branch to remote once the above two tasks are done.
+- [ ] **Score tooltip on hover** — Impact score bar chart (Overview tab) should show a tooltip on bar hover with score value and context.
+- [ ] **Competitor info under non-portfolio solutions** — For challenges not addressed by an OBS solution, surface competitor landscape / market context in the Solutions or Challenges view.
+- [ ] **Existing vs New Prospect tag + last updated + refresh** — Overview meta row should show whether the account is an existing client or a new prospect, a "last updated" timestamp, and a manual refresh trigger.
+- [ ] **Dashboard advanced filters** — AccountDashboard client list needs filter controls (sector, urgency, contract size, etc.) beyond the current static two-client view.
+- [ ] **Presentation details card in dashboard** — A card or panel in AccountDashboard surfacing presentation-ready deal highlights (top play, contract value, next step) for each client.
+- [ ] **Architecture page** — `SystemArchitecture` view is a placeholder; needs real content (agent topology diagram, data flow, integration points).
 
 ---
 
-## Recently changed files (current session — 2026-04-15)
+## Recently changed files (current session — 2026-04-14)
 
 | File | What changed |
 |------|-------------|
@@ -325,4 +328,4 @@ npm run lint
 
 **Active branch:** `final-changes` — all current and pending work lives here. **Do not touch `master`** until the Win Strategy migration is complete and signed off.
 
-*Last updated: 2026-04-15. All 13 builds complete on `final-changes` branch. Remaining: Win Strategy modal scrolling fix, dashboard filters polish pass, push to GitHub. Do not rebuild anything already built. Do not touch `master`.*
+*Last updated: 2026-04-14. Reflects SearchPanel strip-down, Overview removals, Next Steps → Export, Win Strategy tab built, POC card + back button fixes, Sidebar Library restructured with data-driven solution-type groups, Challenges tab redesigned as table. Win Strategy → solution cards migration in progress. Upcoming: score tooltip, competitor info, Existing/New Prospect tag, dashboard filters, presentation card, architecture page content.*

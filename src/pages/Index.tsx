@@ -8,8 +8,8 @@ import { ArchitectureView } from "@/components/architecture/ArchitectureView";
 import { RoadmapView } from "@/components/dashboard/RoadmapView";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("search");
-  const [previousTab, setPreviousTab] = useState("search");
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [previousTab, setPreviousTab] = useState("dashboard");
   const [searchQuery, setSearchQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -62,7 +62,6 @@ const Index = () => {
     if (activeTab === "brief") {
       return (
         <SustainabilityBrief
-          key={searchQuery}
           companyName={searchQuery}
           onBack={(returnTo) => setActiveTab(returnTo)}
           returnTo={previousTab}
@@ -86,7 +85,6 @@ const Index = () => {
     if (activeTab in briefTabMap) {
       return (
         <SustainabilityBrief
-          key={activeTab}
           companyName={briefTabMap[activeTab]}
           onBack={(returnTo) => setActiveTab(returnTo)}
           returnTo={previousTab}

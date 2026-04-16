@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export interface SolutionData {
-  challengeIds: number[];
+  challengeId: number;
+  challengeLabel: string;
   product: string;
   detail: string;
   icon: LucideIcon;
@@ -32,15 +33,10 @@ export interface SolutionData {
 interface SolutionDetailProps {
   companyName: string;
   solution: SolutionData;
-  challenges: { id: number; title: string }[];
   onBack: () => void;
 }
 
-export const SolutionDetail = ({ companyName, solution, challenges, onBack }: SolutionDetailProps) => {
-  const linkedTitles = challenges
-    .filter((c) => solution.challengeIds.includes(c.id))
-    .map((c) => c.title)
-    .join(" · ");
+export const SolutionDetail = ({ companyName, solution, onBack }: SolutionDetailProps) => {
   if (!solution.details) return null;
 
   return (
@@ -56,7 +52,7 @@ export const SolutionDetail = ({ companyName, solution, challenges, onBack }: So
                 {solution.product}
               </h1>
               <p className="mt-1.5 text-sm leading-snug text-muted-foreground">
-                {companyName} · <span className="font-medium text-foreground">{linkedTitles}</span>
+                {companyName} · <span className="font-medium text-foreground">{solution.challengeLabel}</span>
               </p>
             </div>
           </div>

@@ -14,7 +14,6 @@ import {
   Calendar,
   RefreshCw,
   Loader2,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -286,7 +285,6 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
       <SolutionDetail
         companyName={data.name}
         solution={selectedSolution}
-        challenges={data.challenges}
         onBack={() => setSelectedSolution(null)}
       />
     );
@@ -297,12 +295,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
   const topPlay = rankedSolutions[0];
   const topChallenge = data.challenges[0];
   const topChallengeSolution =
-    data.solutions.find((s) => s.challengeIds.includes(topChallenge?.id ?? -1)) ?? topPlay;
-  const challengeTitles = (s: SolutionData) =>
-    data.challenges
-      .filter((c) => s.challengeIds.includes(c.id))
-      .map((c) => c.title)
-      .join(" · ");
+    data.solutions.find((s) => s.challengeId === topChallenge?.id) ?? topPlay;
 
   return (
     <div className="mx-auto max-w-4xl animate-fade-in pb-16 sm:pb-20">
@@ -336,7 +329,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
             [
               ["overview", "Overview"],
               ["challenges", "Challenges"],
-              ["solutions", "Categories"],
+              ["solutions", "Solutions"],
               ["export", "Export"],
             ] as const
           ).map(([v, label]) => (
@@ -417,7 +410,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                   </thead>
                   <tbody>
                     {data.challenges.map((c) => {
-                      const play = data.solutions.find((s) => s.challengeIds.includes(c.id));
+                      const play = data.solutions.find((s) => s.challengeId === c.id);
                       return (
                         <tr
                           key={c.id}
@@ -431,7 +424,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setHighlightedSolutionId(c.id);
+                                    setHighlightedSolutionId(play.challengeId);
                                     handleTabChange("solutions");
                                   }}
                                   className="font-medium leading-snug text-primary text-left hover:underline"
@@ -461,16 +454,16 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
 
               {/* ── Solution impact scores ── */}
               <section className="mt-8">
-                <p className="type-section-label mb-3">Category impact scores</p>
+                <p className="type-section-label mb-3">Solution impact scores</p>
                 <div className="glass-panel divide-y divide-black/[0.05] overflow-hidden rounded-xl">
                   {rankedSolutions.map((s, idx) => (
-                    <div key={s.challengeIds[0]} className="flex items-center gap-4 px-4 py-3">
+                    <div key={s.challengeId} className="flex items-center gap-4 px-4 py-3">
                       <span className="type-eyebrow w-4 shrink-0 tabular-nums text-muted-foreground/60 normal-case">
                         {idx + 1}
                       </span>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium leading-snug text-foreground">{s.product}</p>
-                        <p className="mt-0.5 truncate text-xs text-muted-foreground">{challengeTitles(s)}</p>
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground">{s.challengeLabel}</p>
                       </div>
                       <span
                         className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tabular-nums ${impactBadgeClass(s.impactScore)}`}
@@ -492,7 +485,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                       <p className="text-sm font-semibold leading-snug tracking-tight text-foreground">
                         {topPlay.product}
                       </p>
-                      <p className="mt-1 text-sm text-muted-foreground">{challengeTitles(topPlay)}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{topPlay.challengeLabel}</p>
                     </div>
                     <span className="shrink-0 text-2xl font-semibold tabular-nums tracking-tight text-primary">
                       {topPlay.impactScore}
@@ -517,7 +510,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                     onClick={() => setSelectedSolution(topPlay as SolutionData)}
                     className="mt-4 inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
                   >
-                    View Full Category →
+                    View Full Solution →
                   </button>
                 </div>
               </section>
@@ -536,13 +529,13 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                       <th className="type-eyebrow w-10 px-4 py-3 text-left text-muted-foreground">#</th>
                       <th className="type-eyebrow px-4 py-3 text-left text-muted-foreground">Challenge</th>
                       <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Urgency</th>
-                      <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Category</th>
+                      <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Solution Type</th>
                       <th className="type-eyebrow px-4 py-3 text-left text-muted-foreground">Description</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.challenges.map((c) => {
-                      const solution = data.solutions.find((s) => s.challengeIds.includes(c.id));
+                      const solution = data.solutions.find((s) => s.challengeId === c.id);
                       return (
                         <tr
                           key={c.id}
@@ -568,8 +561,8 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                           <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
                             {solution?.product ?? "—"}
                           </td>
-                          <td className="px-4 py-3 text-xs text-muted-foreground">
-                            {c.description}
+                          <td className="max-w-xs px-4 py-3 text-xs text-muted-foreground">
+                            <span className="block truncate">{c.description}</span>
                           </td>
                         </tr>
                       );
@@ -588,10 +581,10 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                   const ws = winStrategyData[queryKey ?? ""] ?? null;
                   return data.solutions.map((s) => {
                   const Icon = s.icon;
-                  const isHighlighted = s.challengeIds.includes(highlightedSolutionId ?? -1);
+                  const isHighlighted = highlightedSolutionId === s.challengeId;
                   return (
                     <button
-                      key={s.challengeIds[0]}
+                      key={s.challengeId}
                       type="button"
                       onClick={() => { setHighlightedSolutionId(null); setSelectedSolution(s as SolutionData); }}
                       className={cn(
@@ -605,11 +598,11 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                             <Icon className="h-3.5 w-3.5 text-primary" aria-hidden />
                           </div>
                           <span className="type-eyebrow normal-case tracking-normal text-muted-foreground">
-                            #{s.challengeIds[0]}
+                            #{s.challengeId}
                           </span>
                         </div>
                         {(() => {
-                          const tip = SCORE_TOOLTIPS[`${queryKey}:${s.challengeIds[0]}`];
+                          const tip = SCORE_TOOLTIPS[`${queryKey}:${s.challengeId}`];
                           return tip ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
@@ -656,12 +649,12 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                         </div>
                       </dl>
                       <div className="mt-3 flex items-center justify-between gap-2 rounded-lg border border-dashed border-black/[0.1] bg-[#fafafc] px-2 py-1.5 text-xs leading-snug text-muted-foreground">
-                        <span className="truncate">Mapped: {challengeTitles(s)}</span>
+                        <span className="truncate">Mapped: {s.challengeLabel}</span>
                         <ChevronRight className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
                       </div>
                       <div className="mt-3 flex-1 flex items-end gap-2">
                         <div className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
-                          View Full Category →
+                          View Full Solution →
                         </div>
                         {ws && (
                           <div
@@ -767,12 +760,40 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           {/* ── EXPORT ── */}
           {activeTab === "export" && (
             <div className="space-y-12 focus-visible:outline-none">
+              {/* ── Next Steps ── */}
+              <section>
+                <h2 className="type-section-label mb-4">Next Steps</h2>
+                {data.solutions.map((s) => {
+                  const steps = (s as any).details?.nextSteps as string[] | undefined;
+                  if (!steps?.length) return null;
+                  const Icon = s.icon;
+                  return (
+                    <section key={s.challengeId} className="mb-8 last:mb-0">
+                      <div className="mb-3 flex items-center gap-2">
+                        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-black/[0.06] bg-[#fafafc]">
+                          <Icon className="h-3 w-3 text-primary" aria-hidden />
+                        </div>
+                        <p className="type-section-label">{s.product}</p>
+                      </div>
+                      <ol className="space-y-2">
+                        {steps.slice(0, 3).map((step, idx) => (
+                          <li key={idx} className="glass-panel flex items-start gap-3 rounded-xl px-4 py-3">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                            <span className="text-sm leading-snug text-foreground">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </section>
+                  );
+                })}
+              </section>
+
               <section className="glass-panel-strong space-y-6 rounded-xl p-8 sm:p-10">
                 <h2 className="type-section-label">Pitch deck</h2>
                 <div className="space-y-2">
                   {data.solutions.map((s) => (
                     <label
-                      key={s.challengeIds[0]}
+                      key={s.challengeId}
                       className="-mx-2 flex cursor-pointer items-start gap-3 rounded-lg px-2 py-1.5 hover:bg-black/[0.04]"
                     >
                       <div className="relative mt-0.5 flex shrink-0 items-center justify-center">
@@ -788,7 +809,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                       </div>
                       <span className="text-sm leading-snug text-foreground">
                         <span className="font-medium">{s.product}</span>
-                        <span className="font-normal text-muted-foreground"> · {challengeTitles(s)}</span>
+                        <span className="font-normal text-muted-foreground"> · {s.challengeLabel}</span>
                         <span className="tabular-nums font-normal text-muted-foreground"> · {s.impactScore}</span>
                       </span>
                     </label>
@@ -887,7 +908,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           : null;
         return (
           <Dialog open={!!winStrategyModal} onOpenChange={(open) => { if (!open) setWinStrategyModal(null); }}>
-            <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+            <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="leading-snug tracking-tight">
                   {winStrategyModal?.product}
@@ -905,29 +926,32 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                     <div className="space-y-2">
                       {ws.whyNow.map((sig, i) => (
                         <div key={i} className="glass-panel rounded-xl px-4 py-3">
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="flex min-w-0 items-center gap-2.5">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium leading-snug text-foreground">{sig.title}</p>
+                              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{sig.description}</p>
+                            </div>
+                            <div className="flex shrink-0 flex-col items-end gap-1.5">
                               <span className={cn(
-                                "inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em]",
+                                "inline-flex items-center rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em]",
                                 sig.urgency === "Critical" && "text-red-600 bg-red-50 border-red-200/80",
                                 sig.urgency === "High" && "text-amber-600 bg-amber-50 border-amber-200/80",
                                 sig.urgency === "Medium" && "text-yellow-700 bg-yellow-50 border-yellow-200/80",
                               )}>
                                 {sig.urgency}
                               </span>
-                              <p className="text-sm font-medium leading-snug text-foreground">{sig.title}</p>
+                              {sig.daysUntilDeadline !== undefined && (
+                                <span className={cn(
+                                  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold tabular-nums",
+                                  sig.daysUntilDeadline <= 30
+                                    ? "border-red-200/80 bg-red-50 text-red-600"
+                                    : "border-black/[0.08] bg-[#fafafc] text-muted-foreground"
+                                )}>
+                                  <Calendar className="h-2.5 w-2.5" aria-hidden />
+                                  {sig.daysUntilDeadline}d
+                                </span>
+                              )}
                             </div>
-                            {sig.daysUntilDeadline !== undefined && (
-                              <span className={cn(
-                                "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold tabular-nums",
-                                sig.daysUntilDeadline <= 30
-                                  ? "border-red-200/80 bg-red-50 text-red-600"
-                                  : "border-black/[0.08] bg-[#fafafc] text-muted-foreground"
-                              )}>
-                                <Calendar className="h-2.5 w-2.5" aria-hidden />
-                                {sig.daysUntilDeadline}d
-                              </span>
-                            )}
                           </div>
                         </div>
                       ))}
@@ -935,73 +959,26 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                   </div>
 
                   {/* Why OBS — only if a card matches this solution */}
-                  {obsCard && (() => {
-                    // Split a differentiator string into [OBS-positive, competitor-negative].
-                    // Splits on " — " or "; ", assigning the part that names a competitor (or
-                    // starts with "no competitor") to the competitor column. Returns "" for the
-                    // competitor side when no explicit counter-point can be derived.
-                    const parseDiff = (text: string, comps: string[]): [string, string] => {
-                      const re = new RegExp(comps.join("|"), "i");
-                      const assign = (a: string, b: string): [string, string] => {
-                        if (re.test(b) || /^no competitor/i.test(b)) return [a, b];
-                        if (re.test(a)) return [b, a];
-                        return [a, ""];
-                      };
-                      if (text.includes(" — ")) {
-                        const idx = text.indexOf(" — ");
-                        return assign(text.slice(0, idx).trim(), text.slice(idx + 3).trim());
-                      }
-                      if (text.includes("; ")) {
-                        const idx = text.indexOf("; ");
-                        return assign(text.slice(0, idx).trim(), text.slice(idx + 2).trim());
-                      }
-                      return [text, ""];
-                    };
-                    return (
-                      <div>
-                        <p className="type-eyebrow mb-2 flex items-center gap-1.5">
-                          <ShieldCheck className="h-3 w-3 text-primary" aria-hidden /> Why OBS
+                  {obsCard && (
+                    <div>
+                      <p className="type-eyebrow mb-2 flex items-center gap-1.5">
+                        <ShieldCheck className="h-3 w-3 text-primary" aria-hidden /> Why OBS
+                      </p>
+                      <div className="glass-panel rounded-xl px-4 py-4">
+                        <p className="type-eyebrow normal-case mb-2 text-muted-foreground">
+                          vs {obsCard.competitors.join(" · ")}
                         </p>
-                        <div className="glass-panel overflow-hidden rounded-xl">
-                          <table className="w-full text-xs">
-                            <thead>
-                              <tr className="border-b border-black/[0.06]">
-                                <th className="w-1/2 px-4 py-2.5 text-left text-[0.6875rem] font-semibold uppercase tracking-wide text-foreground">
-                                  Orange Business
-                                </th>
-                                <th className="w-1/2 px-4 py-2.5 text-left text-[0.6875rem] font-semibold uppercase tracking-wide text-muted-foreground">
-                                  {obsCard.competitors.join(" / ")}
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {obsCard.differentiators.map((d, j) => {
-                                const [obsText, compText] = parseDiff(d, obsCard.competitors);
-                                return (
-                                  <tr key={j} className="border-b border-black/[0.06] last:border-0">
-                                    <td className="px-4 py-3 align-top">
-                                      <div className="flex items-start gap-2">
-                                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden />
-                                        <span className="text-[0.8125rem] leading-snug text-foreground">{obsText}</span>
-                                      </div>
-                                    </td>
-                                    <td className="px-4 py-3 align-top">
-                                      <div className="flex items-start gap-2">
-                                        <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" aria-hidden />
-                                        <span className="text-[0.8125rem] leading-snug text-muted-foreground">
-                                          {compText || "—"}
-                                        </span>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
+                        <ul className="space-y-2">
+                          {obsCard.differentiators.map((d, j) => (
+                            <li key={j} className="flex items-start gap-2.5 text-sm leading-relaxed">
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                              <span className="text-foreground">{d}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                    );
-                  })()}
+                    </div>
+                  )}
 
                   {/* How to Win */}
                   <div>
