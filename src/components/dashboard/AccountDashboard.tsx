@@ -18,6 +18,7 @@ import {
   aggregateCo2Label,
   type BriefCompanyKey,
 } from "@/lib/briefMetrics";
+import { CompanyLogo, COMPANY_DOMAINS } from "@/lib/companyLogos";
 
 const SECTOR_OPTIONS = [
   { label: "All sectors",    value: "__all__" },
@@ -220,9 +221,12 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="truncate font-display text-[0.9375rem] font-semibold tracking-tight text-foreground">
-                    {c.name}
-                  </span>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <CompanyLogo domain={COMPANY_DOMAINS[key]} name={c.name} className="h-5 w-5 shrink-0" />
+                    <span className="truncate font-display text-[0.9375rem] font-semibold tracking-tight text-foreground">
+                      {c.name}
+                    </span>
+                  </div>
                   {risk ? (
                     <Badge
                       variant="outline"
@@ -251,9 +255,20 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
       {/* Right — detail panel */}
       <section className="flex min-h-0 min-w-0 flex-1 flex-col gap-7 overflow-y-auto p-6 sm:p-8">
         {/* Header */}
-        <div className="space-y-1">
-          <h2 className="font-display text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{data.name}</h2>
-          <p className="text-[0.8125rem] font-normal leading-normal text-muted-foreground">Live summary</p>
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1 min-w-0">
+            <h2 className="font-display text-xl font-semibold tracking-tight text-foreground sm:text-2xl">{data.name}</h2>
+            <p className="text-[0.8125rem] font-normal leading-normal text-muted-foreground">Live summary</p>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            className="shrink-0 gap-1.5"
+            onClick={() => onViewBrief(data.name)}
+          >
+            Open full brief
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+          </Button>
         </div>
 
         {/* Stat grid — 4 data cards in 2×2 */}
@@ -442,18 +457,6 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
           );
         })()}
 
-        {/* CTA */}
-        <div className="mt-auto border-t border-black/[0.06] pt-6">
-          <Button
-            type="button"
-            size="lg"
-            className="w-full gap-2 sm:w-auto"
-            onClick={() => onViewBrief(data.name)}
-          >
-            Open full brief
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </Button>
-        </div>
       </section>
     </div>
   );

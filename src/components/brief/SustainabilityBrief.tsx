@@ -36,6 +36,7 @@ import { SolutionDetail, SolutionData } from "./SolutionDetail";
 import { briefData } from "@/data/briefData";
 import { winStrategyData } from "@/data/winStrategyData";
 import { cn } from "@/lib/utils";
+import { CompanyLogo, COMPANY_DOMAINS } from "@/lib/companyLogos";
 
 interface SustainabilityBriefProps {
   companyName: string;
@@ -318,6 +319,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           >
             <ArrowLeft className="h-4 w-4" aria-hidden />
           </Button>
+          <CompanyLogo domain={queryKey ? COMPANY_DOMAINS[queryKey] : undefined} name={data.name} className="h-9 w-9 shrink-0" />
           <div className="min-w-0">
             <div className="type-section-label flex items-center gap-2">
               <Leaf className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />

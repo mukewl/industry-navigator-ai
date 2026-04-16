@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Search, ArrowRight, HelpCircle, ChevronDown, FileText } from "lucide-react";
+import { Search, ArrowRight, HelpCircle, ChevronDown } from "lucide-react";
 import { briefData } from "@/data/briefData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { CompanyLogo, COMPANY_NAME_TO_DOMAIN } from "@/lib/companyLogos";
 
 interface SearchPanelProps {
   onSearch: (query: string, type: "industry" | "company") => void;
@@ -153,7 +154,7 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
                           }}
                           className="flex w-full items-center gap-2.5 px-3.5 py-1.5 text-left text-[0.8125rem] font-normal text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                         >
-                          <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+                          <CompanyLogo domain={COMPANY_NAME_TO_DOMAIN[name]} name={name} className="h-5 w-5 shrink-0" />
                           {name}
                         </button>
                       ))}
