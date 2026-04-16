@@ -62,8 +62,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Fleet Electrification and Lifecycle Emissions",
+        challengeIds: [1, 3],
         product: "Ocean + Circular Mobility",
         detail:
           "Ocean platform for fleet optimization and eco-driving, plus Circular Mobility for fleet electrification support",
@@ -111,8 +110,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "Energy Consumption in Manufacturing",
+        challengeIds: [2],
         product: "Smart Eco Energy",
         detail:
           "IoT-based energy monitoring and optimization for factories and facilities",
@@ -160,8 +158,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "Supply Chain Transparency and ESG Compliance",
+        challengeIds: [3],
         product: "Evolution Platform",
         detail:
           "ESG-by-design platform services and GreenOps for supplier data tracking",
@@ -288,8 +285,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Cold Chain Energy Efficiency",
+        challengeIds: [1],
         product: "Smart Eco Energy",
         detail:
           "IoT-based energy dashboards and monitoring across stores and logistics facilities",
@@ -337,8 +333,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "Food Waste and Circular Economy Compliance",
+        challengeIds: [2],
         product: "RE Program & Circular Mobility",
         detail:
           "Refurbishment, reuse and takeback programs adapted to retail operations",
@@ -386,8 +381,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "Last-Mile Delivery Emissions",
+        challengeIds: [3, 1],
         product: "Ocean Platform",
         detail:
           "Ocean platform for fleet optimization, eco-driving analytics and electrification planning",
@@ -514,8 +508,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "EU Fleet CO2 Compliance Across 15 Brands",
+        challengeIds: [1],
         product: "Ocean + Circular Mobility",
         detail:
           "Fleet electrification intelligence and EV lifecycle management across all Stellantis marques",
@@ -563,8 +556,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "Manufacturing Energy Intensity Across 40+ Plants",
+        challengeIds: [2],
         product: "Smart Eco Energy",
         detail:
           "IoT energy monitoring and automated demand optimisation across multi-country manufacturing footprint",
@@ -612,8 +604,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "EU Battery Regulation & Critical Mineral Traceability",
+        challengeIds: [3, 1],
         product: "Evolution Platform",
         detail:
           "Secure supply chain data platform for battery passport compliance and critical mineral due diligence",
@@ -740,8 +731,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Scope 1 & 2 Emissions from Refining and LNG Operations",
+        challengeIds: [1],
         product: "Smart Eco Energy",
         detail:
           "Industrial IoT energy optimisation and real-time carbon monitoring across refinery and LNG terminal infrastructure",
@@ -789,8 +779,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "EU Taxonomy Alignment for Renewables CapEx Classification",
+        challengeIds: [2, 3],
         product: "Evolution Platform",
         detail:
           "ESG data infrastructure for EU Taxonomy Technical Screening Criteria assessment and CSRD double-materiality reporting",
@@ -838,8 +827,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "Scope 3 Downstream Emissions Disclosure",
+        challengeIds: [3],
         product: "Ocean Platform",
         detail:
           "Fleet and logistics optimisation to reduce Scope 3 Category 4 (upstream transportation) and distribution emissions",
@@ -966,8 +954,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Float Glass Furnace Decarbonisation",
+        challengeIds: [1],
         product: "Smart Eco Energy",
         detail:
           "IoT energy intelligence across glass furnaces, annealing lehrs, and site utilities to maximise thermal efficiency and reduce EU ETS exposure",
@@ -1015,8 +1002,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "Environmental Product Declarations for Construction Market Access",
+        challengeIds: [2, 3],
         product: "Evolution Platform",
         detail:
           "ESG data management platform for automated EPD data collection, third-party verification workflow, and CSRD product-level disclosure",
@@ -1064,8 +1050,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "Construction Waste Circularity and Recycled Content Targets",
+        challengeIds: [3],
         product: "Ocean + Circular Mobility",
         detail:
           "Reverse logistics intelligence and circular waste collection fleet management for cullet and mineral wool recovery",
@@ -1192,8 +1177,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Scope 3 Product-in-Use Emissions (Category 11)",
+        challengeIds: [1],
         product: "Evolution Platform",
         detail:
           "Product lifecycle data infrastructure for Scope 3 Category 11 disclosure and customer-level carbon impact intelligence",
@@ -1241,8 +1225,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "WEEE Compliance and EU Right to Repair Obligations",
+        challengeIds: [2, 1],
         product: "Ocean + Circular Mobility",
         detail:
           "Reverse logistics management and take-back fleet optimisation for WEEE collection and spare parts distribution",
@@ -1290,8 +1273,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "ESG Transparency Across 50,000+ Tier 1 Suppliers",
+        challengeIds: [3],
         product: "Evolution Platform",
         detail:
           "Supplier ESG data collection, risk scoring, and CSDDD due diligence workflow management at scale",
@@ -1418,8 +1400,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "GHG Emissions from Waste Processing and EU ETS Exposure",
+        challengeIds: [1],
         product: "Smart Eco Energy",
         detail:
           "IoT energy intelligence across waste-to-energy plants and water treatment facilities to reduce EU ETS exposure ahead of the 2028 inclusion date",
@@ -1467,8 +1448,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "PFAS and Emerging Contaminant Compliance in Water Treatment",
+        challengeIds: [2],
         product: "Evolution Platform",
         detail:
           "Real-time water quality data management and regulatory compliance reporting platform for EU Drinking Water Directive and PFAS limit compliance",
@@ -1516,8 +1496,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "Field Operations Fleet Decarbonisation",
+        challengeIds: [3, 1],
         product: "Ocean + Circular Mobility",
         detail:
           "Multi-service field fleet optimisation, eco-driving analytics, and EV transition planning across water, waste, and energy field operations",
@@ -1644,8 +1623,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Aviation Scope 1 Emissions and EU ETS Compliance",
+        challengeIds: [1, 2],
         product: "Ocean + Circular Mobility",
         detail:
           "Ground support vehicle fleet electrification and airside operations emissions management",
@@ -1693,8 +1671,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "Ground Operations Energy and Scope 2 Emissions",
+        challengeIds: [2],
         product: "Smart Eco Energy",
         detail:
           "IoT energy monitoring and optimisation across MRO hangars, cargo terminals, catering facilities, and airport office buildings",
@@ -1742,8 +1719,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "SAF Supply Chain Traceability and ReFuelEU Reporting",
+        challengeIds: [3],
         product: "Evolution Platform",
         detail:
           "SAF mass balance chain-of-custody data management and ReFuelEU Aviation regulatory reporting platform",
@@ -1870,8 +1846,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Agricultural Supply Chain Scope 3 Emissions",
+        challengeIds: [1, 2],
         product: "Evolution Platform",
         detail:
           "Supplier data platform for farm-level Scope 3 Category 1 collection, CSRD value chain disclosure, and dairy farmer carbon reduction programme management",
@@ -1919,8 +1894,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "Plastic Packaging Circularity and EPR Compliance",
+        challengeIds: [2],
         product: "Ocean + Circular Mobility",
         detail:
           "Packaging return logistics intelligence and reverse supply chain optimisation for deposit return schemes and EPR compliance",
@@ -1968,8 +1942,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "Manufacturing Energy and Water Intensity",
+        challengeIds: [3],
         product: "Smart Eco Energy",
         detail:
           "IoT energy and water monitoring across dairy processing, water bottling, and plant-based food manufacturing facilities",
@@ -2096,8 +2069,7 @@ export const briefData = {
     ],
     solutions: [
       {
-        challengeId: 1,
-        challengeLabel: "Ingredient Supply Chain Deforestation and EUDR Compliance",
+        challengeIds: [1, 2],
         product: "Evolution Platform",
         detail:
           "Ingredient traceability and geolocation data platform for EUDR due diligence statements and CSRD value chain deforestation disclosure",
@@ -2145,8 +2117,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 2,
-        challengeLabel: "Plastic Packaging Waste and Microplastics Regulation",
+        challengeIds: [2],
         product: "Ocean + Circular Mobility",
         detail:
           "Packaging return logistics and reverse supply chain management for cosmetics packaging EPR compliance and recycled content targets",
@@ -2194,8 +2165,7 @@ export const briefData = {
         }
       },
       {
-        challengeId: 3,
-        challengeLabel: "Manufacturing Water Consumption and Scope 2 Energy",
+        challengeIds: [3],
         product: "Smart Eco Energy",
         detail:
           "IoT energy and water monitoring across cosmetics and haircare manufacturing plants targeting carbon and water neutrality",
