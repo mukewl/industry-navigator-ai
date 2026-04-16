@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Search, ArrowRight, HelpCircle } from "lucide-react";
+import { Search, ArrowRight, HelpCircle, ChevronDown } from "lucide-react";
+import { briefData } from "@/data/briefData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,10 +37,19 @@ const HELP_STEPS = [
   },
 ];
 
+const SOLUTION_GROUPS = ["Smart Eco Energy", "Evolution Platform", "Ocean + Circular Mobility"].map(
+  (groupName) => ({
+    label: groupName,
+    companies: (Object.values(briefData) as { name: string; solutions: { product: string }[] }[])
+      .filter((company) => company.solutions.some((s) => s.product === groupName))
+      .map((company) => company.name),
+  })
+);
+
 export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
   const [query, setQuery] = useState("");
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [activeSolutionTypes, setActiveSolutionTypes] = useState<Set<string>>(new Set());
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,20 +57,6 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
       onSearch(query.trim(), "company");
     }
   };
-
-  const toggleSolutionType = (value: string) => {
-    setActiveSolutionTypes((prev) => {
-      const next = new Set(prev);
-      if (next.has(value)) {
-        next.delete(value);
-      } else {
-        next.add(value);
-      }
-      return next;
-    });
-  };
-
-  const hasActiveFilters = activeSolutionTypes.size > 0;
 
   return (
     <div className="relative flex flex-col items-center overflow-hidden px-4 pb-16 pt-10">
@@ -139,53 +135,59 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
           </Card>
         </div>
 
-        {/* ── Filter panel ── */}
+        {/* ── Category groups ── */}
         <div className="w-full">
-          <div className="rounded-xl border border-black/[0.06] bg-white/60 px-4 py-3.5 backdrop-blur-sm">
-            <div className="flex flex-col gap-2.5">
-
-              {/* Solution Type row */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <span className="type-eyebrow w-[4.5rem] shrink-0 text-muted-foreground/70">
-                  Solution
-                </span>
-                {(
-                  [
-                    "Energy & Emissions",
-                    "Supply Chain & Compliance",
-                    "Circular Economy",
-                    "Digital Infrastructure",
-                  ] as const
-                ).map((type) => (
+          <div className="rounded-xl border border-black/[0.06] bg-white/60 backdrop-blur-sm overflow-hidden">
+            {/* Group header buttons */}
+            <div className="flex flex-wrap gap-x-0 divide-x divide-black/[0.06]">
+              {SOLUTION_GROUPS.map((group) => {
+                const isOpen = openGroup === group.label;
+                return (
                   <button
-                    key={type}
+                    key={group.label}
                     type="button"
-                    onClick={() => toggleSolutionType(type)}
+                    onClick={() => setOpenGroup(isOpen ? null : group.label)}
                     className={cn(
-                      "rounded-full border px-2.5 py-[0.2rem] text-[0.6875rem] font-medium transition-colors duration-100",
-                      activeSolutionTypes.has(type)
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-black/[0.1] bg-transparent text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                      "flex flex-1 items-center justify-between gap-2 px-4 py-3 text-left text-[0.6875rem] font-medium transition-colors duration-100",
+                      isOpen
+                        ? "bg-primary/[0.06] text-primary"
+                        : "text-muted-foreground hover:bg-black/[0.03] hover:text-foreground"
                     )}
                   >
-                    {type}
+                    <span>{group.label}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+                        isOpen && "rotate-180"
+                      )}
+                      aria-hidden
+                    />
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
 
-            {/* Clear filters link — visible only when filters are active */}
-            {hasActiveFilters && (
-              <div className="mt-2.5 flex justify-end border-t border-black/[0.05] pt-2.5">
-                <button
-                  type="button"
-                  onClick={() => setActiveSolutionTypes(new Set())}
-                  className="text-[0.6875rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Clear filters
-                </button>
-              </div>
-            )}
+            {/* Expanded company list */}
+            {openGroup && (() => {
+              const group = SOLUTION_GROUPS.find((g) => g.label === openGroup);
+              if (!group) return null;
+              return (
+                <div className="border-t border-black/[0.06] px-4 py-3">
+                  <div className="flex flex-wrap gap-2">
+                    {group.companies.map((name) => (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => onSearch(name, "company")}
+                        className="rounded-full border border-black/[0.1] bg-white px-3 py-1 text-[0.6875rem] font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/[0.04] hover:text-primary"
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
 
