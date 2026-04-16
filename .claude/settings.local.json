@@ -6,7 +6,14 @@
       "Bash(node -e ':*)",
       "Bash(npx tsc:*)",
       "Bash(npm run:*)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(python3 skills/ui-ux-pro-max/scripts/search.py \"B2B sales intelligence ESG enterprise dark premium\" --design-system -p \"Industry Navigator\")",
+      "Bash(py --version)",
+      "Bash(python skills/ui-ux-pro-max/scripts/search.py \"B2B sales intelligence ESG enterprise dark premium\" --design-system -p \"Industry Navigator\")",
+      "Read(//c/Users/msbar/.claude/skills/**)",
+      "Read(//c/Users/msbar/.agents/skills/**)",
+      "Bash(python \"/c/Users/msbar/AppData/Local/Temp/skills-VoDoiq/src/ui-ux-pro-max/scripts/search.py\" \"B2B sales intelligence ESG enterprise dark premium\" --design-system -p \"Industry Navigator\")",
+      "Bash(python \"/c/Users/msbar/AppData/Local/Temp/skills-VoDoiq/src/ui-ux-pro-max/scripts/search.py\" \"B2B sales intelligence ESG enterprise dark premium\" --design-system --persist -p \"Industry Navigator\")"
     ]
   }
 }

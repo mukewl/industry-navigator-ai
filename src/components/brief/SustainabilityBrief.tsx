@@ -307,25 +307,25 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
 
   return (
     <div className="mx-auto max-w-4xl animate-fade-in pb-16 sm:pb-20">
-      <header className="mb-10 flex flex-col gap-5 sm:mb-14 sm:flex-row sm:items-center sm:justify-between">
+      <header className="mb-10 flex flex-col gap-5 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => onBack(returnTo)}
-            className="h-9 min-w-9 shrink-0 rounded-lg px-2 text-muted-foreground hover:bg-black/[0.05]"
+            className="h-9 min-w-9 shrink-0 rounded-lg px-2 text-muted-foreground hover:bg-black/[0.06]"
             aria-label="Back to dashboard"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden />
           </Button>
-          <CompanyLogo domain={queryKey ? COMPANY_DOMAINS[queryKey] : undefined} name={data.name} className="h-9 w-9 shrink-0" />
+          <CompanyLogo domain={queryKey ? COMPANY_DOMAINS[queryKey] : undefined} name={data.name} className="h-10 w-10 shrink-0 rounded-xl" />
           <div className="min-w-0">
-            <div className="type-section-label flex items-center gap-2">
-              <Leaf className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-              Brief
+            <div className="mb-0.5 flex items-center gap-1.5">
+              <Leaf className="h-3 w-3 shrink-0 text-primary" aria-hidden />
+              <span className="text-[0.625rem] font-semibold uppercase tracking-[0.07em] text-primary/70">Sustainability Brief</span>
             </div>
-            <h1 className="truncate font-display text-xl font-semibold leading-tight tracking-tight text-foreground sm:text-2xl">
+            <h1 className="truncate font-display text-xl font-bold leading-tight tracking-tight text-foreground sm:text-[1.625rem]">
               {data.name}
             </h1>
           </div>
@@ -333,7 +333,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
       </header>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="glass-tab-shell mb-10 inline-flex h-auto w-full max-w-full flex-wrap justify-start gap-1 bg-transparent p-1 shadow-apple-sm">
+        <TabsList className="mb-10 inline-flex h-auto w-full max-w-full flex-wrap justify-start gap-1 rounded-xl border border-black/[0.07] bg-black/[0.03] p-1 shadow-none">
           {(
             [
               ["overview", "Overview"],
@@ -346,9 +346,9 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
               key={v}
               value={v}
               className={cn(
-                "rounded-lg border-0 px-5 py-3 text-[0.9375rem] font-normal text-muted-foreground shadow-none transition-[background,box-shadow,color] duration-200",
-                "data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-apple-sm",
-                "data-[state=inactive]:hover:bg-black/[0.04]"
+                "rounded-lg border-0 px-5 py-2.5 text-[0.875rem] font-semibold text-muted-foreground shadow-none transition-all duration-200",
+                "data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_4px_rgba(0,0,0,0.10)]",
+                "data-[state=inactive]:hover:bg-white/60 data-[state=inactive]:hover:text-foreground"
               )}
             >
               {label}

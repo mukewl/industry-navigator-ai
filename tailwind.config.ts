@@ -15,24 +15,19 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
+  				'"Plus Jakarta Sans"',
   				'-apple-system',
   				'BlinkMacSystemFont',
   				'"SF Pro Text"',
-  				'"SF Pro Display"',
   				'"Helvetica Neue"',
-  				'Helvetica',
-  				'Arial',
-  				'system-ui',
   				'sans-serif'
   			],
   			display: [
+  				'"Plus Jakarta Sans"',
   				'-apple-system',
   				'BlinkMacSystemFont',
   				'"SF Pro Display"',
-  				'"SF Pro Text"',
   				'"Helvetica Neue"',
-  				'Helvetica',
-  				'Arial',
   				'sans-serif'
   			],
   			mono: [

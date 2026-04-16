@@ -102,26 +102,26 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
       */}
       <div className="relative flex w-full max-w-[44rem] animate-fade-in flex-col items-center gap-10">
 
-        {/* Hero + search card — z-10 ensures dropdown clears the category section below */}
+        {/* Hero + search card */}
         <div className="relative z-10 w-full max-w-[32rem]">
           <div className="mb-10 flex flex-col items-center text-center">
             <h1
               id="search-company-heading"
-              className="text-balance text-[2.75rem] font-semibold leading-[1.05] tracking-[-0.025em] text-foreground sm:text-[3.25rem]"
+              className="text-balance text-[2.75rem] font-extrabold leading-[1.02] tracking-[-0.03em] text-foreground sm:text-[3.375rem]"
             >
               Generate a sustainability brief.
             </h1>
-            <p className="mt-4 text-[0.9375rem] font-normal leading-relaxed text-muted-foreground">
-              Turn company insights into better sales conversations.
+            <p className="mt-5 max-w-[26rem] text-[1rem] font-normal leading-relaxed text-muted-foreground">
+              Turn company ESG signals into pipeline-ready sales conversations.
             </p>
           </div>
 
-          <Card className="glass-panel-strong border-0 shadow-none">
-            <CardContent className="p-6 sm:p-8">
+          <Card className="border border-black/[0.07] bg-white/92 shadow-[0_8px_32px_rgba(0,0,0,0.10)] backdrop-blur-xl">
+            <CardContent className="p-6 sm:p-7">
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <div className="relative" ref={inputWrapperRef}>
                   <Search
-                    className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                    className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70"
                     aria-hidden
                   />
                   <Input
@@ -133,15 +133,15 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
                       setDropdownOpen(true);
                     }}
                     onFocus={() => suggestions.length > 0 && setDropdownOpen(true)}
-                    placeholder="Enter a company name."
-                    className="h-11 border-[3px] border-black/[0.04] bg-[#fafafc] pl-10"
+                    placeholder="Enter a company name"
+                    className="h-12 border border-black/[0.1] bg-white/80 pl-11 text-[0.9375rem] placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
                     aria-labelledby="search-company-heading"
                     autoFocus
                   />
 
                   {/* Autocomplete dropdown */}
                   {dropdownOpen && suggestions.length > 0 && (
-                    <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-xl border border-border bg-popover shadow-apple backdrop-blur-xl">
+                    <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-black/[0.08] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
                       {suggestions.map((name) => (
                         <button
                           key={name}
@@ -152,9 +152,9 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
                             setDropdownOpen(false);
                             onSearch(name, "company");
                           }}
-                          className="flex w-full items-center gap-2.5 px-3.5 py-1.5 text-left text-[0.8125rem] font-normal text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-[0.875rem] font-medium text-foreground transition-colors duration-150 hover:bg-primary/[0.05] hover:text-primary"
                         >
-                          <CompanyLogo domain={COMPANY_NAME_TO_DOMAIN[name]} name={name} className="h-5 w-5 shrink-0" />
+                          <CompanyLogo domain={COMPANY_NAME_TO_DOMAIN[name]} name={name} className="h-6 w-6 shrink-0" />
                           {name}
                         </button>
                       ))}
@@ -164,19 +164,18 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
 
                 <Button
                   type="submit"
-                  size="sm"
                   disabled={isLoading || !query.trim()}
-                  className="h-11 w-full gap-2 rounded-lg"
+                  className="h-12 w-full gap-2 text-[0.9375rem] font-semibold"
                 >
                   {isLoading ? (
                     <>
-                      <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                      Running
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                      Running analysis…
                     </>
                   ) : (
                     <>
                       Run profile
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                      <ArrowRight className="h-4 w-4" aria-hidden />
                     </>
                   )}
                 </Button>
@@ -185,9 +184,12 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
           </Card>
         </div>
 
-        {/* ── Category groups ── */}
+        {/* ── Solution categories ── */}
         <div className="w-full">
-          <div className="rounded-xl border border-black/[0.06] bg-white/60 backdrop-blur-sm overflow-hidden">
+          <p className="mb-3 px-1 text-[0.6875rem] font-semibold uppercase tracking-[0.07em] text-muted-foreground/70">
+            Browse by solution type
+          </p>
+          <div className="overflow-hidden rounded-xl border border-black/[0.07] bg-white/70 shadow-[0_2px_8px_rgba(0,0,0,0.05)] backdrop-blur-sm">
             {/* Group header buttons */}
             <div className="flex flex-wrap gap-x-0 divide-x divide-black/[0.06]">
               {SOLUTION_GROUPS.map((group) => {
@@ -198,9 +200,9 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
                     type="button"
                     onClick={() => setOpenGroup(isOpen ? null : group.label)}
                     className={cn(
-                      "flex flex-1 items-center justify-between gap-2 px-4 py-3 text-left text-[0.6875rem] font-medium transition-colors duration-100",
+                      "flex flex-1 items-center justify-between gap-2 px-4 py-3.5 text-left text-[0.75rem] font-semibold transition-colors duration-150",
                       isOpen
-                        ? "bg-primary/[0.06] text-primary"
+                        ? "bg-primary/[0.07] text-primary"
                         : "text-muted-foreground hover:bg-black/[0.03] hover:text-foreground"
                     )}
                   >
@@ -222,14 +224,14 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
               const group = SOLUTION_GROUPS.find((g) => g.label === openGroup);
               if (!group) return null;
               return (
-                <div className="border-t border-black/[0.06] px-4 py-3">
+                <div className="border-t border-black/[0.06] bg-black/[0.015] px-4 py-4">
                   <div className="flex flex-wrap gap-2">
                     {group.companies.map((name) => (
                       <button
                         key={name}
                         type="button"
                         onClick={() => onSearch(name, "company")}
-                        className="rounded-full border border-black/[0.1] bg-white px-3 py-1 text-[0.6875rem] font-medium text-foreground transition-colors hover:border-primary/50 hover:bg-primary/[0.04] hover:text-primary"
+                        className="rounded-lg border border-black/[0.10] bg-white px-3 py-1.5 text-[0.75rem] font-medium text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-150 hover:border-primary/40 hover:bg-primary/[0.05] hover:text-primary hover:shadow-[0_2px_8px_rgba(255,105,0,0.12)]"
                       >
                         {name}
                       </button>

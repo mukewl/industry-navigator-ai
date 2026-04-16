@@ -107,9 +107,9 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
   const topPlay = [...data.solutions].sort((a, b) => b.impactScore - a.impactScore)[0];
 
   return (
-    <div className="glass-panel-strong -mx-5 flex h-[calc(100dvh-7.5rem)] min-h-[420px] max-h-[920px] overflow-hidden sm:-mx-8 lg:-mx-10">
+    <div className="-mx-5 flex h-[calc(100dvh-7.5rem)] min-h-[420px] max-h-[920px] overflow-hidden rounded-2xl border border-black/[0.07] bg-white/90 shadow-[0_8px_32px_rgba(0,0,0,0.10)] backdrop-blur-xl sm:-mx-8 lg:-mx-10">
       {/* Left — client list */}
-      <aside className="glass-inset flex w-[min(100%,280px)] shrink-0 flex-col border-r border-black/[0.06] min-h-0">
+      <aside className="flex w-[min(100%,280px)] shrink-0 flex-col border-r border-black/[0.07] bg-black/[0.02] min-h-0">
         <div className="shrink-0 border-b border-black/[0.06] px-4 py-4">
           <Button type="button" className="w-full" onClick={onNewProfile}>
             <Plus className="mr-2 h-4 w-4" />
@@ -118,9 +118,9 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
         </div>
 
         {/* Filter bar */}
-        <div className="shrink-0 space-y-2.5 border-b border-black/[0.06] px-3 py-3">
+        <div className="shrink-0 space-y-3 border-b border-black/[0.07] px-3 py-3.5">
           <Select value={filterSector} onValueChange={setFilterSector}>
-            <SelectTrigger className="h-7 w-full border-black/[0.08] bg-white/60 text-[0.6875rem]">
+            <SelectTrigger className="h-8 w-full border-black/[0.08] bg-white text-[0.6875rem] font-medium shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -134,7 +134,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
 
           {/* Client type */}
           <div>
-            <p className="type-eyebrow mb-1">Client type</p>
+            <p className="mb-1.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">Client type</p>
             <div className="flex flex-wrap gap-1">
               {([["All", ""], ["Existing", "existing"], ["Prospect", "prospect"]] as const).map(([label, val]) => (
                 <button
@@ -142,10 +142,10 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
                   type="button"
                   onClick={() => setFilterClient(val)}
                   className={cn(
-                    "rounded px-2 py-0.5 text-[0.625rem] font-medium transition-colors",
+                    "rounded-md border px-2.5 py-1 text-[0.625rem] font-semibold transition-all duration-150",
                     filterClient === val
-                      ? "bg-primary/10 text-primary ring-1 ring-primary/20"
-                      : "text-muted-foreground hover:bg-black/[0.04]"
+                      ? "border-primary/30 bg-primary/10 text-primary"
+                      : "border-transparent text-muted-foreground hover:border-black/[0.08] hover:bg-white hover:text-foreground"
                   )}
                 >
                   {label}
@@ -156,7 +156,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
 
           {/* Confidence */}
           <div>
-            <p className="type-eyebrow mb-1">Confidence</p>
+            <p className="mb-1.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">Confidence</p>
             <div className="flex flex-wrap gap-1">
               {([["All", ""], ["High", "high"], ["Med", "medium"], ["Low", "low"]] as const).map(([label, val]) => (
                 <button
@@ -164,10 +164,10 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
                   type="button"
                   onClick={() => setFilterConfidence(val)}
                   className={cn(
-                    "rounded px-2 py-0.5 text-[0.625rem] font-medium transition-colors",
+                    "rounded-md border px-2.5 py-1 text-[0.625rem] font-semibold transition-all duration-150",
                     filterConfidence === val
-                      ? "bg-primary/10 text-primary ring-1 ring-primary/20"
-                      : "text-muted-foreground hover:bg-black/[0.04]"
+                      ? "border-primary/30 bg-primary/10 text-primary"
+                      : "border-transparent text-muted-foreground hover:border-black/[0.08] hover:bg-white hover:text-foreground"
                   )}
                 >
                   {label}
@@ -178,7 +178,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
 
           {/* ESG risk */}
           <div>
-            <p className="type-eyebrow mb-1">ESG risk</p>
+            <p className="mb-1.5 text-[0.625rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">ESG risk</p>
             <div className="flex flex-wrap gap-1">
               {([["All", ""], ["Critical", "Critical"], ["High", "High"], ["Med", "Medium"]] as const).map(([label, val]) => (
                 <button
@@ -186,10 +186,10 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
                   type="button"
                   onClick={() => setFilterEsg(val)}
                   className={cn(
-                    "rounded px-2 py-0.5 text-[0.625rem] font-medium transition-colors",
+                    "rounded-md border px-2.5 py-1 text-[0.625rem] font-semibold transition-all duration-150",
                     filterEsg === val
-                      ? "bg-primary/10 text-primary ring-1 ring-primary/20"
-                      : "text-muted-foreground hover:bg-black/[0.04]"
+                      ? "border-primary/30 bg-primary/10 text-primary"
+                      : "border-transparent text-muted-foreground hover:border-black/[0.08] hover:bg-white hover:text-foreground"
                   )}
                 >
                   {label}
@@ -216,14 +216,16 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
                 type="button"
                 onClick={() => setSelected(key)}
                 className={cn(
-                  "w-full rounded-lg px-3 py-3 text-left transition-[background,box-shadow] duration-200",
-                  active ? "bg-primary/10 shadow-apple-sm ring-1 ring-primary/20" : "hover:bg-black/[0.04]"
+                  "w-full rounded-xl px-3 py-3 text-left transition-all duration-150",
+                  active
+                    ? "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_2px_0_0_0_hsl(24_100%_50%)] ring-1 ring-black/[0.06]"
+                    : "hover:bg-white/60"
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <CompanyLogo domain={COMPANY_DOMAINS[key]} name={c.name} className="h-5 w-5 shrink-0" />
-                    <span className="truncate font-display text-[0.9375rem] font-semibold tracking-tight text-foreground">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <CompanyLogo domain={COMPANY_DOMAINS[key]} name={c.name} className="h-6 w-6 shrink-0" />
+                    <span className={cn("truncate text-[0.875rem] font-semibold tracking-tight", active ? "text-foreground" : "text-foreground/80")}>
                       {c.name}
                     </span>
                   </div>
@@ -274,48 +276,48 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
         {/* Stat grid — 4 data cards in 2×2 */}
         <div className="grid grid-cols-2 gap-3">
           {/* Contract value */}
-          <div className="flex flex-col gap-2.5 rounded-xl border border-black/[0.06] bg-white/70 p-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-black/[0.06] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
             <div className="flex items-center justify-between">
-              <p className="type-eyebrow text-muted-foreground">Contract value (est.)</p>
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">Contract value</p>
               <TrendingUp className="h-3.5 w-3.5 text-primary/50" aria-hidden />
             </div>
-            <p className="text-[1.375rem] font-semibold tabular-nums tracking-tight text-foreground leading-none">
+            <p className="text-[1.5rem] font-bold tabular-nums tracking-tight text-foreground leading-none">
               {sumContractValueLabel(data)}
             </p>
             <p className="text-[0.6875rem] leading-none text-muted-foreground">All solutions combined</p>
           </div>
 
           {/* Confidence score */}
-          <div className="flex flex-col gap-2.5 rounded-xl border border-black/[0.06] bg-white/70 p-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-black/[0.06] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
             <div className="flex items-center justify-between">
-              <p className="type-eyebrow text-muted-foreground">Confidence</p>
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">Confidence</p>
               <Target className="h-3.5 w-3.5 text-primary/50" aria-hidden />
             </div>
-            <p className="text-[1.375rem] font-semibold tabular-nums tracking-tight text-foreground leading-none">
+            <p className="text-[1.5rem] font-bold tabular-nums tracking-tight text-foreground leading-none">
               {data.score}%
             </p>
-            <Progress value={data.score} className="h-1 bg-black/[0.06]" />
+            <Progress value={data.score} className="h-1.5 bg-black/[0.06]" />
           </div>
 
           {/* CO₂ impact */}
-          <div className="flex flex-col gap-2.5 rounded-xl border border-black/[0.06] bg-white/70 p-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-black/[0.06] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
             <div className="flex items-center justify-between">
-              <p className="type-eyebrow text-muted-foreground">CO₂ impact (est.)</p>
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">CO₂ impact (est.)</p>
               <Leaf className="h-3.5 w-3.5 text-emerald-500/60" aria-hidden />
             </div>
-            <p className="text-[1.375rem] font-semibold tabular-nums tracking-tight text-foreground leading-none">
+            <p className="text-[1.5rem] font-bold tabular-nums tracking-tight text-foreground leading-none">
               {aggregateCo2Label(data)}
             </p>
             <p className="text-[0.6875rem] leading-none text-muted-foreground">Annual reduction</p>
           </div>
 
           {/* ESG risk */}
-          <div className="flex flex-col gap-2.5 rounded-xl border border-black/[0.06] bg-white/70 p-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-black/[0.06] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
             <div className="flex items-center justify-between">
-              <p className="type-eyebrow text-muted-foreground">ESG risk level</p>
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">ESG risk level</p>
               <ShieldAlert className="h-3.5 w-3.5 text-muted-foreground/40" aria-hidden />
             </div>
-            <p className={cn("text-[1.375rem] font-semibold tracking-tight leading-none", urgencyValueClass)}>
+            <p className={cn("text-[1.5rem] font-bold tracking-tight leading-none", urgencyValueClass)}>
               {topUrgency}
             </p>
             <p className="text-[0.6875rem] leading-none text-muted-foreground">Top challenge priority</p>
@@ -325,10 +327,10 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
         {/* Point of contact + Top play */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {/* POC card */}
-          <div className="flex flex-col gap-3 rounded-xl border border-black/[0.06] bg-white/70 p-4">
-            <p className="type-section-label">Point of contact</p>
+          <div className="flex flex-col gap-3 rounded-xl border border-black/[0.06] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">Point of contact</p>
             <div className="flex items-start gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[0.6875rem] font-semibold text-primary">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-[0.6875rem] font-bold text-primary">
                 {primaryContact?.name ? initials(primaryContact.name) : "—"}
               </div>
               <div className="min-w-0">
@@ -352,8 +354,8 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
 
           {/* Top recommended play */}
           {topPlay && (
-            <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-primary/[0.04] p-4">
-              <p className="type-section-label text-primary/70">Top recommended play</p>
+            <div className="flex flex-col gap-3 rounded-xl border border-primary/25 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] p-4 shadow-[0_2px_8px_rgba(255,105,0,0.08)]">
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-primary/60">Top recommended play</p>
               <div className="min-w-0">
                 <p className="line-clamp-2 text-[0.875rem] font-semibold leading-tight text-foreground">
                   {topPlay.product}
@@ -365,7 +367,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[0.6875rem] text-muted-foreground">Impact score</span>
-                  <span className="text-[0.6875rem] font-semibold tabular-nums text-primary">
+                  <span className="text-[0.6875rem] font-bold tabular-nums text-primary">
                     {topPlay.impactScore}
                   </span>
                 </div>
@@ -385,7 +387,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
 
         {/* Revenue projection chart */}
         <div className="min-h-[160px]">
-          <p className="type-section-label mb-4">Revenue projection (est.)</p>
+          <p className="mb-4 text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">Revenue projection (est.)</p>
           <div className="h-[160px] w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barRows} margin={{ top: 4, right: 4, left: 0, bottom: 0 }} barCategoryGap="32%">
@@ -432,10 +434,10 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
               ? "text-amber-600 bg-amber-50 border border-amber-200/80"
               : "text-muted-foreground bg-black/[0.04] border border-black/[0.06]";
           return (
-            <div className="rounded-xl border border-black/[0.06] bg-white/70 p-4">
+            <div className="rounded-xl border border-black/[0.06] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
               <div className="mb-3 flex items-center gap-2">
                 <Presentation className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
-                <p className="type-section-label">Presentation Details</p>
+                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted-foreground/60">Presentation Details</p>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
