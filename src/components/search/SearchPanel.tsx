@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Search, ArrowRight, HelpCircle, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Search, ArrowRight, HelpCircle, ChevronDown, FileText } from "lucide-react";
 import { briefData } from "@/data/briefData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,8 @@ const HELP_STEPS = [
   },
 ];
 
+const COMPANY_NAMES = (Object.values(briefData) as { name: string }[]).map((c) => c.name);
+
 const SOLUTION_GROUPS = ["Smart Eco Energy", "Evolution Platform", "Ocean + Circular Mobility"].map(
   (groupName) => ({
     label: groupName,
@@ -50,9 +52,29 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
   const [query, setQuery] = useState("");
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
+
+  const suggestions = query.trim()
+    ? COMPANY_NAMES.filter((name) =>
+        name.toLowerCase().startsWith(query.trim().toLowerCase())
+      )
+    : [];
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (inputWrapperRef.current && !inputWrapperRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setDropdownOpen(false);
     if (query.trim()) {
       onSearch(query.trim(), "company");
     }
@@ -79,8 +101,8 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
       */}
       <div className="relative flex w-full max-w-[44rem] animate-fade-in flex-col items-center gap-10">
 
-        {/* Hero + search card — narrower column */}
-        <div className="w-full max-w-[32rem]">
+        {/* Hero + search card — z-10 ensures dropdown clears the category section below */}
+        <div className="relative z-10 w-full max-w-[32rem]">
           <div className="mb-10 flex flex-col items-center text-center">
             <h1
               id="search-company-heading"
@@ -96,22 +118,49 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
           <Card className="glass-panel-strong border-0 shadow-none">
             <CardContent className="p-6 sm:p-8">
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                <div className="relative">
+                <div className="relative" ref={inputWrapperRef}>
                   <Search
                     className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                     aria-hidden
                   />
                   <Input
                     name="company"
-                    autoComplete="organization"
+                    autoComplete="off"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => {
+                      setQuery(e.target.value);
+                      setDropdownOpen(true);
+                    }}
+                    onFocus={() => suggestions.length > 0 && setDropdownOpen(true)}
                     placeholder="Enter a company name."
                     className="h-11 border-[3px] border-black/[0.04] bg-[#fafafc] pl-10"
                     aria-labelledby="search-company-heading"
                     autoFocus
                   />
+
+                  {/* Autocomplete dropdown */}
+                  {dropdownOpen && suggestions.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-xl border border-border bg-popover shadow-apple backdrop-blur-xl">
+                      {suggestions.map((name) => (
+                        <button
+                          key={name}
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setQuery(name);
+                            setDropdownOpen(false);
+                            onSearch(name, "company");
+                          }}
+                          className="flex w-full items-center gap-2.5 px-3.5 py-1.5 text-left text-[0.8125rem] font-normal text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                        >
+                          <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
                 <Button
                   type="submit"
                   size="sm"
