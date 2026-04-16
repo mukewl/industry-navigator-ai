@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Search, LayoutDashboard, FileText, ChevronRight, Map, Clock, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -6,6 +5,8 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 interface SidebarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  /** Recent company tab IDs — owned by Index.tsx so all navigation paths are captured */
+  recentIds: string[];
   /** When true, sidebar fills a parent (e.g. mobile sheet) instead of fixed desktop rail */
   embedded?: boolean;
 }
@@ -15,6 +16,7 @@ const navPrimary = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
 ];
 
+// Display labels — kept here so the Sidebar is self-contained visually.
 const COMPANY_LABEL: Record<string, string> = {
   "renault-brief":           "Renault",
   "carrefour-brief":         "Carrefour",
@@ -28,33 +30,7 @@ const COMPANY_LABEL: Record<string, string> = {
   "loreal-brief":            "L'Oréal",
 };
 
-const LS_KEY = "obs_recent_briefs";
-
-function getRecent(): string[] {
-  try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]");
-    if (!Array.isArray(parsed)) return [];
-    return (parsed as string[]).filter((id) => id in COMPANY_LABEL);
-  } catch {
-    return [];
-  }
-}
-
-function pushRecent(tabId: string): string[] {
-  const next = [tabId, ...getRecent().filter((id) => id !== tabId)].slice(0, 3);
-  localStorage.setItem(LS_KEY, JSON.stringify(next));
-  return next;
-}
-
-export const Sidebar = ({ activeTab, onTabChange, embedded }: SidebarProps) => {
-  const [recentIds, setRecentIds] = useState<string[]>(() => getRecent());
-
-  useEffect(() => {
-    if (activeTab in COMPANY_LABEL) {
-      setRecentIds(pushRecent(activeTab));
-    }
-  }, [activeTab]);
-
+export const Sidebar = ({ activeTab, onTabChange, recentIds, embedded }: SidebarProps) => {
   const CompanyButton = ({ id }: { id: string }) => (
     <button
       type="button"

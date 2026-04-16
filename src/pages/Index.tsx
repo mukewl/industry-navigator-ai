@@ -7,11 +7,51 @@ import { AccountDashboard } from "@/components/dashboard/AccountDashboard";
 import { ArchitectureView } from "@/components/architecture/ArchitectureView";
 import { RoadmapView } from "@/components/dashboard/RoadmapView";
 
+// Tab IDs for each company brief — single source of truth used by both
+// navigation handlers and the Sidebar's Recent section.
+const BRIEF_TAB_MAP: Record<string, string> = {
+  "renault-brief":           "Renault",
+  "carrefour-brief":         "Carrefour",
+  "stellantis-brief":        "Stellantis",
+  "totalenergies-brief":     "TotalEnergies",
+  "saintgobain-brief":       "Saint-Gobain",
+  "schneiderelectric-brief": "Schneider Electric",
+  "veolia-brief":            "Veolia",
+  "airfranceklm-brief":      "Air France-KLM",
+  "danone-brief":            "Danone",
+  "loreal-brief":            "L'Oréal",
+};
+
+// Reverse map: display name (case-insensitive) → tab ID, for the search path.
+const NAME_TO_TAB: Record<string, string> = Object.fromEntries(
+  Object.entries(BRIEF_TAB_MAP).map(([tab, name]) => [name.toLowerCase(), tab])
+);
+
+const LS_KEY = "obs_recent_briefs";
+
+function getRecent(): string[] {
+  try {
+    const parsed: unknown = JSON.parse(localStorage.getItem(LS_KEY) ?? "[]");
+    if (!Array.isArray(parsed)) return [];
+    return (parsed as string[]).filter((id) => id in BRIEF_TAB_MAP);
+  } catch {
+    return [];
+  }
+}
+
+function pushRecent(tabId: string): string[] {
+  const next = [tabId, ...getRecent().filter((id) => id !== tabId)].slice(0, 3);
+  localStorage.setItem(LS_KEY, JSON.stringify(next));
+  return next;
+}
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("search");
   const [previousTab, setPreviousTab] = useState("search");
   const [searchQuery, setSearchQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  // Owned here so every navigation path (search, sidebar, dashboard) updates it.
+  const [recentIds, setRecentIds] = useState<string[]>(() => getRecent());
 
   // Called immediately when the user submits a company name
   const handleSearch = (_query: string, _type: "industry" | "company") => {
@@ -21,6 +61,9 @@ const Index = () => {
     setHasSearched(true);
     setPreviousTab(activeTab);
     setActiveTab("brief");
+    // Track recent — look up tab ID from display name (case-insensitive)
+    const tabId = NAME_TO_TAB[query.toLowerCase()];
+    if (tabId) setRecentIds(pushRecent(tabId));
   };
 
   const handleNewSearch = () => {
@@ -35,6 +78,10 @@ const Index = () => {
       setSearchQuery("");
     }
     setActiveTab(tab);
+    // Track recent for direct brief tab navigation (e.g. sidebar clicks)
+    if (tab in BRIEF_TAB_MAP) {
+      setRecentIds(pushRecent(tab));
+    }
   };
 
   const renderContent = () => {
@@ -48,6 +95,8 @@ const Index = () => {
             setHasSearched(true);
             setPreviousTab(activeTab);
             setActiveTab("brief");
+            const tabId = NAME_TO_TAB[companyName.toLowerCase()];
+            if (tabId) setRecentIds(pushRecent(tabId));
           }}
         />
       );
@@ -71,23 +120,11 @@ const Index = () => {
     }
 
     // Direct links to Briefs
-    const briefTabMap: Record<string, string> = {
-      "renault-brief": "Renault",
-      "carrefour-brief": "Carrefour",
-      "stellantis-brief": "Stellantis",
-      "totalenergies-brief": "TotalEnergies",
-      "saintgobain-brief": "Saint-Gobain",
-      "schneiderelectric-brief": "Schneider Electric",
-      "veolia-brief": "Veolia",
-      "airfranceklm-brief": "Air France-KLM",
-      "danone-brief": "Danone",
-      "loreal-brief": "L'Oréal",
-    };
-    if (activeTab in briefTabMap) {
+    if (activeTab in BRIEF_TAB_MAP) {
       return (
         <SustainabilityBrief
           key={activeTab}
-          companyName={briefTabMap[activeTab]}
+          companyName={BRIEF_TAB_MAP[activeTab]}
           onBack={(returnTo) => setActiveTab(returnTo)}
           returnTo={previousTab}
         />
@@ -114,7 +151,7 @@ const Index = () => {
       >
         Skip to main content
       </a>
-      <Sidebar activeTab={activeTab} onTabChange={handleTabChange} />
+      <Sidebar activeTab={activeTab} onTabChange={handleTabChange} recentIds={recentIds} />
       <Header
         activeTab={activeTab}
         onTabChange={handleTabChange}
