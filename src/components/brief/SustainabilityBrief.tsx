@@ -15,6 +15,9 @@ import {
   RefreshCw,
   Loader2,
   X,
+  Linkedin,
+  Mail,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -869,7 +872,38 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                         <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-black/[0.06] bg-[#fafafc]">
                           <Icon className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
                         </div>
-                        <span className="text-sm font-medium text-foreground">{c.role}</span>
+                        <span className="flex-1 text-sm font-medium text-foreground">{c.role}</span>
+                        <div className="flex shrink-0 items-center gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                            aria-label={`View ${c.role} on LinkedIn`}
+                            onClick={() => toast({ title: "Coming soon" })}
+                          >
+                            <Linkedin className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                            aria-label={`Email ${c.role}`}
+                            onClick={() => toast({ title: "Coming soon" })}
+                          >
+                            <Mail className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="ml-1 h-9"
+                            onClick={() => toast({ title: "Coming soon" })}
+                          >
+                            <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+                            Enrich Profile
+                          </Button>
+                        </div>
                       </div>
                     );
                   })}

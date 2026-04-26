@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   GitBranch,
   ArrowDown,
@@ -15,15 +16,26 @@ import {
   FileText,
   Lock,
   CheckCircle2,
+  RotateCcw,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+
+// Persists across tab switches within a single page session, but resets on
+// full page reload — so closing the browser tab and reopening it later in
+// the day triggers auto-play again.
+let hasAnimatedThisSession = false;
+
+const STEP_TICK_MS = 900;
+const TOTAL_STEPS = 5;
 
 const AGENTS = [
   {
@@ -75,22 +87,74 @@ const tooltipClass =
   "max-w-[280px] rounded-xl border border-white/12 bg-[hsl(240_3.8%_10%)] px-3.5 py-3 shadow-apple";
 
 export const ArchitectureView = () => {
+  // progress: 0 = idle, 1..5 = step N active, 6 = all done (final state)
+  const [progress, setProgress] = useState<number>(() =>
+    hasAnimatedThisSession ? TOTAL_STEPS + 1 : 0,
+  );
+  const [tooltipsDisabled, setTooltipsDisabled] = useState<boolean>(
+    () => hasAnimatedThisSession,
+  );
+  const [animationKey, setAnimationKey] = useState(0);
+
+  useEffect(() => {
+    // First mount and we've already animated this session → skip auto-play.
+    // Replay (animationKey > 0) always runs.
+    if (hasAnimatedThisSession && animationKey === 0) return;
+
+    setProgress(0);
+    const id = setInterval(() => {
+      setProgress((p) => {
+        // Mark "animated" on the first real tick (avoids StrictMode setting
+        // the flag during a mount that immediately gets cleaned up).
+        if (p === 0) hasAnimatedThisSession = true;
+        if (p >= TOTAL_STEPS) {
+          clearInterval(id);
+          return TOTAL_STEPS + 1;
+        }
+        return p + 1;
+      });
+    }, STEP_TICK_MS);
+
+    return () => clearInterval(id);
+  }, [animationKey]);
+
+  // Once the animation reaches the final state, permanently disable the
+  // per-agent hover tooltips — the inline progress panel is the single
+  // source of truth from then on.
+  useEffect(() => {
+    if (progress > TOTAL_STEPS) setTooltipsDisabled(true);
+  }, [progress]);
+
+  const handleReplay = () => setAnimationKey((k) => k + 1);
+
   return (
     <TooltipProvider delayDuration={150}>
       <div className="animate-fade-in pb-10 pt-4">
         {/* Page header */}
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-            <GitBranch className="h-[18px] w-[18px] text-primary" />
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <GitBranch className="h-[18px] w-[18px] text-primary" />
+            </div>
+            <div>
+              <h1 className="text-xl font-medium tracking-tight text-foreground leading-tight">
+                Multi-Agent Architecture
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Gen AI Sustainability Profiling System
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-medium tracking-tight text-foreground leading-tight">
-              Multi-Agent Architecture
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Gen AI Sustainability Profiling System
-            </p>
-          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleReplay}
+            className="h-9"
+          >
+            <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
+            Replay
+          </Button>
         </div>
 
         <div>
@@ -166,19 +230,82 @@ export const ArchitectureView = () => {
           <div>
             <SectionLabel num="04" label="Agent Pipeline" />
             <div className="space-y-2">
+              {/* Inline progress panel — same content/styling as the per-agent
+                  hover tooltips, rendered persistently while the auto-play
+                  animation runs. Becomes the single source of truth after
+                  the first run completes. */}
+              {progress > 0 && (
+                <div className={cn(tooltipClass, "max-w-none")}>
+                  <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-wider text-white/35">
+                    Carrefour — pipeline progress
+                  </p>
+                  <div className="space-y-2">
+                    {AGENTS.slice(0, Math.min(progress, TOTAL_STEPS)).map((a, i) => {
+                      const done = progress > i + 1;
+                      return (
+                        <div key={a.num} className="flex items-start gap-2">
+                          {done ? (
+                            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                          ) : (
+                            <div className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                          )}
+                          <span
+                            className={
+                              done
+                                ? "text-[11px] leading-snug text-white/45"
+                                : "text-[11px] leading-snug text-white font-medium"
+                            }
+                          >
+                            {a.action}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Five agent cards */}
               <div className="flex gap-2">
                 {AGENTS.map((agent, idx) => {
                   const Icon = agent.icon;
+                  const stepNum = idx + 1;
+                  const isActive = progress === stepNum;
+                  const isCompleted = progress > stepNum;
+
+                  const cardClasses = cn(
+                    "flex-1 cursor-default shadow-sm transition-all duration-200",
+                    !isActive && !isCompleted &&
+                      "border-border/50 bg-background hover:border-primary/40 hover:bg-primary/[0.02]",
+                    isActive &&
+                      "border-primary/60 bg-primary/[0.06] ring-2 ring-primary/30 shadow-[0_0_0_3px_rgba(255,105,0,0.08)]",
+                    isCompleted && "border-primary/40 bg-primary/[0.03]",
+                  );
+
+                  const numBadgeClasses = cn(
+                    "flex h-6 w-6 items-center justify-center rounded-md border text-[10px] font-bold font-mono transition-colors duration-200",
+                    !isActive && !isCompleted &&
+                      "border-border/60 bg-muted text-muted-foreground",
+                    isActive && "border-primary bg-primary text-primary-foreground",
+                    isCompleted && "border-primary/30 bg-primary/15 text-primary",
+                  );
+
+                  const iconClasses = cn(
+                    "h-4 w-4 transition-colors duration-200",
+                    !isActive && !isCompleted && "text-muted-foreground/60",
+                    (isActive || isCompleted) && "text-primary",
+                  );
+
                   return (
-                    <Tooltip key={agent.num}>
+                    <Tooltip
+                      key={agent.num}
+                      open={tooltipsDisabled ? false : undefined}
+                    >
                       <TooltipTrigger asChild>
-                        <Card className="flex-1 cursor-default border-border/50 bg-background shadow-sm transition-colors duration-150 hover:border-primary/40 hover:bg-primary/[0.02]">
+                        <Card className={cardClasses}>
                           <CardContent className="flex flex-col items-center gap-1.5 px-2 py-3 text-center">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-md border border-border/60 bg-muted text-[10px] font-bold font-mono text-muted-foreground">
-                              {agent.num}
-                            </div>
-                            <Icon className="h-4 w-4 text-muted-foreground/60" />
+                            <div className={numBadgeClasses}>{agent.num}</div>
+                            <Icon className={iconClasses} />
                             <span className="text-[11px] font-medium leading-snug text-foreground">
                               {agent.name}
                             </span>

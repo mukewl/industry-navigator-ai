@@ -13,7 +13,8 @@
       "Read(//c/Users/msbar/.claude/skills/**)",
       "Read(//c/Users/msbar/.agents/skills/**)",
       "Bash(python \"/c/Users/msbar/AppData/Local/Temp/skills-VoDoiq/src/ui-ux-pro-max/scripts/search.py\" \"B2B sales intelligence ESG enterprise dark premium\" --design-system -p \"Industry Navigator\")",
-      "Bash(python \"/c/Users/msbar/AppData/Local/Temp/skills-VoDoiq/src/ui-ux-pro-max/scripts/search.py\" \"B2B sales intelligence ESG enterprise dark premium\" --design-system --persist -p \"Industry Navigator\")"
+      "Bash(python \"/c/Users/msbar/AppData/Local/Temp/skills-VoDoiq/src/ui-ux-pro-max/scripts/search.py\" \"B2B sales intelligence ESG enterprise dark premium\" --design-system --persist -p \"Industry Navigator\")",
+      "Bash(git diff *)"
     ]
   }
 }
