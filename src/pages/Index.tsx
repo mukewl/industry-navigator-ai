@@ -6,6 +6,7 @@ import { SustainabilityBrief } from "@/components/brief/SustainabilityBrief";
 import { AccountDashboard } from "@/components/dashboard/AccountDashboard";
 import { ArchitectureView } from "@/components/architecture/ArchitectureView";
 import { RoadmapView } from "@/components/dashboard/RoadmapView";
+import FloatingPaths from "@/components/ui/background-paths";
 
 // Tab IDs for each company brief — single source of truth used by both
 // navigation handlers and the Sidebar's Recent section.
@@ -158,8 +159,19 @@ const Index = () => {
         searchQuery={searchQuery || undefined}
         onNewSearch={handleNewSearch}
       />
-      <main id="main-content" className="lg:pl-64" tabIndex={-1}>
-        <div className="mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+      <main id="main-content" className="relative lg:pl-64" tabIndex={-1}>
+        {/* Animated path background — landing page only. Spans the main area
+            from the sidebar edge to the right of the viewport. */}
+        {activeTab === "search" && (
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 right-0 z-0 overflow-hidden text-primary lg:left-64"
+            aria-hidden
+          >
+            <FloatingPaths position={1} />
+            <FloatingPaths position={-1} />
+          </div>
+        )}
+        <div className="relative z-10 mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
           {renderContent()}
         </div>
       </main>

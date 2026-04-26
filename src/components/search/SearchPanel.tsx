@@ -82,7 +82,7 @@ export const SearchPanel = ({ onSearch, isLoading }: SearchPanelProps) => {
   };
 
   return (
-    <div className="relative flex flex-col items-center overflow-hidden px-4 pb-16 pt-10">
+    <div className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-10">
       {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div className="absolute left-1/2 top-[22%] h-[480px] w-[860px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.07] blur-[130px]" />

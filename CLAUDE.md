@@ -23,7 +23,7 @@ This document is for AI assistants and developers working in this repo. It summa
 | Backend (scaffold) | **Supabase** — `@supabase/supabase-js`, client in `src/integrations/supabase/client.ts`, generated `types.ts` |
 | Forms / validation | **react-hook-form**, **zod**, **@hookform/resolvers** (available; not central to current flows) |
 | Toasts | **shadcn Toaster** + **Sonner** (both mounted in `App.tsx`) |
-| Animation | **CSS keyframes only** — framer-motion is NOT installed; do not add it |
+| Animation | **CSS keyframes preferred**; framer-motion is allowed for complex animations where CSS keyframes would be impractical (e.g., SVG path animations, spring physics) |
 
 **Path alias:** `@/` → `src/` (see `vite.config.ts`, `tsconfig`).
 
@@ -276,9 +276,6 @@ const topPlay = [...data.solutions].sort((a, b) => b.impactScore - a.impactScore
 ```
 Contract value is accessed via `(topPlay as any).details?.financialCase?.contractValue` with `?? "—"` fallback because TypeScript's inference through the union of all `briefData` values is not always reliable for deeply nested properties.
 
-### No framer-motion
-Framer Motion is **not installed** and should **not be added**. All animation uses CSS keyframes defined in `src/index.css`. New animations go in the `@layer utilities` block alongside existing ones.
-
 ### Recharts styling conventions
 Match the existing `AccountDashboard` chart style:
 - `CartesianGrid vertical={false}` with `stroke="rgba(0,0,0,0.06)"`
@@ -344,8 +341,7 @@ Likely Lovable-scaffold leftovers. Safe to remove or reintegrate intentionally �
   - Company logos: import `CompanyLogo` from `@/lib/companyLogos` — never render raw `<img>` for company logos.
   - Avoid hard-coded hex **except** where Recharts requires explicit colour strings (use `hsl(24 100% 50%)` for primary, `hsl(240 3.8% 46.1%)` for muted).
   - Brand colour is always `#FF6900` / `hsl(24 100% 50%)` — ignore any design system recommendation to use red (`#DC2626`) as the CTA colour.
-- **Animation:** add new keyframes to `src/index.css` `@layer utilities` block; name classes `animate-*`.
-- **No framer-motion.** Do not install it.
+- **Animation:** prefer CSS keyframes in `src/index.css` `@layer utilities` block (named `animate-*`); reach for framer-motion only when keyframes are impractical (see Tech stack row for policy).
 - **Skills:** The repo includes Claude skills under `.claude/skills/` — use when the user invokes them via `/skill-name`. The `ui-ux-pro-max` skill is installed; its `search.py` script lives at `C:\Users\msbar\AppData\Local\Temp\skills-VoDoiq\src\ui-ux-pro-max\scripts\search.py` (run with `python`, not `python3`).
 
 ---
