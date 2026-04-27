@@ -7,6 +7,29 @@ import { AccountDashboard } from "@/components/dashboard/AccountDashboard";
 import { ArchitectureView } from "@/components/architecture/ArchitectureView";
 import { RoadmapView } from "@/components/dashboard/RoadmapView";
 import FloatingPaths from "@/components/ui/background-paths";
+import { ChevronDown, Check, Info } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+
+type Mode = "light" | "standard" | "deep";
+
+const MODES: { id: Mode; name: string; description: string }[] = [
+  { id: "light",    name: "Light",    description: "Fast and efficient. Lowest energy footprint." },
+  { id: "standard", name: "Standard", description: "Balanced research depth and speed." },
+  { id: "deep",     name: "Deep",     description: "Most thorough analysis. Highest research quality." },
+];
+
+const MODE_LABELS: Record<Mode, string> = {
+  light: "Light",
+  standard: "Standard",
+  deep: "Deep",
+};
 
 // Tab IDs for each company brief — single source of truth used by both
 // navigation handlers and the Sidebar's Recent section.
@@ -53,6 +76,8 @@ const Index = () => {
   const [hasSearched, setHasSearched] = useState(false);
   // Owned here so every navigation path (search, sidebar, dashboard) updates it.
   const [recentIds, setRecentIds] = useState<string[]>(() => getRecent());
+  // Research mode — cosmetic only, no downstream effect.
+  const [mode, setMode] = useState<Mode>("standard");
 
   // Called immediately when the user submits a company name
   const handleSearch = (_query: string, _type: "industry" | "company") => {
@@ -169,6 +194,59 @@ const Index = () => {
           >
             <FloatingPaths position={1} />
             <FloatingPaths position={-1} />
+          </div>
+        )}
+
+        {/* Research-mode picker — landing page only. Anchored to top-left of the
+            main area (right of sidebar), independent of hero's centered layout. */}
+        {activeTab === "search" && (
+          <div className="absolute left-6 top-6 z-30 flex items-center gap-1.5 lg:left-[17.5rem]">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex h-11 items-center gap-2 rounded-md border border-black/[0.1] bg-white px-4 text-base font-medium text-muted-foreground transition-colors duration-150 hover:border-black/[0.18] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+                >
+                  {MODE_LABELS[mode]}
+                  <ChevronDown className="h-4 w-4" aria-hidden />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-[280px] p-1">
+                {MODES.map((m) => (
+                  <DropdownMenuItem
+                    key={m.id}
+                    onSelect={() => setMode(m.id)}
+                    className={cn(
+                      "flex cursor-pointer items-start justify-between gap-3 rounded-md px-2.5 py-2",
+                      mode === m.id && "bg-primary/[0.04]",
+                    )}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-[14px] font-medium text-foreground">{m.name}</span>
+                      <span className="mt-0.5 text-[12px] text-muted-foreground/80">{m.description}</span>
+                    </div>
+                    {mode === m.id && (
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Tooltip delayDuration={200}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground/60 transition-colors duration-150 hover:bg-black/[0.04] hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+                  aria-label="About research modes"
+                >
+                  <Info className="h-4 w-4" aria-hidden />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="start" className="max-w-[260px]">
+                Choose research depth — affects response time, analysis quality, and energy footprint.
+              </TooltipContent>
+            </Tooltip>
           </div>
         )}
         <div className="relative z-10 mx-auto w-full max-w-[1200px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
