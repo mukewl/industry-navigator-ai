@@ -451,7 +451,7 @@ export const AccountDashboard = ({ onNewProfile, onViewBrief }: AccountDashboard
                   <p className="text-[0.75rem] font-medium text-foreground">{pres.date}</p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-[0.75rem] text-muted-foreground">Category</p>
+                  <p className="text-[0.75rem] text-muted-foreground">Solution</p>
                   <p className="text-[0.75rem] font-medium text-foreground">{pres.solution}</p>
                 </div>
               </div>

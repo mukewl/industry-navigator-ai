@@ -368,7 +368,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
             [
               ["overview", "Overview"],
               ["challenges", "Challenges"],
-              ["solutions", "Categories"],
+              ["solutions", "Solutions"],
               ["export", "Export"],
             ] as const
           ).map(([v, label]) => (
@@ -493,7 +493,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
 
               {/* ── Solution impact scores ── */}
               <section className="mt-8">
-                <p className="type-section-label mb-3">Category impact scores</p>
+                <p className="type-section-label mb-3">Solution impact scores</p>
                 <div className="glass-panel divide-y divide-black/[0.05] overflow-hidden rounded-xl">
                   {rankedSolutions.map((s, idx) => (
                     <div key={s.challengeIds[0]} className="flex items-center gap-4 px-4 py-3">
@@ -549,7 +549,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                     onClick={() => setSelectedSolution(topPlay as SolutionData)}
                     className="mt-4 inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-opacity hover:opacity-90"
                   >
-                    View Full Category →
+                    View Full Solution →
                   </button>
                 </div>
               </section>
@@ -568,7 +568,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                       <th className="type-eyebrow w-10 px-4 py-3 text-left text-muted-foreground">#</th>
                       <th className="type-eyebrow px-4 py-3 text-left text-muted-foreground">Challenge</th>
                       <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Urgency</th>
-                      <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Category</th>
+                      <th className="type-eyebrow whitespace-nowrap px-4 py-3 text-left text-muted-foreground">Solution</th>
                       <th className="type-eyebrow px-4 py-3 text-left text-muted-foreground">Description</th>
                     </tr>
                   </thead>
@@ -693,7 +693,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                       </div>
                       <div className="mt-3 flex-1 flex items-end gap-2">
                         <div className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
-                          View Full Category →
+                          View Full Solution →
                         </div>
                         {ws && (
                           <div
