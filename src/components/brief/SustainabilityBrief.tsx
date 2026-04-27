@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { SolutionDetail, SolutionData } from "./SolutionDetail";
+import { PitchDeckModal } from "./PitchDeckModal";
 import { briefData } from "@/data/briefData";
 import { winStrategyData } from "@/data/winStrategyData";
 import { cn } from "@/lib/utils";
@@ -173,6 +174,8 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
   const [winStrategyModal, setWinStrategyModal] = useState<SolutionData | null>(null);
   const [briefDate, setBriefDate] = useState("18 Mar 2026");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [selectedSolutionIds, setSelectedSolutionIds] = useState<Set<number>>(new Set());
+  const [pitchDeckOpen, setPitchDeckOpen] = useState(false);
 
   const handleRefresh = () => {
     if (isRefreshing) return;
@@ -219,6 +222,13 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
     setSlideKey((k) => k + 1);
   };
 
+  // Initialize Pitch Deck selection to all solutions for the resolved company.
+  useEffect(() => {
+    if (data) {
+      setSelectedSolutionIds(new Set(data.solutions.map((s) => s.challengeIds[0])));
+    }
+  }, [data]);
+
   // Scroll to focused custom solution after tab animation completes
   useEffect(() => {
     if (activeTab === "solutions" && focusedCustomIdx !== null) {
@@ -247,6 +257,23 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           : "Connecting to Canva... This feature will be available in the live version.",
       className: "bg-primary text-primary-foreground border-primary font-medium",
       duration: 3000,
+    });
+  };
+
+  const handleOpenPitchDeck = () => {
+    if (selectedSolutionIds.size === 0) {
+      toast({ title: "Select at least one solution to include in the deck" });
+      return;
+    }
+    setPitchDeckOpen(true);
+  };
+
+  const toggleSolutionSelection = (id: number) => {
+    setSelectedSolutionIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
     });
   };
 
@@ -783,7 +810,8 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                       <div className="relative mt-0.5 flex shrink-0 items-center justify-center">
                         <input
                           type="checkbox"
-                          defaultChecked
+                          checked={selectedSolutionIds.has(s.challengeIds[0])}
+                          onChange={() => toggleSolutionSelection(s.challengeIds[0])}
                           className="peer h-4 w-4 cursor-pointer appearance-none rounded border border-black/[0.12] bg-white checked:border-primary checked:bg-primary"
                         />
                         <Check
@@ -800,7 +828,7 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                   ))}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" className="h-11" onClick={() => handleExport("PowerPoint")}>
+                  <Button type="button" className="h-11" onClick={handleOpenPitchDeck}>
                     <Presentation className="mr-2 h-3.5 w-3.5" />
                     PowerPoint
                   </Button>
@@ -1169,6 +1197,16 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
           )}
         </DialogContent>
       </Dialog>
+
+      {/* ── Pitch Deck Preview Modal ── */}
+      <PitchDeckModal
+        open={pitchDeckOpen}
+        onClose={() => setPitchDeckOpen(false)}
+        brief={data}
+        selectedSolutions={data.solutions.filter((s) =>
+          selectedSolutionIds.has(s.challengeIds[0]),
+        )}
+      />
     </div>
   );
 };
