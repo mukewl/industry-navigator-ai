@@ -18,6 +18,7 @@ import {
   Linkedin,
   Mail,
   Sparkles,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -434,6 +435,26 @@ export const SustainabilityBrief = ({ companyName, onBack, returnTo }: Sustainab
                       New Prospect
                     </span>
                   )}
+                </div>
+                <div>
+                  <p className="type-eyebrow">Estimated Emissions</p>
+                  <div className="mt-1 flex items-center gap-1.5">
+                    <p className="text-base font-medium tabular-nums tracking-tight text-foreground">≈ 3–6g CO2e</p>
+                    <Tooltip delayDuration={200}>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label="About emissions estimate"
+                          className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground/50 transition-colors hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+                        >
+                          <Info className="h-3.5 w-3.5" aria-hidden />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" align="start" className="max-w-[320px]">
+                        Estimated emissions for the 5-agent pipeline running ~30–50 LLM queries on an efficient model stack (Haiku / GPT-4o class, ~0.10–0.13g CO2e per query). Excludes infrastructure overhead. Based on SIC research, 2026.
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </div>
               </div>
 
